@@ -5,16 +5,23 @@ from user.models import *
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализация пользователя"""
+
+    date_joined = serializers.ReadOnlyField()
+
     class Meta:
         model = User
         fields = (
             "id",
+            "email",
+            "password",
+            "date_joined",
             "firstName",
             "lastName",
             "photo",
             "patronymic",
             "role"
         )
+        extra_kwargs = {'password': {'write_only': True}}
 
 class ParticipantSerializer(serializers.ModelSerializer):
     """Сериализация участника"""
