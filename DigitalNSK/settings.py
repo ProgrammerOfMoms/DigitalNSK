@@ -43,13 +43,13 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_yasg',
     'djoser',
 
     'user',
     'event',
     'testing',
     'institution',
-
 ]
 
 MIDDLEWARE = [
@@ -65,6 +65,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'DigitalNSK.urls'
+
 
 TEMPLATES = [
     {

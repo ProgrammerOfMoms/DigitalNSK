@@ -39,7 +39,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """Модель пользователя"""
 
-    PARTICIPANT     = "PATICIPANT"
+    PARTICIPANT     = "PARTICIPANT"
     TUTOR           = "TUTOR"
     UNIVERSITY      = "UNIVERSITY"
     PARTNER         = "PARTNER"
@@ -118,7 +118,7 @@ class Participant(models.Model):
     )
 
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
-    eduInstitution  = models.OneToOneField(Institution, on_delete = models.CASCADE, related_name = "participant", verbose_name = "Образовательное учреждение", blank = True) 
+    eduInstitution  = models.OneToOneField(Institution, on_delete = models.CASCADE, related_name = "participant", verbose_name = "Образовательное учреждение", blank = True, null = True) 
     
     """???"""
     level           = models.CharField(choices = CHOICES_OF_LEVEL, default = CLASS_8, verbose_name = "Класс/курс", max_length = 20, blank = True)
@@ -128,7 +128,7 @@ class Participant(models.Model):
     instURL         = models.URLField(verbose_name= "Ссылка на instagram", blank = True)
     fbURL           = models.URLField(verbose_name= "Ссылка на facebook", blank = True)
     passedTests     = models.ManyToManyField(Test, verbose_name = "Завершенные тесты", related_name= "participant", blank = True)
-    events          = models.ForeignKey(Progress, on_delete = models.CASCADE, related_name= "participant", verbose_name = "Мероприятия", blank = True)
+    events          = models.ForeignKey(Progress, on_delete = models.CASCADE, related_name= "participant", verbose_name = "Мероприятия", blank = True, null = True)
     progress        = models.FloatField(verbose_name = "Прогресс", default=0, blank = True)
     mailing         = models.BooleanField(default=False)
     

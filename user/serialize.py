@@ -31,6 +31,17 @@ class ParticipantSerializer(serializers.ModelSerializer):
     #passedTests    = TestSerializer(many = True)
     #events         = EventSerializer()
 
+    def create(self, validate_data):
+        user = validate_data.get("id")
+        validate_data.pop("id")
+        serializer = UserSerializer(data = user)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        print(serializer.data["id"])
+        user = User.objects.get(id = serializer.data["id"])
+        return Participant.objects.create(id = user, **validate_data)
+
+
     class Meta:
         model = Participant
         fields = (
