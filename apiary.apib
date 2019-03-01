@@ -3,17 +3,17 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
 # DigitalNSK
 
-Описание
+    Описание
 
 ## Пользователь [/user]
 
-### Вход [POST/user/signin/]
-
+### Авторизаци пользователя [POST/user/signin/]
+###### авторизация с помощью email'а и пароля
 + Request (application/json)
 
         {
-            'email': 'электронный адрес',
-            'password': 'пароль'
+            'email': 'Электронный_адрес',
+            'password': 'Пароль'
         }
 
 + Response 201 (application/json)
@@ -41,3 +41,33 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             {
                 'error': 'Пожалуйста, введите email и пароль'
             }
+
+### Регистрация пользователя(Участник) [POST/user/signup/]
+###### регистрация с помощью email'а и пароля
++ Request (application/json)
+
+        {
+            'id':
+            {
+                'email': 'Электронный_адрес*',
+                'firstName': 'Имя*',
+                'lastName': 'Фамилия*',
+                'patronymic': 'Отчество',
+                'password': 'Пароль*',
+                'photo': 'Фотграфия',
+                'phoneNumber': 'Номер_телефона*',
+                'role': 'Роль*'
+            }
+            'eduInstitution': 'Учебное_заведение',
+            'level': 'Класс/курс',
+            'vkURL': 'Ссылка_на_аккаунт_Вконтакте',
+            'instURL': 'Ссылка_на_аккаунт_instagram',
+            'fbURL': 'Ссылка_на_аккаунт_facebook',
+            'mailing': 'Подписка_на_рассылку'
+        }
+
+
+
+
+
+
