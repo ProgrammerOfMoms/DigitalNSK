@@ -7,7 +7,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
 ## Пользователь [/user]
 
-### Авторизаци пользователя [POST/user/signin/]
+### Авторизация пользователя [POST/user/signin/]
 ###### авторизация с помощью email'а и пароля
 + Request (application/json)
 
@@ -66,6 +66,13 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             'mailing': 'Подписка_на_рассылку'
         }
 
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                'error': 'Не удалось зарегистрировать пользователя'
+            }
 
 
 
