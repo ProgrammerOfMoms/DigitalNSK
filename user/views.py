@@ -22,13 +22,13 @@ class SignUp(APIView):
     """
     description: 'This is a sample server Petstore server.'
     """
-    
+
 
 
     permission_classes = (AllowAny,)
     def get(self, request):
-         return Response({"doc": self.__doc__})
- 
+        return Response({"doc": self.__doc__})
+
     def post(self, request):
         try:
             user = json.loads(request.body)
@@ -40,7 +40,7 @@ class SignUp(APIView):
                 serializer = ParticipantSerializer(data = user)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-            
+
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
@@ -74,7 +74,7 @@ class SignIn(APIView):
             data = json.loads(request.body)
             email = data['email']
             password = data['password']
-    
+
             user = User.objects.get(email=email, password=password)
             if user:
                 try:
@@ -85,8 +85,8 @@ class SignIn(APIView):
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['token'] = token
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
-                    return Response(user_details, status=status.HTTP_200_OK)
-    
+                    return Response(user_details, status=status.HTTP_201_CREATED)
+
                 except Exception as e:
                     raise e
             else:
@@ -94,7 +94,7 @@ class SignIn(APIView):
                 return Response(res, status=status.HTTP_403_FORBIDDEN)
         except KeyError:
             res = {'error': 'Пожалуйста, введите email и пароль'}
-            return Response(res)
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
             res = {'error': 'Пользователь не найден'}
