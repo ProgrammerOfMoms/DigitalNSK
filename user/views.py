@@ -23,19 +23,13 @@ class SignUp(APIView):
     description: 'This is a sample server Petstore server.'
     """
 
-
-
     permission_classes = (AllowAny,)
     def get(self, request):
         return Response({"doc": self.__doc__})
 
     def post(self, request):
         try:
-            user = json.loads(request.body)
-            print('//////\n', user)
-
-            # print(user)
-
+            user = json.loads(request.body.decode("utf-8"))
             if user["id"]["role"] == User.PARTICIPANT:
                 serializer = ParticipantSerializer(data = user)
                 serializer.is_valid(raise_exception=True)
@@ -71,7 +65,8 @@ class SignIn(APIView):
 
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            print(type(request.body))
+            data = json.loads(request.body.decode("utf-8"))
             email = data['email']
             password = data['password']
 
