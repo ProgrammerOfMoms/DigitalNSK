@@ -11,22 +11,24 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 ##### с помощью email'а и пароля
 + Request (application/json)
 
-        {
-            'email': 'Электронный_адрес',
-            'password': 'Пароль'
-        }
+    + Body
+
+            {
+                "email": "Электронный_адрес",
+                "password": "Пароль"
+            }
 
 + Response 201 (application/json)
 
     + Body
 
             {
-                data:
+                "data":
                 {
-                    'email': 'Электронный_адрес',
-                    'firstName': 'Имя',
-                    'lastName': 'Фамилия',
-                    'token': 'Bearer token'
+                    "email": "Электронный_адрес",
+                    "firstName": "Имя",
+                    "lastName": "Фамилия",
+                    "token": "Bearer token"
                 }
             }
 
@@ -35,9 +37,9 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                data:
+                "errors":
                 {
-                    'error': 'Пользователь не найден'
+                    "error": "Пользователь не найден"
                 }
             }
 
@@ -46,9 +48,9 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                data:
+                "errors":
                 {
-                    'error': 'Пожалуйста, введите email и пароль'
+                    "error": "Пожалуйста, введите email и пароль"
                 }
             }
 
@@ -56,48 +58,72 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 ##### с помощью email'а и пароля
 + Request (application/json)
 
-        {
-            'id':
+    + Body
             {
-                'email': 'Электронный_адрес*',
-                'firstName': 'Имя*',
-                'lastName': 'Фамилия*',
-                'patronymic': 'Отчество',
-                'password': 'Пароль*',
-                'photo': 'Фотграфия',
-                'phoneNumber': 'Номер_телефона*',
-                'role': 'Роль*'
+                "id":
+                {
+                    "email": "Электронный_адрес*",
+                    "firstName": "Имя*",
+                    "lastName": "Фамилия*",
+                    "patronymic": "Отчество",
+                    "password": "Пароль*",
+                    "photo": "Фотграфия",
+                    "phoneNumber": "Номер_телефона*",
+                    "role": "Роль*"
+                }
+                "eduInstitution": "Учебное_заведение",
+                "level": "Класс/курс",
+                "vkURL": "Ссылка_на_аккаунт_Вконтакте",
+                "instURL": "Ссылка_на_аккаунт_instagram",
+                "fbURL": "Ссылка_на_аккаунт_facebook",
+                "mailing": "Подписка_на_рассылку"
             }
-            'eduInstitution': 'Учебное_заведение',
-            'level': 'Класс/курс',
-            'vkURL': 'Ссылка_на_аккаунт_Вконтакте',
-            'instURL': 'Ссылка_на_аккаунт_instagram',
-            'fbURL': 'Ссылка_на_аккаунт_facebook',
-            'mailing': 'Подписка_на_рассылку'
-        }
 
 + Response 201 (application/json)
 
     + Body
-
             {
-                data:
-                {
-                    'email': 'Электронный_адрес',
-                    'firstName': 'Имя',
-                    'lastName': 'Фамилия',
-                    'token': 'Bearer token'
+            "data": {
+                "type": "SignUp",
+                "id": "Идентификатор",
+                "attributes": {
+                    "level": "Класс/курс",
+                    "vkURL": "Ссылка_на_аккаунт_Вконтакте",
+                    "instURL": "Ссылка_на_аккаунт_instagram",
+                    "fbURL": "Ссылка_на_аккаунт_facebook",
+                    "progress": "Прогресс участиника"
+                },
+                "relationships": {
+                    "id": {
+                        "data": {
+                            "type": "User",
+                            "id": "Идентификатор"
+                        }
+                    },
+                    "eduInstitution": {
+                        "data": "Учебное заведение"
+                    },
+                    "passedTests": {
+                        "data": [],
+                        "meta": {
+                            "count": 0
+                        }
+                    },
+                    "events": {
+                        "data": "Мероприятия"
+                    }
                 }
             }
+        }
 
 + Response 403 (application/json)
 
     + Body
 
             {
-                data:
+                "errors":
                 {
-                    'error': 'Не удалось зарегистрировать пользователя'
+                    "error": "Не удалось зарегистрировать пользователя"
                 }
             }
 
