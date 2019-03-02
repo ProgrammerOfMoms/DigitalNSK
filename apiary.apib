@@ -83,38 +83,47 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
     + Body
             {
-            "data": {
-                "type": "SignUp",
-                "id": "Идентификатор",
-                "attributes": {
-                    "level": "Класс/курс",
-                    "vkURL": "Ссылка_на_аккаунт_Вконтакте",
-                    "instURL": "Ссылка_на_аккаунт_instagram",
-                    "fbURL": "Ссылка_на_аккаунт_facebook",
-                    "progress": "Прогресс участиника"
-                },
-                "relationships": {
-                    "id": {
-                        "data": {
-                            "type": "User",
-                            "id": "Идентификатор"
+                "data":
+                {
+                    "type": "SignUp",
+                    "id": "Идентификатор",
+                    "attributes":
+                    {
+                        "level": "Класс/курс",
+                        "vkURL": "Ссылка_на_аккаунт_Вконтакте",
+                        "instURL": "Ссылка_на_аккаунт_instagram",
+                        "fbURL": "Ссылка_на_аккаунт_facebook",
+                        "progress": "Прогресс участиника"
+                    },
+                    "relationships":
+                    {
+                        "id":
+                        {
+                            "data":
+                            {
+                                "type": "User",
+                                "id": "Идентификатор"
+                            }
+                        },
+                        "eduInstitution":
+                        {
+                            "data": "Учебное заведение"
+                        },
+                        "passedTests":
+                        {
+                            "data": [],
+                            "meta":
+                            {
+                                "count": 0
+                            }
+                        },
+                        "events":
+                        {
+                            "data": "Мероприятия"
                         }
-                    },
-                    "eduInstitution": {
-                        "data": "Учебное заведение"
-                    },
-                    "passedTests": {
-                        "data": [],
-                        "meta": {
-                            "count": 0
-                        }
-                    },
-                    "events": {
-                        "data": "Мероприятия"
                     }
                 }
             }
-        }
 
 + Response 403 (application/json)
 
@@ -127,7 +136,235 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 }
             }
 
+### Редактирование профиля [POST/user/edit/]
+##### пользователя в личном кабинете
++ Request (application/json)
 
+    + Body
+            {
 
+            }
 
++ Response 201 (application/json)
 
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Восстановление пароля [POST/user/recovery-password/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Авторизация через Вконтакте [POST/user/auth-vk/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Авторизация через Instagram [POST/user/auth-inst/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Авторизация через Facebook [POST/user/auth-fb/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Регистрация через Вконтакте [POST/user/reg-vk/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Регистрация через Instagram [POST/user/reg-inst/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
+
+### Регистрация через Facebook [POST/user/reg-fb/]
++ Request (application/json)
+
+    + Body
+            {
+
+            }
+
++ Response 201 (application/json)
+
+    + Body
+            {
+                "data":
+                {
+
+                }
+            }
+
++ Response 403 (application/json)
+
+    + Body
+
+            {
+                "errors":
+                {
+
+                }
+            }
