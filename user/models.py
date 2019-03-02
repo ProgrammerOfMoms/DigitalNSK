@@ -9,7 +9,7 @@ from testing.models import Test
 from institution.models import Institution
 
 class UserManager(BaseUserManager):
- 
+
     def _create_user(self, email, password, **extra_fields):
         """
         Creates and saves a User with the given email,and password.
@@ -24,16 +24,16 @@ class UserManager(BaseUserManager):
                 return user
         except:
             raise
- 
+
     def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, **extra_fields)
- 
+
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
- 
+
         return self._create_user(email, password=password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -79,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return "{} {} id{}".format(self.firstName, self.lastName, str(self.id))
-    
+
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

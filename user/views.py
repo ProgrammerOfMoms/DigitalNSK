@@ -29,12 +29,13 @@ class SignUp(APIView):
 
     def post(self, request):
         try:
-            user = json.loads(request.body.decode("utf-8"))
-            if user["id"]["role"] == User.PARTICIPANT:
-                serializer = ParticipantSerializer(data = user)
+            data = json.loads(request.body.decode("utf-8"))
+            email = data['id']['email']
+            password = data['id']['password']
+            if data["id"]["role"] == User.PARTICIPANT:
+                serializer = ParticipantSerializer(data = data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
@@ -51,7 +52,23 @@ class SignUp(APIView):
             #     serializer = AdministratorSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
             #     serializer.save()
-
+            user = User.objects.get(email=data['id']['email'], password=data['id']['password'])
+            if user:
+                try:
+                    payload = jwt_payload_handler(user)
+                    token = jwt.encode(payload, settings.SECRET_KEY)
+                    user_details = {}
+                    user_details['email'] = "%s" % (user.email)
+                    user_details['firstName'] = "%s" % (user.firstName)
+                    user_details['lastName'] = "%s" % (user.lastName)
+                    user_details['token'] = token
+                    user_logged_in.send(sender=user.__class__, request=request, user=user)
+                    return Response(user_details, status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    raise e
+            else:
+                res = {'error': 'Пользователь не найден'}
+                return Response(res, status=status.HTTP_403_FORBIDDEN)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
@@ -65,7 +82,6 @@ class SignIn(APIView):
 
     def post(self, request):
         try:
-            print(type(request.body))
             data = json.loads(request.body.decode("utf-8"))
             email = data['email']
             password = data['password']
@@ -76,6 +92,7 @@ class SignIn(APIView):
                     payload = jwt_payload_handler(user)
                     token = jwt.encode(payload, settings.SECRET_KEY)
                     user_details = {}
+                    user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['token'] = token

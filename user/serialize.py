@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ParticipantSerializer(serializers.ModelSerializer):
     """Сериализация участника"""
-    
+
     id              = UserSerializer()
     #eduInstitution = InstitutionSerializer()
     #passedTests    = TestSerializer(many = True)

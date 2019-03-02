@@ -21,9 +21,13 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                'firstName': 'Имя',
-                'lastName': 'Фамилия',
-                'token': 'Bearer token'
+                data:
+                {
+                    'email': 'Электронный_адрес',
+                    'firstName': 'Имя',
+                    'lastName': 'Фамилия',
+                    'token': 'Bearer token'
+                }
             }
 
 + Response 403 (application/json)
@@ -31,7 +35,10 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                'error': 'Пользователь не найден'
+                data:
+                {
+                    'error': 'Пользователь не найден'
+                }
             }
 
 + Response 400 (application/json)
@@ -39,7 +46,10 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                'error': 'Пожалуйста, введите email и пароль'
+                data:
+                {
+                    'error': 'Пожалуйста, введите email и пароль'
+                }
             }
 
 ### Регистрация пользователя(Участник) [POST/user/signup/]
@@ -71,10 +81,13 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                'firstName': 'Имя',
-                'lastName': 'Фамилия',
-                'token': 'Bearer token'
-                нужно доработать!!!
+                data:
+                {
+                    'email': 'Электронный_адрес',
+                    'firstName': 'Имя',
+                    'lastName': 'Фамилия',
+                    'token': 'Bearer token'
+                }
             }
 
 + Response 403 (application/json)
@@ -82,7 +95,10 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
 
             {
-                'error': 'Не удалось зарегистрировать пользователя'
+                data:
+                {
+                    'error': 'Не удалось зарегистрировать пользователя'
+                }
             }
 
 
