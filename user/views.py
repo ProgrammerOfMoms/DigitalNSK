@@ -17,6 +17,10 @@ from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
 
 
+def getJWT(user):
+    payload = jwt_payload_handler(user)
+    return jwt.encode(payload, settings.SECRET_KEY)
+
 
 class SignUp(APIView):
     """
@@ -30,12 +34,15 @@ class SignUp(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body.decode("utf-8"))
-            email = data['id']['email']
-            password = data['id']['password']
+            
             if data["id"]["role"] == User.PARTICIPANT:
-                serializer = ParticipantSerializer(data = data)
+                serializer = ParticipantSerializer(data = data, fields = ("id", "level", "token"))
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
+
+                user = User.objects.get(email = data["id"]["email"])
+                token = {"jwt": getJWT(user)}
+                
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
@@ -54,12 +61,11 @@ class SignUp(APIView):
             #     serializer.save()
             else:
                 res = {'error': 'Пользователь не найден'}
-                return Response(res, status=status.HTTP_403_FORBIDDEN)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(errors = res, status=status.HTTP_403_FORBIDDEN)
+            return Response(data = serializer.data, headers = token, status=status.HTTP_201_CREATED)
         except Exception as e:
-            print(e)
             res = {'error': 'Не удалось зарегистрировать пользователя'}
-            return Response(res, status=status.HTTP_403_FORBIDDEN)
+            return Response(errors = res, status=status.HTTP_403_FORBIDDEN)
 
 class SignIn(APIView):
     """Авторизация через email и password"""
@@ -75,13 +81,11 @@ class SignIn(APIView):
             user = User.objects.get(email=email, password=password)
             if user:
                 try:
-                    payload = jwt_payload_handler(user)
-                    token = jwt.encode(payload, settings.SECRET_KEY)
                     user_details = {}
                     user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
-                    user_details['token'] = token
+                    user_details['token'] = getJWT(user)
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
                     return Response(user_details, status=status.HTTP_201_CREATED)
 
