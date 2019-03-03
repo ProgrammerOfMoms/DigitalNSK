@@ -42,6 +42,22 @@ class UserSerializer(serializers.ModelSerializer):
             "role"
         )
         extra_kwargs = {'password': {'write_only': True}}
+    
+    def create(self, validate_data):
+        email = validate_data.get("email")
+        password = validate_data.get("password")
+        validate_data.pop("email")
+        validate_data.pop("password")
+
+        return User.objects.create_user(email = email, password = password, **validate_data)
+    
+    def update(self, instance, validate_data):
+
+        for key in validate_data.keys():
+            setattr(instance, key, validate_data[key])
+        
+        instance.save()
+        return instance
 
 class ParticipantSerializer(DynamicFieldsModelSerializer):
     """Сериализация участника"""
@@ -52,7 +68,6 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
     #events         = EventSerializer()
 
     def create(self, validate_data):
-        print("here")
         user = validate_data.get("id")
         validate_data.pop("id")
         serializer = UserSerializer(data = user)
@@ -60,6 +75,24 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
         serializer.save()
         user = User.objects.get(id = serializer.data["id"])
         return Participant.objects.create(id = user, **validate_data)
+    
+    def update(self, instance, validate_data):
+        
+        for key in validate_data.keys():
+            if key == "id":
+                try:
+                    user = User.objects.get(id = instance.id.id)
+                    updateUser = validate_data[key]
+                    serializer = UserSerializer(user, updateUser, partial = True)
+                    serializer.is_valid(raise_exception = True)
+                    serializer.save()
+                except Exception as e:
+                    raise e
+            else:
+                setattr(instance, key, validate_data[key])
+        
+        instance.save()
+        return instance
 
 
     class Meta:

@@ -8,6 +8,8 @@ from django.contrib.auth.models import (
 from testing.models import Test
 from institution.models import Institution
 
+
+
 class UserManager(BaseUserManager):
 
     def _create_user(self, email, password, **extra_fields):

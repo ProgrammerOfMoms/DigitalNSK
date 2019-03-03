@@ -12,6 +12,7 @@ import coreschema
 from DigitalNSK import settings
 
 import json
+import copy
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
@@ -23,9 +24,7 @@ def getJWT(user):
 
 
 class SignUp(APIView):
-    """
-    description: 'This is a sample server Petstore server.'
-    """
+    """Регистрация через email и password"""
 
     permission_classes = (AllowAny,)
     def get(self, request):
@@ -36,13 +35,14 @@ class SignUp(APIView):
             data = json.loads(request.body.decode("utf-8"))
             
             if data["id"]["role"] == User.PARTICIPANT:
-                serializer = ParticipantSerializer(data = data, fields = ("id", "level", "token"))
+                serializer = ParticipantSerializer(data = data)
                 serializer.is_valid(raise_exception=True)
+                    
                 serializer.save()
 
                 user = User.objects.get(email = data["id"]["email"])
                 token = {"jwt": getJWT(user)}
-                
+
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
@@ -61,11 +61,15 @@ class SignUp(APIView):
             #     serializer.save()
             else:
                 res = {'error': 'Пользователь не найден'}
-                return Response(errors = res, status=status.HTTP_403_FORBIDDEN)
+                return Response(data = res, status=status.HTTP_403_FORBIDDEN)
             return Response(data = serializer.data, headers = token, status=status.HTTP_201_CREATED)
         except Exception as e:
+            raise e
             res = {'error': 'Не удалось зарегистрировать пользователя'}
-            return Response(errors = res, status=status.HTTP_403_FORBIDDEN)
+            return Response(data = res, status=status.HTTP_403_FORBIDDEN)
+                
+
+
 
 class SignIn(APIView):
     """Авторизация через email и password"""
@@ -85,9 +89,9 @@ class SignIn(APIView):
                     user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
-                    user_details['token'] = getJWT(user)
+                    token = {"jwt": getJWT(user)}
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
-                    return Response(user_details, status=status.HTTP_201_CREATED)
+                    return Response(data = user_details, headers = token, status=status.HTTP_201_CREATED)
 
                 except Exception as e:
                     raise e
@@ -101,3 +105,45 @@ class SignIn(APIView):
         except User.DoesNotExist:
             res = {'error': 'Пользователь не найден'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
+
+
+class Profile(APIView):
+    """Редактирование профиля"""
+
+    # permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        """Получение информации о пользователе"""
+        
+        try:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+
+            if user.role == User.PARTICIPANT:
+                user = user.participant
+                serializer = ParticipantSerializer(user)
+                return Response(data = serializer.data, status = status.HTTP_200_OK)
+        
+        except Exception as e:
+            raise e
+    
+    def put(self, request):
+        """Обновление профиля"""
+
+        try:
+            id = request.META["HTTP_ID"]
+            updateParticipant = json.loads(request.body.decode("utf-8"))
+            user = User.objects.get(id = id)   
+
+            if user.role == User.PARTICIPANT:
+                user = user.participant
+                serializer = ParticipantSerializer(user, updateParticipant, partial = True)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+                return Response(data = serializer.data, status = status.HTTP_200_OK)
+            
+            """Здесь остальные роли"""
+
+        except Exception as e:
+            raise e
