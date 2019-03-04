@@ -90,10 +90,9 @@ class SignIn(APIView):
             email = data['email']
             password = data['password']
 
-            user = User.objects.get(email=email)
+            user = authenticate(email = email, password = password)
             if user:
                 try:
-                    user = authenticate(email = email, password = password)
                     user_details = {}
                     user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
