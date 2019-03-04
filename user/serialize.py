@@ -81,9 +81,9 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
         serializer.save()
         user = User.objects.get(id = serializer.data["id"])
         try:
-            instituteId = validate_data.get("eduInstitution")
+            instituteData = validate_data.get("eduInstitution")
             validate_data.pop("eduInstitution")
-            institute = Institution.objects.get(name = instituteId["name"])
+            institute = Institution.objects.get(name = instituteData["name"])
             print(institute)
             
         except Institution.DoesNotExist as e:
@@ -92,7 +92,7 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
         return Participant.objects.create(id = user, eduInstitution = institute, **validate_data)
     
    
-   
+
     def update(self, instance, validate_data):
         for key in validate_data.keys():
             if key == "id":
