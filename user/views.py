@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -42,11 +43,11 @@ class SignUp(APIView):
                 serializer.save()
 
                 user = User.objects.get(email = data["id"]["email"])
-                token = {"jwt": getJWT(user)}
                 data = serializer.data
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
+                res["jwt"] = getJWT(user)
 
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
@@ -69,7 +70,7 @@ class SignUp(APIView):
                 return Response(data = res, status=status.HTTP_403_FORBIDDEN)
             
 
-            return Response(data = res, headers = token, status=status.HTTP_201_CREATED)
+            return Response(data = res, status=status.HTTP_201_CREATED)
         except Exception as e:
             raise e
             res = {'error': 'Не удалось зарегистрировать пользователя'}
@@ -89,17 +90,17 @@ class SignIn(APIView):
             email = data['email']
             password = data['password']
 
-            user = User.objects.get(email=email, password=password)
+            user = User.objects.get(email=email)
             if user:
                 try:
+                    user = authenticate(email = email, password = password)
                     user_details = {}
                     user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
-                    token = {"jwt": getJWT(user)}
+                    user_details['jwt'] = "%s" % (getJWT(user))
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
-                    return Response(data = user_details, headers = token, status=status.HTTP_201_CREATED)
-
+                    return Response(data = user_details, status=status.HTTP_201_CREATED)
                 except Exception as e:
                     raise e
             else:
