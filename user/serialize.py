@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from institution.serialize import InstitutionSerializer
 from user.models import *
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -60,14 +61,18 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+
 class ParticipantSerializer(DynamicFieldsModelSerializer):
     """Сериализация участника"""
 
     id              = UserSerializer()
-    #eduInstitution = InstitutionSerializer()
+    eduInstitution  = InstitutionSerializer()
     #passedTests    = TestSerializer(many = True)
     #events         = EventSerializer()
 
+    
+    
     def create(self, validate_data):
         user = validate_data.get("id")
         validate_data.pop("id")
@@ -75,10 +80,20 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user = User.objects.get(id = serializer.data["id"])
-        return Participant.objects.create(id = user, **validate_data)
-    
-    def update(self, instance, validate_data):
+        try:
+            instituteId = validate_data.get("eduInstitution")
+            validate_data.pop("eduInstitution")
+            institute = Institution.objects.get(name = instituteId["name"])
+            print(institute)
+            
+        except Institution.DoesNotExist as e:
+            raise e
         
+        return Participant.objects.create(id = user, eduInstitution = institute, **validate_data)
+    
+   
+   
+    def update(self, instance, validate_data):
         for key in validate_data.keys():
             if key == "id":
                 try:

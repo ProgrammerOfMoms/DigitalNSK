@@ -12,13 +12,13 @@ class RecoveryLinkSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model = Participant
+        model = RecoveryLink
         fields = (
             "id",
             "link",
         )
     
-    
+
     def create(self, validate_data):
         user = validate_data.get("id")
         validate_data.pop("id")

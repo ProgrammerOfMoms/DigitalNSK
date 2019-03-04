@@ -7,6 +7,6 @@ class LinkRecoveryAdmin(admin.ModelAdmin):
         'link',
     )
 
-admin.site.register(RecoveryLink)
+admin.site.register(RecoveryLink, LinkRecoveryAdmin)
 
 

@@ -17,6 +17,7 @@ import copy
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
+from mail.linkGenerator import LinkGenerator
 
 
 def getJWT(user):
@@ -156,21 +157,23 @@ class Profile(APIView):
 
 
 # class PasswordRecovery(APIView):
+
 #     """Восстановление пароля"""
 
 #     permission_classes = (AllowAny,)
 
 #     def get(self, request):
 #         try:
-            
+#             id = request.META["HTTP_ID"]
+#             link = LinkGenerator(data = data)
 
-#         except:
-#             pass
+#         except KeyError as e:
+#             if e == "HTTP_ID":
+#                 res = ""
+#                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 #     def post(self, request):
 #         pass
-    
-#     def generateRecoveryLink(user):
 
 
 
