@@ -18,6 +18,7 @@ class RecoveryLinkSerializer(serializers.ModelSerializer):
             "link",
         )
     
+    
     def create(self, validate_data):
         user = validate_data.get("id")
         validate_data.pop("id")
@@ -25,7 +26,7 @@ class RecoveryLinkSerializer(serializers.ModelSerializer):
             user = User.objects.get(id = user["id"])
             serializer = UserSerializer(data = user)
             serializer.is_valid(raise_exception=True)
-            return RecoveryLink.objects()
+            return RecoveryLink.objects.create(id = user, **validate_data)
 
         except User.DoesNotExist as e:
             raise e

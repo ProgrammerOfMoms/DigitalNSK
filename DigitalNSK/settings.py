@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'event',
     'testing',
     'institution',
+    'mail',
 ]
 
 MIDDLEWARE = [
