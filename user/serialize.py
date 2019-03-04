@@ -42,6 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
             "role"
         )
         extra_kwargs = {'password': {'write_only': True}}
+        depth = 5
     
     def create(self, validate_data):
         email = validate_data.get("email")
@@ -108,3 +109,4 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
             "events",
             "progress"
         )
+        depth = 5

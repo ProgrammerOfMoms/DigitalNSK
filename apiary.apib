@@ -20,6 +20,9 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
 + Response 201 (application/json)
 
+    + Headers
+            jwt: "bearer token"
+
     + Body
 
             {
@@ -27,8 +30,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 {
                     "email": "Электронный_адрес",
                     "firstName": "Имя",
-                    "lastName": "Фамилия",
-                    "token": "Bearer token"
+                    "lastName": "Фамилия"
                 }
             }
 
@@ -81,47 +83,32 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
 + Response 201 (application/json)
 
+    + Headers
+            jwt: bearer token
+
     + Body
             {
-                "data":
+                "data": 
                 {
-                    "type": "SignUp",
-                    "id": "Идентификатор",
-                    "attributes":
+                    "id": 
                     {
-                        "level": "Класс/курс",
-                        "vkURL": "Ссылка_на_аккаунт_Вконтакте",
-                        "instURL": "Ссылка_на_аккаунт_instagram",
-                        "fbURL": "Ссылка_на_аккаунт_facebook",
-                        "progress": "Прогресс участиника"
+                        "id": "id пользователя",
+                        "email": "email",
+                        "date_joined": "дата регистрации",
+                        "firstName": "имя",
+                        "lastName": "фамилия",
+                        "photo": "url фото",
+                        "patronymic": "отчество",
+                        "role": "роль"
                     },
-                    "relationships":
-                    {
-                        "id":
-                        {
-                            "data":
-                            {
-                                "type": "User",
-                                "id": "Идентификатор"
-                            }
-                        },
-                        "eduInstitution":
-                        {
-                            "data": "Учебное заведение"
-                        },
-                        "passedTests":
-                        {
-                            "data": [],
-                            "meta":
-                            {
-                                "count": 0
-                            }
-                        },
-                        "events":
-                        {
-                            "data": "Мероприятия"
-                        }
-                    }
+                    "eduInstitution": "образовательное учреждение",
+                    "level": "класс/курс",
+                    "vkURL": "vk url",
+                    "instURL": "instagram url",
+                    "fbURL": "fb url",
+                    "passedTests": ["завершенные тесты"],
+                    "events": "мероприятия || null",
+                    "progress": "личный прогресс"
                 }
             }
 

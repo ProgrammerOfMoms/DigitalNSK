@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.utils import jwt_payload_handler, jwt
 from rest_framework.schemas import ManualSchema
+from rest_framework.renderers import JSONRenderer
 import coreapi
 import coreschema
 from DigitalNSK import settings
@@ -36,12 +37,15 @@ class SignUp(APIView):
             
             if data["id"]["role"] == User.PARTICIPANT:
                 serializer = ParticipantSerializer(data = data)
-                serializer.is_valid(raise_exception=True)
-                    
+                serializer.is_valid(raise_exception=True)   
                 serializer.save()
 
                 user = User.objects.get(email = data["id"]["email"])
                 token = {"jwt": getJWT(user)}
+                data = serializer.data
+                res = {"id": data["id"]}
+                data.pop("id")
+                res.update(data)
 
             # elif user["id"]["role"] == User.TUTOR:
             #     serializer = TutorSerializer(data = role)
@@ -62,7 +66,9 @@ class SignUp(APIView):
             else:
                 res = {'error': 'Пользователь не найден'}
                 return Response(data = res, status=status.HTTP_403_FORBIDDEN)
-            return Response(data = serializer.data, headers = token, status=status.HTTP_201_CREATED)
+            
+
+            return Response(data = res, headers = token, status=status.HTTP_201_CREATED)
         except Exception as e:
             raise e
             res = {'error': 'Не удалось зарегистрировать пользователя'}
@@ -147,3 +153,24 @@ class Profile(APIView):
 
         except Exception as e:
             raise e
+
+
+# class PasswordRecovery(APIView):
+#     """Восстановление пароля"""
+
+#     permission_classes = (AllowAny,)
+
+#     def get(self, request):
+#         try:
+            
+
+#         except:
+#             pass
+
+#     def post(self, request):
+#         pass
+    
+#     def generateRecoveryLink(user):
+
+
+
