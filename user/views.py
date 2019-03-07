@@ -201,8 +201,6 @@ class PasswordRecovery(APIView):
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
-
-
 # class PasswordRecoveryAccept(APIView):
 #     def get
 
