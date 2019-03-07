@@ -56,7 +56,10 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validate_data):
 
         for key in validate_data.keys():
-            setattr(instance, key, validate_data[key])
+            if key == "password":
+                instance.set_password(validate_data[key])
+            else:
+                setattr(instance, key, validate_data[key])
         
         instance.save()
         return instance
@@ -102,6 +105,7 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
                     serializer = UserSerializer(user, updateUser, partial = True)
                     serializer.is_valid(raise_exception = True)
                     serializer.save()
+                    setattr(instance, key, user)
                 except Exception as e:
                     raise e
             else:

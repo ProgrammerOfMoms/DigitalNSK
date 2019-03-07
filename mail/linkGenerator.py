@@ -1,16 +1,25 @@
 from .models import RecoveryLink
+from user.models import User
 from .serialize import RecoveryLinkSerializer
 
-class LinkGenerator():
-    def __init__(self, data):
-        serializer = RecoveryLinkSerializer(data = data)
-        if serializer.is_valid():
-            serializer.save()
-            self.link = serializer.data["link"]
-            self.userId = serializer.data["id"]["id"]
-        else:
-            self.link = None
-            self.userId = -1
+import uuid
+import random
+
+def linkGenerator(id):
+    try:
+        user = User.objects.get(id = id)
+        link = RecoveryLink.objects.get_or_create(id = user)
+        while True:
+            h = uuid.uuid4().hex
+            if h!=link[0].link:
+                link[0].link = h
+                # link.save()
+                return (link[0].link, user.email)
+    except:
+        return None
+        
+
+    
         
 
 

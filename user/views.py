@@ -18,7 +18,8 @@ import copy
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
-from mail.linkGenerator import LinkGenerator
+from mail.linkGenerator import linkGenerator
+from mail.actions import *
 
 
 def getJWT(user):
@@ -130,10 +131,19 @@ class Profile(APIView):
             if user.role == User.PARTICIPANT:
                 user = user.participant
                 serializer = ParticipantSerializer(user)
-                return Response(data = serializer.data, status = status.HTTP_200_OK)
+                data = serializer.data
+                res = {"id": data["id"]}
+                data.pop("id")
+                res.update(data)
+                return Response(data = res, status = status.HTTP_200_OK)
         
-        except Exception as e:
-            raise e
+        except User.DoesNotExist:
+            res = {"error": "Такого пользователя не существует"}
+            return Response(data = res, status = status.HTTP_404_NOT_FOUND)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            
     
     def put(self, request):
         """Обновление профиля"""
@@ -148,32 +158,53 @@ class Profile(APIView):
                 serializer = ParticipantSerializer(user, updateParticipant, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
-                return Response(data = serializer.data, status = status.HTTP_200_OK)
+                print(user.id)
+                data = serializer.data
+                print(updateParticipant["id"])
+                print(data["id"])
+                res = {"id": data["id"]}
+                data.pop("id")
+                res.update(data)
+                return Response(data = res, status = status.HTTP_200_OK)
             
             """Здесь остальные роли"""
 
-        except Exception as e:
-            raise e
+        except User.DoesNotExist:
+            res = {"error": "Такого пользователя не существует"}
+            return Response(data = res, status = status.HTTP_404_NOT_FOUND)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 
-# class PasswordRecovery(APIView):
+class PasswordRecovery(APIView):
+    """Отправка ссылки для восстановления пароля"""
 
-#     """Восстановление пароля"""
+    permission_classes = (AllowAny,)
 
-#     permission_classes = (AllowAny,)
+    def get(self, request):
+        origin = "http://digitalnsk.sibtiger.com/user/recovery-password"
+        try:
+            id = request.META["HTTP_ID"]
+            data = linkGenerator(id = id)
+            send_password_recovery_link(email = data[1], link = data[0])
+            return Response(status = status.HTTP_200_OK)
 
-#     def get(self, request):
-#         try:
-#             id = request.META["HTTP_ID"]
-#             link = LinkGenerator(data = data)
+        except KeyError as e:
+            if e == "HTTP_ID":
+                res = {"error":"id не указан"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                res = {"error": "Неизвестный параметр "+e}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
-#         except KeyError as e:
-#             if e == "HTTP_ID":
-#                 res = ""
-#                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
-#     def post(self, request):
-#         pass
+
+# class PasswordRecoveryAccept(APIView):
+#     def get
 
 
 
