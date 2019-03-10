@@ -37,10 +37,10 @@ class SignUp(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body.decode("utf-8"))
-            
+
             if data["id"]["role"] == User.PARTICIPANT:
                 serializer = ParticipantSerializer(data = data)
-                serializer.is_valid(raise_exception=True)   
+                serializer.is_valid(raise_exception=True)
                 serializer.save()
 
                 user = User.objects.get(email = data["id"]["email"])

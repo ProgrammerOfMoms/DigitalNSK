@@ -35,14 +35,14 @@ class QuestionSerializer(serializers.ModelSerializer):
             serializer.save()
 
         return Question.objects.get(id = question.id)
-    
+
     """def update()"""
 
 class TestSerializer(serializers.ModelSerializer):
     """"""
 
     questions = QuestionSerializer()
-    
+
     class Meta:
         model = Test
         fields = (
@@ -62,5 +62,5 @@ class TestSerializer(serializers.ModelSerializer):
             serializer.save()
 
         return Test.objects.get(id = test.id)
-    
+
     """def update()"""

@@ -22,7 +22,7 @@ from rest_framework import permissions
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include("user.urls")),
-    path('test/', include("testing.urls")),
+    path('tests/', include("testing.urls")),
 ]
 
 
