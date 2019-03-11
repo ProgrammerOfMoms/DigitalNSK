@@ -389,3 +389,28 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": "что-то пошло не так"
             }
+
+### Получение результата теста №1 [POST/tests/test1/]
++ Request (application/json)
+
+    + Body
+            {
+                "answers": [массив int (от 1 до 5)] - номера группы ответа
+            }
+
++ Response 200 (application/json)
+
+    + Body
+            {
+                "status": True,
+                "points":[
+                    {"type": Название группы, "value": количество баллов},
+                ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
