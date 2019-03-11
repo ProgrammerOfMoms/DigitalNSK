@@ -158,10 +158,7 @@ class Profile(APIView):
                 serializer = ParticipantSerializer(user, updateParticipant, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
-                print(user.id)
                 data = serializer.data
-                print(updateParticipant["id"])
-                print(data["id"])
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
@@ -182,12 +179,14 @@ class PasswordRecovery(APIView):
 
     permission_classes = (AllowAny,)
 
-    def get(self, request):
-        origin = "http://digitalnsk.sibtiger.com/user/recovery-password"
+    def post(self, request):
+        # origin = "http://digitalnsk.sibtiger.com/user/recovery-password"
         try:
-            id = request.META["HTTP_ID"]
+            email = json.loads(request.body.decode("utf-8"))["email"]
+            id = User.objects.get(email = email).id
             data = linkGenerator(id = id)
-            send_password_recovery_link(email = data[1], link = data[0])
+            print(data)
+            send_password_recovery_link.after_response(email = data[1], link = data[0])
             return Response(status = status.HTTP_200_OK)
 
         except KeyError as e:

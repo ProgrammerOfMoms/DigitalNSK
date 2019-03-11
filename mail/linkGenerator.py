@@ -13,10 +13,11 @@ def linkGenerator(id):
             h = uuid.uuid4().hex
             if h!=link[0].link:
                 link[0].link = h
-                # link.save()
+                link[0].save()
                 return (link[0].link, user.email)
-    except:
-        return None
+    except Exception as e:
+        raise e
+        # return None
         
 
     
