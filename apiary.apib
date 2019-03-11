@@ -403,11 +403,8 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
             {
                 "status": True,
-                "types":[
-                    Названия групп (str)
-                ]
-                "values": [
-                    Количество баллов по каждой группе(int),
+                "points":[
+                    {"type": Название группы, "value": количество баллов},
                 ]
             }
 
@@ -417,7 +414,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": текст ошибки
             }
-
+            
 ### Получение теста №2 [GET/tests/test2/]
 + Response 200 (application/json)
 
@@ -443,8 +440,8 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": "что-то пошло не так"
             }
-
-### Получение результата теста №2 [POST/tests/test2/]
+            
+### Получение результата теста №1 [POST/tests/test2/]
 + Request (application/json)
 
     + Body
@@ -459,14 +456,60 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
             {
                 "status": True,
-                "types": [
-                    массив строк - название компетенций
+                "good": [
+                    массив строк - компетенции, которые реализуются в действиях/субъективной оценке
                 ],
-                "values": [
-                    массив int - количество баллов
+                "bad": [
+                    массив строк - не выявленные компетенции
                 ]
-                "max": [
-                    массив int - максимальное количество баллов
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
+
+### Нужен ли дополнительный вопрос [POST/tests/test2/]
++ Request (application/json)
+
+    + Body
+            {
+                "values": [отпрвить тот же массив, что получен в тесте №1]
+            }
+            
++ Response 200 (application/json)
+
+    + Body
+            {
+                "status": true,
+                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужн),
+                "types": [массив номеров групп, которые набрали одинаковое количество баллов]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
+            
+### Получить дополнительный вопрос [POST/tests/test2/]
++ Request (application/json)
+
+    + Body
+            {
+                "types": [массив номеров групп, которые набрали одинаковое количество баллов]
+            }
+            
++ Response 200 (application/json)
+
+    + Body
+           {
+                "description": Описание вопроса,
+                "answers": [
+                    {"types": Описание ответа, "group": номер группы ответа},
                 ]
             }
 

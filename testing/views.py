@@ -6,7 +6,7 @@ import requests
 import random
 import json
 
-def Test1(request):
+def test1(request):
     if request.method == "GET":
         try:
             res = {
@@ -115,7 +115,68 @@ def Test1(request):
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
 
-def Test2(request):
+def additional(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            flag = False
+            if "values" in data:
+                maximum = data["values"][0]
+                maxI = 0
+                values = data["values"]
+                lenght = len(values)
+                for i in range(lenght):
+                    if maximum < values[i]:
+                        maximum = values[i]
+                        maxI = i
+                mas = [maxI+1]
+                for  i in range(maxI+1,lenght):
+                    if maximum == values[i]:
+                        mas.append(i+1)
+
+                if len(mas) != 1:
+                    flag = True
+                res = {
+                    "status": True,
+                    "additional": flag,
+                    "types": mas
+                }
+                return JsonResponse(res)
+            else:
+                return JsonResponse({"status": False, "error": "Неверный запрос"})
+        except:
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})
+
+def test11(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            if "types" in data:
+                mas = [
+                    "координировать и регулировать людей, их группы и коллективы с целью совершенствования и развития общества, достижения стоящих перед людьми задач (области применения — правовые основы цифровой трансформации, регулярный менеджмент, онлайн-образование и др.)",
+                    "изучать взаимосвязи живых организмов и законы естественных наук, использовать знания о наземных и водных биологических системах для улучшения технологических инноваций (области применения — экологические инициативы, цифровое сельское хозяйство, биоинженерия и др.)",
+                    "решать инженерные задачи — создавать и улучшать технические устройства, механизмы, оборудование (области применения — искусственный интеллект, цифровая среда обитания, индустрия 4 и др.)",
+                    "заниматься IT-сферой — создавать, обрабатывать, хранить, защищать и передавать информацию с помощью вычислительной техники (области применения — веб-разработка, кибербезопасность, цифровые каналы связи и др.)",
+                    "заниматься изучением непосредственной коммуникации с целью решения социальных проблем в условиях цифрового мира (области применения — социализация роботов, data scientist, психология и др.)"
+                ]
+                jMas = []
+                for item in data["types"]:
+                    group = {
+                        "types": mas[item-1],
+                        "group": item
+                    }
+                    jMas.append(group)
+                res ={
+                    "description": "Внимание! У вас выявлено равное предпочтение по двум сферам. Пожалуйста, ответьте на дополнительный вопрос, чтобы определить ваше дальнейшее направление участия в проекте. В условиях цифровой экономики вас больше привлекает:",
+                    "answers": jMas
+                }
+                return JsonResponse(res)
+            else:
+                return JsonResponse({"status": False, "error": "Неверный запрос"})
+        except:
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})
+
+def test2(request):
     if request.method == "GET":
         try:
             res = {
@@ -217,7 +278,7 @@ def Test2(request):
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
-        #try:
+        try:
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
                 types = [
@@ -248,5 +309,5 @@ def Test2(request):
                 return JsonResponse(res)
             else:
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
-        #except:
-        #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
+        except:
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})

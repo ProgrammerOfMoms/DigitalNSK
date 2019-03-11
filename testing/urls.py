@@ -4,8 +4,8 @@ from .views import *
 from .Create_false_tests import create_false_test
 
 urlpatterns = [
-
-    path('test1/', Test1),
-    path('test2/', Test2),
-    #path('test3/', falseTest3.as_view()),
+    path('test1/', test1),
+    path('test2/', test2),
+    path('additional/', additional),
+    path('add-question/', test11),
 ]
