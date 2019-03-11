@@ -235,14 +235,11 @@ def Test2(request):
                 ]
                 masVal = [0,0,0,0,0,0,0,0,0,0,0]
                 for answer in data["answers"]:
-                    masVal[masTypes.index(answer["type"])] ==
+                    masVal[masTypes.index(answer["type"])] = masVal[masTypes.index(answer["type"])] + answer["value"]
                 res = {
                     "status": True,
-                    "good": {
-                        "types": good,
-
-                    }
-                    "bad": bad
+                    "types": masTypes,
+                    "values": masVal
                 }
                 return JsonResponse(res)
             else:
