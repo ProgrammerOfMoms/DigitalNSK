@@ -185,7 +185,6 @@ class PasswordRecovery(APIView):
             email = json.loads(request.body.decode("utf-8"))["email"]
             id = User.objects.get(email = email).id
             data = linkGenerator(id = id)
-            print(data)
             send_password_recovery_link.after_response(email = data[1], link = data[0])
             return Response(status = status.HTTP_200_OK)
 
