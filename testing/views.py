@@ -96,16 +96,17 @@ def Test1(request):
                 if len(data["answers"]) == 10:
                     res = {
                         "status": True,
-                        "points":[
-                            {"type": "Социальное управление", "value": 0},
-                            {"type": "Естественные науки и биотехнологии", "value": 0},
-                            {"type": "Современная инженерия", "value": 0},
-                            {"type": "IT-компетенции", "value": 0},
-                            {"type": "Гуманитарные технологии, наука и искусство", "value": 0}
+                        "types":[
+                            "Социальное управление", "value": 0},
+                            "Естественные науки и биотехнологии", "value": 0},
+                            "Современная инженерия", "value": 0},
+                            "IT-компетенции", "value": 0},
+                            "Гуманитарные технологии, наука и искусство", "value": 0}
                         ]
+                        "values":[0,0,0,0,0]
                     }
                     for answer in data["answers"]:
-                        res["points"][answer-1]["value"] = res["points"][answer-1]["value"] + 1
+                        res["values"][answer-1] = res["values"][answer-1] + 1
                     return JsonResponse(res)
                 else:
                     return JsonResponse({"status": False, "error": "Неверный размер массива"})
@@ -113,6 +114,8 @@ def Test1(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
+
+
 
 def Test2(request):
     if request.method == "GET":

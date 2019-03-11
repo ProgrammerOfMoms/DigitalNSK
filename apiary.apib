@@ -403,8 +403,11 @@ HOST: http://digitalnsk.sibtiger.com:5000/
     + Body
             {
                 "status": True,
-                "points":[
-                    {"type": Название группы, "value": количество баллов},
+                "types":[
+                    Названия групп (str)
+                ]
+                "values": [
+                    Количество баллов по каждой группе(int),
                 ]
             }
 
@@ -414,7 +417,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": текст ошибки
             }
-            
+
 ### Получение теста №2 [GET/tests/test2/]
 + Response 200 (application/json)
 
@@ -440,7 +443,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": "что-то пошло не так"
             }
-            
+
 ### Получение результата теста №2 [POST/tests/test2/]
 + Request (application/json)
 
