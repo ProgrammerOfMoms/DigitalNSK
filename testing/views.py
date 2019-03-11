@@ -217,10 +217,10 @@ def Test2(request):
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
-        try:
+        #try:
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
-                masTypes = [
+                types = [
                     "Бызовые навыки программирования",
                     "Построение личной стратегии",
                     "Умение учиться + исследовательсике компетенции",
@@ -233,16 +233,20 @@ def Test2(request):
                     "Самомотивация и самоорганизация",
                     "Технологические тренды современности"
                 ]
-                masVal = [0,0,0,0,0,0,0,0,0,0,0]
+                val = [0,0,0,0,0,0,0,0,0,0,0]
+                maximum = [0,0,0,0,0,0,0,0,0,0,0]
                 for answer in data["answers"]:
-                    masVal[masTypes.index(answer["type"])] = masVal[masTypes.index(answer["type"])] + answer["value"]
+                    i = types.index(answer["type"])
+                    val[i] = val[i] + answer["group"]
+                    maximum[i] = maximum[i] + 1
                 res = {
                     "status": True,
-                    "types": masTypes,
-                    "values": masVal
+                    "types": types,
+                    "values": val,
+                    "max": maximum
                 }
                 return JsonResponse(res)
             else:
-                return JsonResponse({"status": False})
-        except:
-            return JsonResponse({"status": False})
+                return JsonResponse({"status": False, "error": "Неверный запрос"})
+        #except:
+        #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
