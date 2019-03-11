@@ -17,7 +17,7 @@ def send_password_recovery_link(email, link):
     link = "http://digitalnsk.sibtiger.com/recovery/?hash="+link
     #email = "slamvsem@gmail.com" #it's temp line
 
-    f = open('/home/dato/Рабочий стол/Digital/DigitalNSK/mail/static/mail/recovery.html', 'r')
+    f = open('/var/www/www-root/data/www/api.digitalnsk.sibtiger.com/static/mail/recovery.html', 'r')
     html = f.read()
     soup = BeautifulSoup(html, "html.parser")
     a = soup.find(id = "root")
