@@ -113,7 +113,7 @@ def Test1(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
-"""
+
 def Test2(request):
     if request.method == "GET":
         try:
@@ -132,7 +132,7 @@ def Test2(request):
                     },
                     {
                         "content": "Когда я сталкиваюсь с каким-то сенсационным сообщением в новостях, мои мысли, вероятнее всего, будут ближе к следующим:",
-                        "type": "Навыки работы с информацией, фактчекинг // есть альтернативный вариант про подготовку доклада",
+                        "type": "Навыки работы с информацией, фактчекинг",
                         "answers":[
                             {"content": "я думаю о состоянии участников события, принимаю ту или иную сторону конфликта", "group":0},
                             {"content": "данная новость не вызывает полного доверия, стоит еще проверить источник и факты", "group": 1}
@@ -140,7 +140,7 @@ def Test2(request):
                     },
                     {
                         "content": "Существует мнение, что навык программирования в наше время является столь же необходимым, как чтение и письмо. На данный момент я:",
-                        "type": "Бызовые навыки программирования",
+                        "type": "Базовые навыки программирования",
                         "answers":[
                             {"content": "владею базовыми навыками программирования", "group": 1},
                             {"content": "не брался за практическое освоение", "group": 0}
@@ -214,33 +214,25 @@ def Test2(request):
             }
             return JsonResponse(res)
         except:
-            return JsonResponse({"status": False})
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
         try:
-            mas =
-            res = {
-                "status": True,
-                "answers":[
-                "Основы кибербезопасности": 0,
-                "Навыки работы с информацией, фактчекинг // есть альтернативный вариант про подготовку доклада": 0,
-                "Бызовые навыки программирования": 0,
-                "Построение личной стратегии": 0,
-                "Лидерство": 0,
-                "Формирование личного бренда": 0,
-                "Риск-менеджмент": 0,
-                "Умение учиться + исследовательсике компетенции": 0,
-                "Big data и принятие решения": 0,
-                "Самомотивация и самоорганизация": 0,
-                "Технологические тренды современности": 0
-                ]
-            }
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
+                bad = []
+                good = []
                 for answer in data["answers"]:
-                    res[answer["type"]] = res[answer["type"]] + answer["value"]
+                    if answer["group"] == 0:
+                        bad.append(answer["type"])
+                    else:
+                        good.append(answer["type"])
+                res = {
+                    "status": True,
+                    "good": good,
+                    "bad": bad
+                }
                 return JsonResponse(res)
             else:
                 return JsonResponse({"status": False})
         except:
             return JsonResponse({"status": False})
-"""

@@ -414,3 +414,59 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": текст ошибки
             }
+            
+### Получение теста №2 [GET/tests/test2/]
++ Response 200 (application/json)
+
+    + Body
+            {
+                "status": True,
+                "name": Название теста,
+                "desciption": Описание теста,
+                "questions": [
+                    {
+                        "content": Сам вопрос,
+                        "type": Исследуемая компетенция,
+                        "answers":[
+                            {"content": Сам ответ, "group": Номер группы ответа}
+                        ]
+                    }
+                ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": "что-то пошло не так"
+            }
+            
+### Получение результата теста №1 [POST/tests/test2/]
++ Request (application/json)
+
+    + Body
+            {
+                "answers": [
+                    {"type": Исследуемая компетенция, "group": Номер группы ответа},
+                ]
+            }
+            
++ Response 200 (application/json)
+
+    + Body
+            {
+                "status": True,
+                "good": [
+                    массив строк - компетенции, которые реализуются в действиях/субъективной оценке
+                ],
+                "bad": [
+                    массив строк - не выявленные компетенции
+                ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
