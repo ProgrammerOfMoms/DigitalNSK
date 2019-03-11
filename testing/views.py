@@ -60,7 +60,7 @@ def Test1(request):
                         "content": "В одно и то же время в школе проходят внеурочные занятия по двум направлениям. Я определенно выберу занятия по:",
                         "answers":[
                             {"content": "робототехнике", "group": 3},
-                            {"content": "разработке веб-приложений", "group": "4"}
+                            {"content": "разработке веб-приложений", "group": 4}
                         ]
                     },
                     {
@@ -220,16 +220,28 @@ def Test2(request):
         try:
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
-                bad = []
-                good = []
+                masTypes = [
+                    "Бызовые навыки программирования",
+                    "Построение личной стратегии",
+                    "Умение учиться + исследовательсике компетенции",
+                    "Основы кибербезопасности",
+                    "Навыки работы с информацией, фактчекинг",
+                    "Лидерство",
+                    "Формирование личного бренда",
+                    "Риск-менеджмент",
+                    "Big data и принятие решения",
+                    "Самомотивация и самоорганизация",
+                    "Технологические тренды современности"
+                ]
+                masVal = [0,0,0,0,0,0,0,0,0,0,0]
                 for answer in data["answers"]:
-                    if answer["group"] == 0:
-                        bad.append(answer["type"])
-                    else:
-                        good.append(answer["type"])
+                    masVal[masTypes.index(answer["type"])] ==
                 res = {
                     "status": True,
-                    "good": good,
+                    "good": {
+                        "types": good,
+
+                    }
                     "bad": bad
                 }
                 return JsonResponse(res)
