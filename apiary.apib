@@ -441,7 +441,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": "что-то пошло не так"
             }
             
-### Получение результата теста №1 [POST/tests/test2/]
+### Получение результата теста №2 [POST/tests/test2/]
 + Request (application/json)
 
     + Body
@@ -511,6 +511,53 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "answers": [
                     {"types": Описание ответа, "group": номер группы ответа},
                 ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
+
+### Получение теста №3 [POST/tests/test3/]
++ Request (application/json)
+
+    + Body
+            {
+                "test1": int - результат первого этапа
+            }
+            
++ Response 200 (application/json)
+
+    + Body
+           {
+                "status": true,
+                "description": описание,
+                "test": [массив строк - вопросы]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "status": False,
+                "error": текст ошибки
+            }
+            
+### Получение результата теста №3 [POST/tests/test3/]
++ Request (application/json)
+
+    + Body
+            {
+                "answers": [массив int - ответы]
+            }
+            
++ Response 200 (application/json)
+
+    + Body
+            {
+                "status": true,
+                "result": оценка по 10-ти балльной шкале
             }
 
 + Response 403 (application/json)

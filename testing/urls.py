@@ -8,4 +8,6 @@ urlpatterns = [
     path('test2/', test2),
     path('additional/', additional),
     path('add-question/', test11),
+    path('test3/', test3),
+    path('result-test3/', resultOfTest3)
 ]
