@@ -401,9 +401,13 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
     + Body
             {
-                "status": True,
-                "points":[
-                    {"type": Название группы, "value": количество баллов},
+                "status": true,
+                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужно),
+                "description": Описание вопроса ("additional": true),
+                "types": название сфер,
+                "values": [массив int - результат теста №1],
+                "questions": [
+                    {"type": текст ответа, "group": номер сферы}
                 ]
             }
 
@@ -413,7 +417,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": текст ошибки
             }
-            
+
 ### Получение теста №2 [GET/tests/test2/]
 + Response 200 (application/json)
 
@@ -478,25 +482,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "values": [отпрвить тот же массив, что получен в тесте №1]
             }
 
-+ Response 200 (application/json)
-
-    + Body
-            {
-                "status": true,
-                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужно),
-                "description": Описание вопроса ("additional": true),
-                "values": [массив int - результат теста №1]
-                "questions": [
-                    {"type": текст ответа, "group": номер сферы}
-                ]
-            }
-
-+ Response 403 (application/json)
-    + Body
-            {
-                "status": False,
-                "error": текст ошибки
-            }
 
 ### Результаты дополнительного вопроса [POST/tests/result-additional/]
 + Request (application/json)
