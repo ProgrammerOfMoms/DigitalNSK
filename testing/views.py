@@ -129,10 +129,18 @@ def test1(request):
                                 "group": item,
                             }
                             jMas.append(group)
+                        types = [
+                            "Социальное управление",
+                            "Естественные науки и биотехнологии",
+                            "Современная инженерия",
+                            "IT-компетенции",
+                            "Гуманитарные технологии, наука и искусство"
+                        ]
                         res ={
                             "status": True,
                             "additional": True,
                             "values": values,
+                            "types": types,
                             "description": "Внимание! У вас выявлено равное предпочтение по двум сферам. Пожалуйста, ответьте на дополнительный вопрос, чтобы определить ваше дальнейшее направление участия в проекте. В условиях цифровой экономики вас больше привлекает:",
                             "questions": jMas
                         }
@@ -144,6 +152,7 @@ def test1(request):
         #except:
         #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
 
+"""
 def additional(request):
     if request.method == "POST":
         try:
@@ -155,6 +164,7 @@ def additional(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
+"""
 
 def resultOfAdditional(request):
     if request.method == "POST":
