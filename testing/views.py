@@ -278,11 +278,11 @@ def test2(request):
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
-        try:
+        #try:
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
                 types = [
-                    "Бызовые навыки программирования",
+                    "Базовые навыки программирования",
                     "Построение личной стратегии",
                     "Умение учиться + исследовательсике компетенции",
                     "Основы кибербезопасности",
@@ -309,8 +309,8 @@ def test2(request):
                 return JsonResponse(res)
             else:
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
-        except:
-            return JsonResponse({"status": False, "error": "что-то пошло не так"})
+        #except:
+        #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
 
 def test3(request):
     if request.method == "POST":
@@ -414,7 +414,6 @@ def test3(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
-
 
 def resultOfTest3(request):
     if request.method == "POST":
