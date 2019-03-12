@@ -364,7 +364,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             }
 
 ## Тестирование [/tests]
-
 ### Получение теста №1 [GET/tests/test1/]
 + Response 200 (application/json)
 
@@ -471,21 +470,25 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": текст ошибки
             }
 
-### Нужен ли дополнительный вопрос [POST/tests/additional/]
+### Нужен ли дополнительный вопрос/его получение [POST/tests/additional/]
 + Request (application/json)
 
     + Body
             {
                 "values": [отпрвить тот же массив, что получен в тесте №1]
             }
-            
+
 + Response 200 (application/json)
 
     + Body
             {
                 "status": true,
-                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужн),
-                "types": [массив номеров групп, которые набрали одинаковое количество баллов]
+                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужно),
+                "description": Описание вопроса ("additional": true),
+                "values": [массив int - результат теста №1]
+                "questions": [
+                    {"type": текст ответа, "group": номер сферы}
+                ]
             }
 
 + Response 403 (application/json)
@@ -494,23 +497,23 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "status": False,
                 "error": текст ошибки
             }
-            
-### Получить дополнительный вопрос [POST/tests/add-question/]
+
+### Результаты дополнительного вопроса[POST/tests/additional/]
 + Request (application/json)
 
     + Body
             {
-                "types": [массив номеров групп, которые набрали одинаковое количество баллов]
+                "values": [отпрвить тот же массив, что получен в тесте №1],
+                "answer": номер сферы ответа
             }
-            
+
 + Response 200 (application/json)
 
     + Body
-           {
-                "description": Описание вопроса,
-                "answers": [
-                    {"types": Описание ответа, "group": номер группы ответа},
-                ]
+            {
+                "status": true,
+                "types": [Название сфер],
+                "values": [Показатели для графика]
             }
 
 + Response 403 (application/json)
