@@ -311,7 +311,7 @@ def test2(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
-"""
+
 def test3(request):
     if request.method == "POST":
         try:
@@ -409,4 +409,24 @@ def test3(request):
                         "Новые знаковые системы"
                         'Технологии "взаимодействия с человеком"'
                     ]
-"""
+                return JsonResponse({"status": False, "test":res})
+            else:
+                return JsonResponse({"status": False, "error": "Неверный запрос"})
+        except:
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})
+
+
+def resultOfTest3(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            if "answers" in data:
+                sum = 0
+                for answer in data["answers"]:
+                    sum = sum + answer
+                res = sum * 5 / len(data["answers"])
+                return JsonResponse({"status": True, "result": res})
+            else:
+                return JsonResponse({"status": False, "error": "Неверный запрос"})
+        except:
+            return JsonResponse({"status": False, "error": "что-то пошло не так"})
