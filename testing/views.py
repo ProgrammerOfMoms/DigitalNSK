@@ -94,6 +94,13 @@ def test1(request):
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
                 if len(data["answers"]) == 10:
+                    _types = [
+                            "Социальное управление",
+                            "Естественные науки и биотехнологии",
+                            "Современная инженерия",
+                            "IT-компетенции",
+                            "Гуманитарные технологии, наука и искусство"
+                        ]
                     values = [0,0,0,0,0]
                     for answer in data["answers"]:
                         values[answer-1] = values[answer-1] + 1
@@ -112,6 +119,7 @@ def test1(request):
                         res = {
                             "status": True,
                             "additional": False,
+                            "types": _types,
                             "values": values
                         }
                     else:
@@ -129,18 +137,11 @@ def test1(request):
                                 "group": item,
                             }
                             jMas.append(group)
-                        types = [
-                            "Социальное управление",
-                            "Естественные науки и биотехнологии",
-                            "Современная инженерия",
-                            "IT-компетенции",
-                            "Гуманитарные технологии, наука и искусство"
-                        ]
                         res ={
                             "status": True,
                             "additional": True,
                             "values": values,
-                            "types": types,
+                            "types": _types,
                             "description": "Внимание! У вас выявлено равное предпочтение по двум сферам. Пожалуйста, ответьте на дополнительный вопрос, чтобы определить ваше дальнейшее направление участия в проекте. В условиях цифровой экономики вас больше привлекает:",
                             "questions": jMas
                         }
