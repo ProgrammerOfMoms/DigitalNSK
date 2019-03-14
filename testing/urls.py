@@ -4,8 +4,10 @@ from .views import *
 from .Create_false_tests import create_false_test
 
 urlpatterns = [
-    #path('', create_false_test),
-    path('test1/', Test1),
-    #path('test2/', falseTest2.as_view()),
-    #path('test3/', falseTest3.as_view()),
+    path('test1/', test1),
+    path('test2/', test2),
+    #path('additional/', additional),
+    path('result-additional/', resultOfAdditional),
+    path('test3/', test3),
+    path('result-test3/', resultOfTest3)
 ]
