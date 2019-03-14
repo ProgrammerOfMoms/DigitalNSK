@@ -18,6 +18,7 @@ import copy
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
+from mail.models import RecoveryLink
 from mail.linkGenerator import linkGenerator
 from mail.actions import *
 
@@ -37,13 +38,16 @@ class SignUp(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body.decode("utf-8"))
+            
 
             if data["id"]["role"] == User.PARTICIPANT:
+                phone = data["id"]["phoneNumber"]
                 serializer = ParticipantSerializer(data = data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-
                 user = User.objects.get(email = data["id"]["email"])
+                user.phoneNumber = phone
+                user.save()
                 data = serializer.data
                 res = {"id": data["id"]}
                 data.pop("id")
@@ -175,14 +179,15 @@ class Profile(APIView):
 
 
 class PasswordRecovery(APIView):
-    """Отправка ссылки для восстановления пароля"""
+    """Отправка и удаление ссылки для восстановления пароля"""
 
     permission_classes = (AllowAny,)
 
     def post(self, request):
         # origin = "http://digitalnsk.sibtiger.com/user/recovery-password"
         try:
-            email = json.loads(request.body.decode("utf-8"))["email"]
+            data = json.loads(request.body.decode("utf-8"))
+            email = data["email"]
             id = User.objects.get(email = email).id
             data = linkGenerator(id = id)
             send_password_recovery_link.after_response(email = data[1], link = data[0])
@@ -193,8 +198,23 @@ class PasswordRecovery(APIView):
                 res = {"error":"id не указан"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             else:
-                res = {"error": "Неизвестный параметр "+e}
+                res = {"error": "Неизвестный параметр"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, format=None):
+        try:
+            hash = json.loads(request.body.decode("utf-8"))["hash"]
+            link = RecoveryLink.objects.get(link = hash)
+            link.delete()
+            return Response(status = status.HTTP_200_OK)
+
+        except RecoveryLink.DoesNotExist:
+            res = {"error": "Данной ссылки не найдено"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)

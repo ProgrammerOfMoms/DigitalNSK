@@ -154,34 +154,90 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             }
 
 ### Восстановление пароля [POST/user/recovery-password/]
-##### не готово!!!
+
 + Request (application/json)
 
     + Body
             {
-
+                "email": "email пользователя"
             }
 
-+ Response 201 (application/json)
++ Response 200 (application/json)
 
     + Body
             {
-                "data":
-                {
-
-                }
+                "data": null
             }
 
-+ Response 403 (application/json)
++ Response 400 (application/json)
 
     + Body
 
             {
-                "errors":
-                {
-
+                "errors": {
+                    "error": "Неизвестный параметр"
                 }
             }
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": {
+                    "error": "id не указан"
+                }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": {
+                    "error": "Неизвестная ошибка"
+                }
+            }
+
+### Восстановление пароля [DELETE/user/recovery-password/]
+
++ Request (application/json)
+
+    + Body
+            {
+                "hash": "hash из параметра, после перехода с почты"
+            }
+
++ Response 200 (application/json)
+
+    + Body
+            {
+                "data": null
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": {
+                    "error": "Неизвестная ошибка"
+                }
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errors": {
+                    "error": "Данной ссылки не найдено"
+                }
+            }
+
+
+
+
+
 
 ### Авторизация через Вконтакте [POST/user/auth-vk/]
 ##### не готово!!!

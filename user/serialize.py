@@ -50,7 +50,6 @@ class UserSerializer(serializers.ModelSerializer):
         password = validate_data.get("password")
         validate_data.pop("email")
         validate_data.pop("password")
-
         return User.objects.create_user(email = email, password = password, **validate_data)
     
     def update(self, instance, validate_data):
@@ -77,6 +76,7 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
     
     
     def create(self, validate_data):
+        print(validate_data)
         user = validate_data.get("id")
         validate_data.pop("id")
         serializer = UserSerializer(data = user)

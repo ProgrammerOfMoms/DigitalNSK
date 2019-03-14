@@ -16,6 +16,7 @@ class RecoveryLinkSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "link",
+            # "create_time",
         )
     
 
