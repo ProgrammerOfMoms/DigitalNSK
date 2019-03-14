@@ -102,15 +102,15 @@ class Progress(models.Model):
 class Participant(models.Model):
     """Модель участника"""
 
-    CLASS_8     = "8TH CLASS"
-    CLASS_9     = "9TH CLASS"
-    CLASS_10    = "10TH CLASS"
-    CLASS_11    = "11TH CLASS"
-    COURSE_1    = "1TH COURSE"
-    COURSE_2    = "2TH COURSE"
-    COURSE_3    = "3TH COURSE"
-    COURSE_4    = "4TH COURSE"
-    COURSE_5    = "5TH COURSE"
+    CLASS_8     = "8 класс"
+    CLASS_9     = "9 класс"
+    CLASS_10    = "10 класс"
+    CLASS_11    = "11 класс"
+    COURSE_1    = "1 курс"
+    COURSE_2    = "2 курс"
+    COURSE_3    = "3 курс"
+    COURSE_4    = "Сотрудник"
+    COURSE_5    = "Иное"
 
 
     CHOICES_OF_LEVEL = (
