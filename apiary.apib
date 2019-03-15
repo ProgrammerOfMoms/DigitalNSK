@@ -123,13 +123,24 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 }
             }
 
-### Редактирование профиля [POST/user/edit/]
+### Редактирование профиля [PUT/user/edit/]
 ##### не готово!!!
 + Request (application/json)
 
     + Body
             {
-
+                "id":
+                {
+                    "firstName": "Имя",
+                    "lastName": "Фамилия",
+                    "email": "email",
+                    "patronymic": "Отчество",
+                    "phoneNumber": "Номер телефона",
+                    "password": "новый пароль",
+                }, 
+                "otherFields1": "поле зависит от роли",
+                "otherFields2": "поле зависит от роли",
+                "otherFieldsN": "поле зависит от роли"
             }
 
 + Response 201 (application/json)
