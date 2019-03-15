@@ -5,3 +5,5 @@ class Institution(models.Model):
     class Meta:
         verbose_name        = "Образовательное учреждение"
         verbose_name_plural = "Образовательные учреждения" 
+    def __str__(self):
+        return self.name

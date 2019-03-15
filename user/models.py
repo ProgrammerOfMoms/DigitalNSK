@@ -116,7 +116,7 @@ class Participant(models.Model):
     CHOICES_OF_LEVEL = (
         (CLASS_8,"8 класс"), (CLASS_9, "9 класс"), (CLASS_10, "10 класс"),
         (CLASS_11,"11 класс"), (COURSE_1, "1 курс"), (COURSE_2, "2 курс"),
-        (COURSE_3, "3 курс"), (COURSE_4, "4 курс"), (COURSE_5, "5 курс"),
+        (COURSE_3, "3 курс"), (COURSE_4, "Сотрудник"), (COURSE_5, "Иное"),
     )
 
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
