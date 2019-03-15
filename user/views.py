@@ -153,7 +153,10 @@ class Profile(APIView):
         """Обновление профиля"""
 
         try:
-            id = request.META["HTTP_ID"]
+            try:
+                id = request.META["HTTP_ID"]
+            except KeyError:
+                id = json.loads(request.body.decode("utf-8"))["id"]["email"]
             updateParticipant = json.loads(request.body.decode("utf-8"))
             user = User.objects.get(id = id)   
 
@@ -166,6 +169,7 @@ class Profile(APIView):
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
+                res["jwt"] = getJWT(user)
                 return Response(data = res, status = status.HTTP_200_OK)
             
             """Здесь остальные роли"""
@@ -203,6 +207,7 @@ class PasswordRecovery(APIView):
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
     
     def delete(self, request, format=None):
         try:
