@@ -153,12 +153,16 @@ class Profile(APIView):
         """Обновление профиля"""
 
         try:
+            id = ""
             try:
                 id = request.META["HTTP_ID"]
+                user = User.objects.get(id = id)
             except KeyError:
-                id = json.loads(request.body.decode("utf-8"))["id"]["email"]
+                email = json.loads(request.body.decode("utf-8"))["id"]["email"]
+                user = User.objects.get(email = email)
             updateParticipant = json.loads(request.body.decode("utf-8"))
-            user = User.objects.get(id = id)   
+            updateParticipant["id"].pop("email")
+               
 
             if user.role == User.PARTICIPANT:
                 user = user.participant
@@ -169,15 +173,17 @@ class Profile(APIView):
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
-                res["jwt"] = getJWT(user)
+                res["jwt"] = getJWT(user.id)
                 return Response(data = res, status = status.HTTP_200_OK)
             
             """Здесь остальные роли"""
 
-        except User.DoesNotExist:
+        except User.DoesNotExist as e:
+            raise(e)
             res = {"error": "Такого пользователя не существует"}
             return Response(data = res, status = status.HTTP_404_NOT_FOUND)
-        except:
+        except Exception as e:
+            raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
@@ -223,9 +229,6 @@ class PasswordRecovery(APIView):
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
-
-# class PasswordRecoveryAccept(APIView):
-#     def get
 
 
 
