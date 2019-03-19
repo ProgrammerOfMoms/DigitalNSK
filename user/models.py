@@ -5,7 +5,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
 
-from testing.models import Test
+from testing.models import ResultOfTest
 from institution.models import Institution
 
 
@@ -129,7 +129,7 @@ class Participant(models.Model):
     vkURL           = models.URLField(verbose_name= "Ссылка на vkontakte", blank = True)
     instURL         = models.URLField(verbose_name= "Ссылка на instagram", blank = True)
     fbURL           = models.URLField(verbose_name= "Ссылка на facebook", blank = True)
-    passedTests     = models.ManyToManyField(Test, verbose_name = "Завершенные тесты", related_name= "participant", blank = True)
+    passedTests     = models.ManyToManyField(ResultOfTest, verbose_name = "Результаты тестов", related_name= "participant", blank = True)
     events          = models.ForeignKey(Progress, on_delete = models.CASCADE, related_name= "participant", verbose_name = "Мероприятия", blank = True, null = True)
     progress        = models.FloatField(verbose_name = "Прогресс", default=0, blank = True)
     mailing         = models.BooleanField(default=False)

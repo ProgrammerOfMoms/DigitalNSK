@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from institution.serialize import InstitutionSerializer
+from testing.serialize import ResultOfTestSerializer
 from user.models import *
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -70,7 +71,7 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
 
     id              = UserSerializer()
     eduInstitution  = InstitutionSerializer()
-    #passedTests    = TestSerializer(many = True)
+    passedTests     = ResultOfTestSerializer(many = True)
     #events         = EventSerializer()
 
     

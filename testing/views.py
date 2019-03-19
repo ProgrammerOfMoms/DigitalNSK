@@ -1,10 +1,39 @@
-from django.shortcuts import render, HttpResponse, redirect
-from django.http import JsonResponse
+from django.shortcuts import render
+from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import permissions
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_jwt.utils import jwt_payload_handler, jwt
+from rest_framework.schemas import ManualSchema
+from rest_framework.renderers import JSONRenderer
+from DigitalNSK import settings
 from .models import *
+from .serialize import *
 
-import requests
-import random
 import json
+
+class Testing(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self,request):
+        try:
+            name = request.GET["name"]
+            test = Test.objects.get(name = name)
+            serializer = TestSerializer(test)
+            data = serializer.data
+            res = {"id": data["id"]}
+            data.pop("id")
+            res.update(data)
+            return Response(data = res, status = status.HTTP_200_OK)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+    def post(self,request):
+        pass
 
 def test1(request):
     if request.method == "GET":
