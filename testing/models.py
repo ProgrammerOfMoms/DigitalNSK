@@ -22,6 +22,13 @@ class Question(models.Model):
     def __str__(self):
         return "id: {}, content: {}".format(self.id, self.content)
 
+class Group(models.Model):
+    """Группа"""
+
+    key  = models.IntegerField(verbose_name = "Номер группы")
+    name = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
+
+
 class Test(models.Model):
     TEST_1 = "Тест №1"
     TEST_2 = "Тест №2"
@@ -33,10 +40,12 @@ class Test(models.Model):
         (TEST_3, "Тест №3")
     )
 
-    name        = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
-    description = models.TextField(verbose_name="Описание", blank=True, null = True)
-    questions   = models.ManyToManyField(Question, verbose_name = "Вопросы", related_name="test")
-    mode        = models.CharField(choices = CHOICES_OF_TEST, default = TEST_1, verbose_name = "Тип теста", max_length = 50)
+    name                = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
+    description         = models.TextField(verbose_name="Описание", blank=True, null = True)
+    questions           = models.ManyToManyField(Question, verbose_name = "Вопросы", related_name="test")
+    mode                = models.CharField(choices = CHOICES_OF_TEST, default = TEST_1, verbose_name = "Тип теста", max_length = 50)
+    groups              = models.ManyToManyField(Group, verbose_name = "Группы", related_name="test", blank = True)
+    additionalQuestion  = models.OneToOneField(Question, verbose_name = "Дополнительный вопрос", related_name="test_add", on_delete = models.SET_NULL, blank = True, null = True)
     class Meta:
         verbose_name        = "Тест"
         verbose_name_plural = "Тесты"

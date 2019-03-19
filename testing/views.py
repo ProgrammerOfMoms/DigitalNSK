@@ -33,8 +33,59 @@ class Testing(APIView):
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
     def post(self,request):
-        pass
+        #try:
+            data = json.loads(request.body.decode("utf-8"))
+            if "answers" in data and "test" in data:
+                answers = data["answers"]
+                test = Test.objects.get(id = data["test"])
+                print(test)
+                groups = test.groups.all()
+                print(groups)
+                nameOfGroups = []
+                val = [0] * len(groups)
+                for group in nameOfGroups:
+                    nameOfGroups.append(group.name)
+                for answer in data["answers"]:
+                    val[answer-1] = val[answer-1] + 1
 
+                maximum = max(val)
+                maxI = val.index(maximum)
+                if val.count(maximum) == 1:
+                    res = {
+                        "additional": False,
+                        "types": nameOfGroups,
+                        "values": val
+                    }
+                else:
+                    types = [maxI]
+                    for  i in range(maxI+1,len(groups)):
+                        if maximum == val[i]:
+                            types.append(i)
+                    addQuestion = test.additionalQuestion
+                    mas = []
+                    answers = addQuestion.answers.all()
+                    for item in types:
+                        group = {
+                            "types": answers[item].content,
+                            "group": answers[item].group
+                        }
+                        mas.append(group)
+                    res ={
+                        "additional": True,
+                        "values": val,
+                        "types": nameOfGroups,
+                        "description": addQuestion.content,
+                        "questions": mas
+                    }
+                return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                res = {"error": "Отсутствуют необходимые поля"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        #except:
+        #    res = {"error": "Неизвестная ошибка"}
+        #    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+ 
+"""
 def test1(request):
     if request.method == "GET":
         try:
@@ -120,25 +171,25 @@ def test1(request):
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
         #try:
-            data = json.loads(request.body.decode("utf-8"))
-            if "answers" in data:
-                _types = [
-                        "Социальное управление",
-                        "Естественные науки и биотехнологии",
-                        "Современная инженерия",
-                        "IT-компетенции",
-                        "Гуманитарные технологии, наука и искусство"
-                    ]
-                values = [0,0,0,0,0]
-                for answer in data["answers"]:
-                    values[answer-1] = values[answer-1] + 1
-                maximum = values[0]
-                maxI = 0
-                lenght = len(values)
-                for i in range(lenght):
-                    if maximum < values[i]:
-                        maximum = values[i]
-                        maxI = i
+            # data = json.loads(request.body.decode("utf-8"))
+            # if "answers" in data:
+            #     _types = [
+            #             "Социальное управление",
+            #             "Естественные науки и биотехнологии",
+            #             "Современная инженерия",
+            #             "IT-компетенции",
+            #             "Гуманитарные технологии, наука и искусство"
+            #         ]
+            #     values = [1,4,2,1,0]
+            #     for answer in data["answers"]:
+            #         values[answer-1] = values[answer-1] + 1
+            #     maximum = values[0]
+            #     maxI = 0
+            #     lenght = len(values)
+            #     for i in range(lenght):
+            #         if maximum < values[i]:
+            #             maximum = values[i]
+            #             maxI = i
                 types = [maxI+1]
                 for  i in range(maxI+1,lenght):
                     if maximum == values[i]:
@@ -179,7 +230,7 @@ def test1(request):
         #except:
         #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
 
-"""
+
 def additional(request):
     if request.method == "POST":
         try:

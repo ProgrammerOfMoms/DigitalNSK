@@ -18,6 +18,15 @@ class QuestionAdmin(admin.ModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 
+class GroupAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'key',
+        'name'
+    )
+
+admin.site.register(Group, GroupAdmin)
+
 class TestAdmin(admin.ModelAdmin):
     list_display = (
         'id',
