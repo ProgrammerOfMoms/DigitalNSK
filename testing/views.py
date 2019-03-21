@@ -15,10 +15,10 @@ from .serialize import *
 
 import json
 
-def test1(data):
-    if "answers" in data and "test" in data:
+def test2(data, user):
+    if "answers" in data:
         answers = data["answers"]
-        test = Test.objects.get(mode = data["test"])
+        test = Test.objects.get(mode = 2)
         groups = test.groups.all()
         nameOfGroups = []
         val = [0] * len(groups)
@@ -56,8 +56,8 @@ def test1(data):
                 "description": addQuestion.content,
                 "questions": mas
             }
-        ResultOfTest.objects.create(competence = str(res))
-        
+        result = ResultOfTest.objects.create(competence = str(res), test = test)
+        user.passedTests.add(result)
         return Response(data = res, status = status.HTTP_200_OK)
     else:
         res = {"error": "Отсутствуют необходимые поля"}
@@ -239,141 +239,28 @@ def resultOfAdditional(request):
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
 """
 
-def test2(request):
-    if request.method == "GET":
-        try:
-            res = {
-                "status": True,
-                "name": "Базовые компетенции",
-                "desciption": "Вам предлагается ряд утверждений, которые необходимо продолжить одним из предлагаемых вариантов. Пожалуйста, выберите тот вариант, который ближе всего отражает ваше мнение и действительность на сегодняшний день.",
-                "questions": [
-                    {
-                        "content": "При работе с интернетом я сталкивался с одной или несколькими проблемами: взламывание страницы в социальной сети; кража личных данных с различных веб-сайтов; попадание вируса на устройство; потеря денежных средств:",
-                        "type": "Основы кибербезопасности",
-                        "answers":[
-                            {"content": "сталкивался несколько раз", "group": 0},
-                            {"content": "никогда либо однажды", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Когда я сталкиваюсь с каким-то сенсационным сообщением в новостях, мои мысли, вероятнее всего, будут ближе к следующим:",
-                        "type": "Навыки работы с информацией, фактчекинг",
-                        "answers":[
-                            {"content": "я думаю о состоянии участников события, принимаю ту или иную сторону конфликта", "group":0},
-                            {"content": "данная новость не вызывает полного доверия, стоит еще проверить источник и факты", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Существует мнение, что навык программирования в наше время является столь же необходимым, как чтение и письмо. На данный момент я:",
-                        "type": "Базовые навыки программирования",
-                        "answers":[
-                            {"content": "владею базовыми навыками программирования", "group": 1},
-                            {"content": "не брался за практическое освоение", "group": 0}
-                        ]
-                    },
-                    {
-                        "content": "Мои планы на будущее в виде конкретных целей охватывают период:",
-                        "type": "Построение личной стратегии",
-                        "answers":[
-                            {"content": "на ближайшие год-два", "group": 0},
-                            {"content": "на период более пяти лет", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "При работе в команде мне чаще свойственно:",
-                        "type": "Лидерство",
-                        "answers":[
-                            {"content": "брать на себя инициативу, координировать работу группы", "group": 1},
-                            {"content": "у меня роль участника наравне с остальными", "group": 0}
-                        ]
-                    },
-                    {
-                        "content": "Я думаю, что использование личного аккаунта в социальных сетях в профессиональных целях — это:",
-                        "type": "Формирование личного бренда",
-                        "answers":[
-                            {"content": "это излишне; я думаю, личная жизнь должна быть отделена от сферы работы", "group": 0},
-                            {"content": "это конкурентное преимущество; планирую использовать это в своей деятельности", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Если бы я планировал масштабную поездку на несколько недель, то к возможному неблагоприятному стечению обстоятельств я бы отнесся следующим образом:",
-                        "type": "Риск-менеджмент",
-                        "answers":[
-                            {"content": "продумал, что может пойти не так, и тщательно подготовился на случай, если это произойдет", "group": 1},
-                            {"content": "скорее всего, я не придам значения возможным неприятностям; а если что-то случится, буду действовать по обстоятельствам", "group": 0}
-                        ]
-                    },
-                    {
-                        "content": "В моей жизни опыт самостоятельного освоения конкретной дисциплины или специфической области знаний:",
-                        "type": "Умение учиться + исследовательсике компетенции",
-                        "answers":[
-                            {"content": "отсутствует; обычно мне помогали в этом учителя или репетиторы", "group": 0},
-                            {"content": "был один или более раз", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Если бы мне нужно было решить, с помощью какого инструмента повысить продажи в крупной торговой сети, я бы выбрал:",
-                        "type": "Big data и принятие решения",
-                        "answers":[
-                            {"content": "провести репрезентативную фокус-группу потенциальных потребителей предложения", "group": 0},
-                            {"content": "воспользоваться большими данными покупательской активности на протяжении последнего года","group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Когда мне что-то поручают, мне скорее свойственно следующее:",
-                        "type": "Самомотивация и самоорганизация",
-                        "answers":[
-                            {"content": "долго не могу собраться с мыслями, делаю работу в последнюю ночь", "group": 0},
-                            {"content": "составляю план действий, способен его придерживаться", "group": 1}
-                        ]
-                    },
-                    {
-                        "content": "Когда я сталкиваюсь с информацией про самоуправляемых роботов, блокчейн, цифровых помощников, этические рамки искусственного интеллекта, моя реакция ближе к тому, что я:",
-                        "type": "Технологические тренды современности",
-                        "answers":[
-                            {"content": "испытываю воодушевление и любопытство, стараюсь побольше узнать про это", "group": 1},
-                            {"content": "думаю, что это мало касается моей жизни, не интересуюсь подобным", "group": 0}
-                        ]
-                    },
-                ]
-            }
-            return JsonResponse(res)
-        except:
-            return JsonResponse({"status": False, "error": "что-то пошло не так"})
-    elif request.method == "POST":
-
-            data = json.loads(request.body.decode("utf-8"))
-            if "answers" in data:
-                types = [
-                    "Базовые навыки программирования",
-                    "Построение личной стратегии",
-                    "Умение учиться + исследовательсике компетенции",
-                    "Основы кибербезопасности",
-                    "Навыки работы с информацией, фактчекинг",
-                    "Лидерство",
-                    "Формирование личного бренда",
-                    "Риск-менеджмент",
-                    "Big data и принятие решения",
-                    "Самомотивация и самоорганизация",
-                    "Технологические тренды современности"
-                ]
-                val = [0,0,0,0,0,0,0,0,0,0,0]
-                maximum = [0,0,0,0,0,0,0,0,0,0,0]
-                for answer in data["answers"]:
-                    i = types.index(answer["type"])
-                    val[i] = val[i] + answer["group"]
-                    maximum[i] = maximum[i] + 1
-                res = {
-                    "status": True,
-                    "types": types,
-                    "values": val,
-                    "max": maximum
-                }
-                return JsonResponse(res)
-            else:
-                return JsonResponse({"status": False, "error": "Неверный запрос"})
-        #except:
-        #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
+def test1(data, user):
+    if "answers" in data:
+        test = Test.objects.get(mode = 1)
+        types = test.groups.all()
+        val = [0] * len(types)
+        maximum = [0] * len(types)
+        for answer in data["answers"]:
+            i = types.index(answer["type"])
+            val[i] = val[i] + answer["group"]
+            maximum[i] = maximum[i] + 1
+        res = {
+            "status": True,
+            "types": types,
+            "values": val,
+            "max": maximum
+        }
+        result = ResultOfTest.objects.create(competence = str(res), test = test)
+        user.passedTests.add(result)
+        return Response(data = res, status = status.HTTP_200_OK)
+    else:
+        res = {"error": "Отсутствуют необходимые поля"}
+        return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 def test3(request):
     if request.method == "POST":
@@ -523,17 +410,27 @@ class Testing(APIView):
 
     def post(self,request):
         data = json.loads(request.body.decode("utf-8"))
-        if "type" in data:
-            if data["type"] == 1:
-                return test1(data = data)
-            elif data["type"] == 2:
-                return test2(data = data)
-            elif data["type"] == 3:
-                return test3(data = data)
-            else:
-                res = {"error": "Неизвестный тип теста"}
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            try:
+                user = Participant.objects.get(id = id)
+                if "type" in data:
+                    if data["type"] == 1:
+                        return test1(data = data, user = user)
+                    elif data["type"] == 2:
+                        return test2(data = data, user = user)
+                    elif data["type"] == 3:
+                        return test3(data = data, user = user)
+                    else:
+                        res = {"error": "Неизвестный тип теста"}
+                        return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+                else:
+                    res = {"error": "Не указан тип теста"}
+                    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            except:
+                res = {"error": "Такого пользователя не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         else:
-            res = {"error": "Не указан тип теста"}
+            res = {"error": "Не указан id пользователя"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             

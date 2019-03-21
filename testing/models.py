@@ -40,7 +40,7 @@ class Test(models.Model):
     name                = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
     description         = models.TextField(verbose_name="Описание", blank=True, null = True)
     questions           = models.ManyToManyField(Question, verbose_name = "Вопросы", related_name="test")
-    mode                = models.IntegerField(verbose_name = "Тип теста", unique = True)
+    mode                = models.IntegerField(verbose_name = "Тип теста")
     groups              = models.ManyToManyField(Group, verbose_name = "Группы", related_name="test", blank = True)
     additionalQuestion  = models.OneToOneField(Question, verbose_name = "Дополнительный вопрос", related_name="test_add", on_delete = models.SET_NULL, blank = True, null = True)
     class Meta:
