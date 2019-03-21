@@ -1,8 +1,22 @@
 from django.db import models
 
+
+class Group(models.Model):
+    """Группа"""
+
+    key  = models.IntegerField(verbose_name = "Номер группы")
+    name = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
+
+    class Meta:
+        verbose_name        = "Группа"
+        verbose_name_plural = "Группы"
+    
+    def __str__(self):
+        return "id: {}, key: {}, name: {}".format(self.id, self.key, self.name)
+
 class Answer(models.Model):
     content     = models.TextField(verbose_name="Ответ")
-    group       = models.IntegerField(verbose_name="Группа")
+    group       = models.ForeignKey(Group, verbose_name = "Группа", related_name = "answer", on_delete=models.SET_NULL, null = True)
 
     class Meta:
         verbose_name        = "Ответ"
@@ -21,13 +35,6 @@ class Question(models.Model):
 
     def __str__(self):
         return "id: {}, content: {}".format(self.id, self.content)
-
-class Group(models.Model):
-    """Группа"""
-
-    key  = models.IntegerField(verbose_name = "Номер группы")
-    name = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
-
 
 class Test(models.Model):
     name                = models.CharField(max_length = 200, verbose_name = "Название", unique = True)
