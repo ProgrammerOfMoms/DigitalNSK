@@ -15,76 +15,52 @@ from .serialize import *
 
 import json
 
-class Testing(APIView):
-    permission_classes = (AllowAny,)
+def test1(data):
+    if "answers" in data and "test" in data:
+        answers = data["answers"]
+        test = Test.objects.get(id = data["test"])
+        groups = test.groups.all()
+        nameOfGroups = []
+        val = [0] * len(groups)
+        for group in nameOfGroups:
+            nameOfGroups.append(group.name)
+        for answer in data["answers"]:
+            val[answer-1] = val[answer-1] + 1
 
-    def get(self,request):
-        try:
-            name = request.GET["name"]
-            test = Test.objects.get(name = name)
-            serializer = TestSerializer(test)
-            data = serializer.data
-            res = {"id": data["id"]}
-            data.pop("id")
-            res.update(data)
-            return Response(data = res, status = status.HTTP_200_OK)
-        except:
-            res = {"error": "Неизвестная ошибка"}
-            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        maximum = max(val)
+        maxI = val.index(maximum)
+        if val.count(maximum) == 1:
+            res = {
+                "additional": False,
+                "types": nameOfGroups,
+                "values": val
+            }
+        else:
+            types = [maxI]
+            for  i in range(maxI+1,len(groups)):
+                if maximum == val[i]:
+                    types.append(i)
+            addQuestion = test.additionalQuestion
+            mas = []
+            answers = addQuestion.answers.all()
+            for item in types:
+                group = {
+                    "types": answers[item].content,
+                    "group": answers[item].group
+                }
+                mas.append(group)
+            res ={
+                "additional": True,
+                "values": val,
+                "types": nameOfGroups,
+                "description": addQuestion.content,
+                "questions": mas
+            }
+        return Response(data = res, status = status.HTTP_200_OK)
+    else:
+        res = {"error": "Отсутствуют необходимые поля"}
+        return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
-    def post(self,request):
-        #try:
-            data = json.loads(request.body.decode("utf-8"))
-            if "answers" in data and "test" in data:
-                answers = data["answers"]
-                test = Test.objects.get(id = data["test"])
-                print(test)
-                groups = test.groups.all()
-                print(groups)
-                nameOfGroups = []
-                val = [0] * len(groups)
-                for group in nameOfGroups:
-                    nameOfGroups.append(group.name)
-                for answer in data["answers"]:
-                    val[answer-1] = val[answer-1] + 1
-
-                maximum = max(val)
-                maxI = val.index(maximum)
-                if val.count(maximum) == 1:
-                    res = {
-                        "additional": False,
-                        "types": nameOfGroups,
-                        "values": val
-                    }
-                else:
-                    types = [maxI]
-                    for  i in range(maxI+1,len(groups)):
-                        if maximum == val[i]:
-                            types.append(i)
-                    addQuestion = test.additionalQuestion
-                    mas = []
-                    answers = addQuestion.answers.all()
-                    for item in types:
-                        group = {
-                            "types": answers[item].content,
-                            "group": answers[item].group
-                        }
-                        mas.append(group)
-                    res ={
-                        "additional": True,
-                        "values": val,
-                        "types": nameOfGroups,
-                        "description": addQuestion.content,
-                        "questions": mas
-                    }
-                return Response(data = res, status = status.HTTP_200_OK)
-            else:
-                res = {"error": "Отсутствуют необходимые поля"}
-                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
-        #except:
-        #    res = {"error": "Неизвестная ошибка"}
-        #    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
- 
 """
 def test1(request):
     if request.method == "GET":
@@ -229,8 +205,6 @@ def test1(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         #except:
         #    return JsonResponse({"status": False, "error": "что-то пошло не так"})
-
-
 def additional(request):
     if request.method == "POST":
         try:
@@ -242,8 +216,6 @@ def additional(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
-"""
-
 def resultOfAdditional(request):
     if request.method == "POST":
         try:
@@ -263,6 +235,7 @@ def resultOfAdditional(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
+"""
 
 def test2(request):
     if request.method == "GET":
@@ -366,7 +339,7 @@ def test2(request):
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
     elif request.method == "POST":
-        #try:
+
             data = json.loads(request.body.decode("utf-8"))
             if "answers" in data:
                 types = [
@@ -528,3 +501,37 @@ def resultOfTest3(request):
                 return JsonResponse({"status": False, "error": "Неверный запрос"})
         except:
             return JsonResponse({"status": False, "error": "что-то пошло не так"})
+
+class Testing(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self,request):
+        try:
+            _type = request.GET["type"]
+            test = Test.objects.get(mode = _type)
+            serializer = TestSerializer(test)
+            data = serializer.data
+            res = {"id": data["id"]}
+            data.pop("id")
+            res.update(data)
+            return Response(data = res, status = status.HTTP_200_OK)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+    def post(self,request):
+        data = json.loads(request.body.decode("utf-8"))
+        if "type" in data:
+            if data["type"] == 1:
+                return test1(data = data)
+            elif data["type"] == 2:
+                return test2(data = data)
+            elif data["type"] == 3:
+                return test3(data = data)
+            else:
+                res = {"error": "Неизвестный тип теста"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            res = {"error": "Не указан тип теста"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            
