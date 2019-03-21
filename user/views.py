@@ -99,6 +99,7 @@ class SignIn(APIView):
             if user:
                 try:
                     user_details = {}
+                    user_details['id'] = "%s" % (user.id)
                     user_details['email'] = "%s" % (user.email)
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)

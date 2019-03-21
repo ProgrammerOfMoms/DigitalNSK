@@ -18,7 +18,7 @@ import json
 def test1(data):
     if "answers" in data and "test" in data:
         answers = data["answers"]
-        test = Test.objects.get(id = data["test"])
+        test = Test.objects.get(mode = data["test"])
         groups = test.groups.all()
         nameOfGroups = []
         val = [0] * len(groups)
@@ -49,13 +49,15 @@ def test1(data):
                     "group": answers[item].group
                 }
                 mas.append(group)
-            res ={
+            res = {
                 "additional": True,
                 "values": val,
                 "types": nameOfGroups,
                 "description": addQuestion.content,
                 "questions": mas
             }
+        ResultOfTest.objects.create(competence = str(res))
+        
         return Response(data = res, status = status.HTTP_200_OK)
     else:
         res = {"error": "Отсутствуют необходимые поля"}
