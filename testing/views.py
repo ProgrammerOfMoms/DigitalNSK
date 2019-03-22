@@ -93,14 +93,16 @@ def test3(data, user):
                 sum = 0
                 for answer in data["answers"]:
                     sum = sum + answer
-                res = sum * 5 / len(data["answers"])
+                res = {"result": sum * 5 / len(data["answers"])}
                 result = ResultOfTest.objects.create(competence = str(res), test = test)
                 user.passedTests.add(result)
+                
             else:
                 res = {"error": "Отсутствуют необходимые поля"}
             return res
         except:
             res = {"error": "Что-то пошло не так"}
+            return res
 
 class Testing(APIView):
     permission_classes = (AllowAny,)
@@ -121,14 +123,16 @@ class Testing(APIView):
                     test2 = Test.objects.get(mode = 2)
                     user = Participant.objects.get(id = id)
                     temp = user.passedTests.get(test = test2).competence
-                    print(temp)
-                    #result = bytes(json.dumps(temp), "utf-8")
-                    result = json.JSONEncoder(temp)
+                    result = eval(temp)
                     val = result["values"]
                     types = result["types"]
-                    test = Tests.objects.get(name = types[val.index(max(val))])
-                    #1212
-                return Response(status = status.HTTP_200_OK)
+                    test = Test.objects.get(name = types[val.index(max(val))])
+                    serializer = TestSerializer(test)
+                    data = serializer.data
+                    res = {"id": data["id"]}
+                    data.pop("id")
+                    res.update(data)
+                return Response(data = res, status = status.HTTP_200_OK)
             else:
                 res = {"error": "Не указан id пользователя"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
