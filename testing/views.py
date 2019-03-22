@@ -397,14 +397,25 @@ class Testing(APIView):
 
     def get(self,request):
         try:
-            _type = request.GET["type"]
-            test = Test.objects.get(mode = _type)
-            serializer = TestSerializer(test)
-            data = serializer.data
-            res = {"id": data["id"]}
-            data.pop("id")
-            res.update(data)
-            return Response(data = res, status = status.HTTP_200_OK)
+            if "HTTP_ID" in request.META:
+                id = request.META["HTTP_ID"]
+                _type = request.GET["type"]
+                if _type != 3:
+                    test = Test.objects.get(mode = _type)
+                    serializer = TestSerializer(test)
+                    data = serializer.data
+                    res = {"id": data["id"]}
+                    data.pop("id")
+                    res.update(data)
+                else:
+                    test = Test.objects.filter(mode = _type)
+                    test2 = Test.objects.filter(mode = 2)
+                    user = Participant.objects.get(id = id)
+                    user.passedTests.filter()
+                return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                res = {"error": "Не указан id пользователя"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
