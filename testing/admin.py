@@ -10,6 +10,14 @@ class AnswerAdmin(admin.ModelAdmin):
 
 admin.site.register(Answer, AnswerAdmin)
 
+class ResultOfTestAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'competence'
+    )
+
+admin.site.register(ResultOfTest, ResultOfTestAdmin)
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = (
         'id',

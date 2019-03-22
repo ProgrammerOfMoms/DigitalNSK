@@ -297,11 +297,10 @@ class Testing(APIView):
                     user = Participant.objects.get(id = id)
                     result = json.loads(user.passedTests.filter(test = test2).competence)
                     #1212
-                    result[""]
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 res = {"error": "Не указан id пользователя"}
-                return Response(data = res, status = status.HTTP_400_BAD_REQUEST
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
