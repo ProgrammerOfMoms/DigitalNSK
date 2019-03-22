@@ -123,7 +123,7 @@ class Testing(APIView):
                     temp = user.passedTests.get(test = test2).competence
                     print(temp)
                     #result = bytes(json.dumps(temp), "utf-8")
-                    result = json.JSONEncoder(temp
+                    result = json.JSONEncoder(temp)
                     val = result["values"]
                     types = result["types"]
                     test = Tests.objects.get(name = types[val.index(max(val))])
