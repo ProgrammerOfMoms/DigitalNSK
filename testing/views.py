@@ -246,7 +246,8 @@ def test1(data, user):
         val = [0] * len(types)
         maximum = [0] * len(types)
         for answer in data["answers"]:
-            i = types.index(answer["type"])
+            group = Group.object.get(id = answer)
+            #говно ебанное
             val[i] = val[i] + answer["group"]
             maximum[i] = maximum[i] + 1
         res = {
