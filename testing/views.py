@@ -60,6 +60,8 @@ def test2(data, user):
                 "types": nameOfGroups,
                 "values": val
             }
+            result = ResultOfTest.objects.create(competence = str(res), test = test)
+            user.passedTests.add(result)
         else:
             types = [maxI]
             for  i in range(maxI+1,len(groups)):
@@ -82,14 +84,14 @@ def test2(data, user):
                 "description": addQuestion.content,
                 "questions": mas
             }
-        result = ResultOfTest.objects.create(competence = str(res), test = test)
-        user.passedTests.add(result)
     else:
         res = {"error": "Отсутствуют необходимые поля"}
     return res
 
 def test0(data, user):
-    pass
+    if "values" in data and "types" in data and "answer" in data:
+        Group.objects.get(id = data["answer"])
+
 
 def test3(data, user):
         try:
@@ -129,7 +131,7 @@ class Testing(APIView):
                     res.update(data)
                 else:
                     test2 = Test.objects.get(mode = 2)
-                    
+                    print(user.passedTests.get(test = test2))
                     temp = user.passedTests.get(test = test2).competence
                     result = eval(temp)
                     val = result["values"]
