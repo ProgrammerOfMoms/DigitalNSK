@@ -182,6 +182,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = default_headers + (
     "HTTP_ID",
+    "ID",
+    "id"
 )
 
 JWT_AUTH = {
