@@ -76,7 +76,6 @@ def test2(data, user):
                     "group": answers[item].group.id
                 }
                 mas.append(group)
-                print(mas)
             res = {
                 "additional": True,
                 "values": val,
@@ -88,10 +87,21 @@ def test2(data, user):
         res = {"error": "Отсутствуют необходимые поля"}
     return res
 
-def test0(data, user):
-    if "values" in data and "types" in data and "answer" in data:
-        Group.objects.get(id = data["answer"])
-
+# def test0(data, user):
+#     if "values" in data and "types" in data and "answer" in data:
+#         group = Group.objects.get(id = data["answer"])
+#         values = data["values"]
+#         types = data["types"]
+#         test = Test.objects.get(mode = 2)
+#         values[types.index(group.name)] = values[types.index(group.name)] + 1
+#         res = {
+#                 "additional": False,
+#                 "types": types,
+#                 "values": values
+#             }
+#         result = ResultOfTest.objects.create(competence = str(res), test = test)
+#         user.passedTests.add(result)
+#         return res
 
 def test3(data, user):
         try:
@@ -100,8 +110,9 @@ def test3(data, user):
                 test = Test.objects.get(id = id)
                 sum = 0
                 for answer in data["answers"]:
-                    sum = sum + answer
-                res = {"result": sum * 5 / len(data["answers"])}
+                    sum = sum + Group.objects.get(id = answer).key
+                sum = sum * 5 / len(data["answers"])
+                res = {"result": sum}
                 result = ResultOfTest.objects.create(competence = str(res), test = test)
                 user.passedTests.add(result)
                 
@@ -121,7 +132,7 @@ class Testing(APIView):
                 id = request.META["HTTP_ID"]
                 _type = request.GET["type"]
                 user = Participant.objects.get(id = id)
-                #if len(user.passedTests.all()) < int(_type):
+                #if len(user.passedTests.all()) == 0 :
                 if _type != "3":
                     test = Test.objects.get(mode = _type)
                     serializer = TestSerializer(test)
@@ -159,6 +170,7 @@ class Testing(APIView):
             id = request.META["HTTP_ID"]
             if "type" in data:
                 #try:
+                    print(data["type"])
                     user = Participant.objects.get(id = id)
                     if data["type"] == 1:
                         res = test1(data = data, user = user)
