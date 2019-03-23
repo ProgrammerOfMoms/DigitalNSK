@@ -19,14 +19,16 @@ import json
 def test1(data, user):
     if "answers" in data:
         test = Test.objects.get(mode = 1)
-        temp = test.groups.all()
+        temp = test.groups.exclude(name = "Ничего")
         types = []
         for _type in temp:
             types.append(_type.name)
-        val = [0] * len(types)
+        length = len(types)
+        val = [0] * length
         for answer in data["answers"]:
             group = Group.objects.get(id = answer).key - 1
-            val[group] = val[group] + 1
+            if group < length:
+                val[group] = val[group] + 1
         res = {
             "status": True,
             "types": types,
@@ -85,6 +87,9 @@ def test2(data, user):
         res = {"error": "Отсутствуют необходимые поля"}
     return res
 
+def test0(data, user):
+    pass
+
 def test3(data, user):
         try:
             if "answers" in data:
@@ -112,6 +117,8 @@ class Testing(APIView):
             if "HTTP_ID" in request.META:
                 id = request.META["HTTP_ID"]
                 _type = request.GET["type"]
+                user = Participant.objects.get(id = id)
+                #if len(user.passedTests.all()) < int(_type):
                 if _type != "3":
                     test = Test.objects.get(mode = _type)
                     serializer = TestSerializer(test)
@@ -121,7 +128,7 @@ class Testing(APIView):
                     res.update(data)
                 else:
                     test2 = Test.objects.get(mode = 2)
-                    user = Participant.objects.get(id = id)
+                    
                     temp = user.passedTests.get(test = test2).competence
                     result = eval(temp)
                     val = result["values"]
@@ -133,6 +140,9 @@ class Testing(APIView):
                     data.pop("id")
                     res.update(data)
                 return Response(data = res, status = status.HTTP_200_OK)
+                #else:
+                #    res = {"error": "Не указан id пользователя"}
+                #    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             else:
                 res = {"error": "Не указан id пользователя"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
@@ -161,6 +171,12 @@ class Testing(APIView):
                             return Response(data = res, status = status.HTTP_200_OK)
                     elif data["type"] == 3:
                         res = test3(data = data, user = user)
+                        if "error" in res:
+                            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+                        else:
+                            return Response(data = res, status = status.HTTP_200_OK)
+                    if data["type"] == 0:
+                        res = test0(data = data, user = user)
                         if "error" in res:
                             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                         else:
