@@ -71,9 +71,10 @@ def test2(data, user):
             for item in types:
                 group = {
                     "types": answers[item].content,
-                    "group": answers[item].group
+                    "group": answers[item].group.id
                 }
                 mas.append(group)
+                print(mas)
             res = {
                 "additional": True,
                 "values": val,
