@@ -139,7 +139,7 @@ class Testing(APIView):
                 user = Participant.objects.get(id = id)
                 length = len(user.passedTests.all())
                 print(length)
-                if length < int(_type):
+                if length <= int(_type):
                     if _type != "3":
                         test = Test.objects.get(mode = _type)
                         serializer = TestSerializer(test)
