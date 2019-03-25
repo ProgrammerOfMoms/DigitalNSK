@@ -60,6 +60,8 @@ def test2(data, user):
                 "types": nameOfGroups,
                 "values": val
             }
+            user.competence = nameOfGroups["maxI"]
+            user.save()
             result = ResultOfTest.objects.create(competence = str(res), test = test)
             user.passedTests.add(result)
         else:
@@ -136,7 +138,8 @@ class Testing(APIView):
                 _type = request.GET["type"]
                 user = Participant.objects.get(id = id)
                 length = len(user.passedTests.all())
-                if length < str(_type):
+                print(length)
+                if length < int(_type):
                     if _type != "3":
                         test = Test.objects.get(mode = _type)
                         serializer = TestSerializer(test)
@@ -145,12 +148,7 @@ class Testing(APIView):
                         data.pop("id")
                         res.update(data)
                     else:
-                        test2 = Test.objects.get(mode = 2)
-                        temp = user.passedTests.get(test = test2).competence
-                        result = eval(temp)
-                        val = result["values"]
-                        types = result["types"]
-                        test = Test.objects.get(name = types[val.index(max(val))])
+                        test = Test.objects.get(name = user.competence)
                         serializer = TestSerializer(test)
                         data = serializer.data
                         res = {"id": data["id"]}
@@ -159,9 +157,12 @@ class Testing(APIView):
                     return Response(data = res, status = status.HTTP_200_OK)
                 else:
                     res = {"lastTest": length}
-                    for i in range(length):
-                        test = Test.objects.get(mode = i+1)
-                        res["test"+str(i+1)] = user.passedTests.get(test = test)
+                    if length >= 1:
+                        res["test1"] =  user.passedTests.get(test = Test.objects.get(mode = 1))
+                    if length >= 2:
+                        res["test2"] =  user.passedTests.get(test = Test.objects.get(mode = 2))
+                    if length >= 3:
+                        res["test3"] =  user.passedTests.get(test = Test.objects.get(name = user.competence))
                     return Response(data = res, status = status.HTTP_200_OK)
             else:
                 res = {"error": "Не указан id пользователя"}

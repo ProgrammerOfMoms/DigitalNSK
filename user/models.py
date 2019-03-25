@@ -121,7 +121,7 @@ class Participant(models.Model):
 
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
     eduInstitution  = models.CharField(max_length = 50,verbose_name = "Учебное учреждение", blank = True, null = True)
-
+    competence      = models.CharField(max_length = 100, verbose_name = "Компетенция", null = True)
     """???"""
     level           = models.CharField(choices = CHOICES_OF_LEVEL, default = CLASS_8, verbose_name = "Класс/курс", max_length = 20, blank = True)
     """???"""
