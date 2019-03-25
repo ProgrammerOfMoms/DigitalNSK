@@ -125,9 +125,6 @@ def test3(data, user):
             res = {"error": "Что-то пошло не так"}
             return res
 
-def testResult(data, user):
-    pass
-
 class Testing(APIView):
     permission_classes = (AllowAny,)
 
