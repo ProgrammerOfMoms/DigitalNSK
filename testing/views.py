@@ -123,6 +123,9 @@ def test3(data, user):
             res = {"error": "Что-то пошло не так"}
             return res
 
+def testResult(data, user):
+    pass
+
 class Testing(APIView):
     permission_classes = (AllowAny,)
 
@@ -132,31 +135,34 @@ class Testing(APIView):
                 id = request.META["HTTP_ID"]
                 _type = request.GET["type"]
                 user = Participant.objects.get(id = id)
-                #if len(user.passedTests.all()) == 0 :
-                if _type != "3":
-                    test = Test.objects.get(mode = _type)
-                    serializer = TestSerializer(test)
-                    data = serializer.data
-                    res = {"id": data["id"]}
-                    data.pop("id")
-                    res.update(data)
+                length = len(user.passedTests.all())
+                if length < str(_type):
+                    if _type != "3":
+                        test = Test.objects.get(mode = _type)
+                        serializer = TestSerializer(test)
+                        data = serializer.data
+                        res = {"id": data["id"]}
+                        data.pop("id")
+                        res.update(data)
+                    else:
+                        test2 = Test.objects.get(mode = 2)
+                        temp = user.passedTests.get(test = test2).competence
+                        result = eval(temp)
+                        val = result["values"]
+                        types = result["types"]
+                        test = Test.objects.get(name = types[val.index(max(val))])
+                        serializer = TestSerializer(test)
+                        data = serializer.data
+                        res = {"id": data["id"]}
+                        data.pop("id")
+                        res.update(data)
+                    return Response(data = res, status = status.HTTP_200_OK)
                 else:
-                    test2 = Test.objects.get(mode = 2)
-                    print(user.passedTests.get(test = test2))
-                    temp = user.passedTests.get(test = test2).competence
-                    result = eval(temp)
-                    val = result["values"]
-                    types = result["types"]
-                    test = Test.objects.get(name = types[val.index(max(val))])
-                    serializer = TestSerializer(test)
-                    data = serializer.data
-                    res = {"id": data["id"]}
-                    data.pop("id")
-                    res.update(data)
-                return Response(data = res, status = status.HTTP_200_OK)
-                #else:
-                #    res = {"error": "Не указан id пользователя"}
-                #    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+                    res = {"lastTest": length}
+                    for i in range(length):
+                        test = Test.objects.get(mode = i+1)
+                        res["test"+str(i+1)] = user.passedTests.get(test = test)
+                    return Response(data = res, status = status.HTTP_200_OK)
             else:
                 res = {"error": "Не указан id пользователя"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
