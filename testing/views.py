@@ -60,7 +60,7 @@ def test2(data, user):
                 "types": nameOfGroups,
                 "values": val
             }
-            user.competence = nameOfGroups["maxI"]
+            user.competence = nameOfGroups[maxI]
             user.save()
             result = ResultOfTest.objects.create(competence = str(res), test = test)
             user.passedTests.add(result)
