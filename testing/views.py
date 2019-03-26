@@ -136,7 +136,7 @@ class Testing(APIView):
                 user = Participant.objects.get(id = id)
                 length = len(user.passedTests.all())
                 print(length)
-                if length <= int(_type):
+                if length < int(_type):
                     if _type != "3":
                         test = Test.objects.get(mode = _type)
                         serializer = TestSerializer(test)
@@ -155,11 +155,11 @@ class Testing(APIView):
                 else:
                     res = {"lastTest": length}
                     if length >= 1:
-                        res["test1"] =  user.passedTests.get(test = Test.objects.get(mode = 1))
+                        res["test1"] =  ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(mode = 1))).data
                     if length >= 2:
-                        res["test2"] =  user.passedTests.get(test = Test.objects.get(mode = 2))
+                        res["test2"] = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(mode = 2))).data
                     if length >= 3:
-                        res["test3"] =  user.passedTests.get(test = Test.objects.get(name = user.competence))
+                        res["test3"] = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(name = user.competence))).data
                     return Response(data = res, status = status.HTTP_200_OK)
             else:
                 res = {"error": "Не указан id пользователя"}
