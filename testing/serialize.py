@@ -83,4 +83,6 @@ class ResultOfTestSerializer(serializers.ModelSerializer):
         validateTest = validate_data.get("test")
         validate_data.pop("test")
         test = TestSerializer(data = validateTest)
-        return ResultOfTest.objects.create(test = test, **validate_data)
+        res = ResultOfTest.objects.create(test = test, **validate_data)
+        res["competence"] = eval(res["competence"])
+        return res

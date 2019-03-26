@@ -57,3 +57,6 @@ class ResultOfTest(models.Model):
     class Meta:
         verbose_name        = "Результат теста"
         verbose_name_plural = "Результаты теста"
+
+    def __str__(self):
+        return "id: {}, test: {}".format(self.id, self.test.mode)
