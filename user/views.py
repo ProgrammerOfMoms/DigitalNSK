@@ -104,6 +104,8 @@ class SignIn(APIView):
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['jwt'] = "%s" % (getJWT(user))
+                    if len(user.participant.passedTests.all())==3:
+                        user_details['test'] = True
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
                     return Response(data = user_details, status=status.HTTP_201_CREATED)
                 except Exception as e:
