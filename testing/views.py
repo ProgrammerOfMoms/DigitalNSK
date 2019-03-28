@@ -28,7 +28,8 @@ def test1(data, user):
         for answer in data["answers"]:
             group = Group.objects.get(id = answer).key - 1
             if group < length:
-                val[group] = val[group] + 1
+                if group != -1:
+                    val[group] = val[group] + 1
         res = {
             "status": True,
             "types": types,
