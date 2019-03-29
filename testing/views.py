@@ -147,7 +147,7 @@ class Testing(APIView):
                         data.pop("id")
                         res.update(data)
                     else:
-                        test = Test.objects.get(name = user.competence)
+                        test = Test.objects.get(name = user.competence.name)
                         serializer = TestSerializer(test)
                         data = serializer.data
                         res = {"id": data["id"]}
