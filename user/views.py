@@ -222,8 +222,35 @@ class PasswordRecovery(APIView):
         try:
             hash = json.loads(request.body.decode("utf-8"))["hash"]
             link = RecoveryLink.objects.get(link = hash)
-            link.delete()
+            link.active = False
             return Response(status = status.HTTP_200_OK)
+
+        except RecoveryLink.DoesNotExist:
+            res = {"error": "Данной ссылки не найдено"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))["id"]
+            link = RecoveryLink.objects.get(link = data["hash"])
+            print(link)
+            if not link.active:
+                res = {"error": "Данной ссылки не найдено"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            user = link.id
+            password = {"id":{"password":data["password"]}}
+            if user.role == User.PARTICIPANT:
+                user = user.participant
+                serializer = ParticipantSerializer(user, password, partial = True)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+                data = serializer.data
+                res = {"id": data["id"]}
+                data.pop("id")
+                res.update(data)
+                res["jwt"] = getJWT(user.id)
+                link.delete()
+                return Response(data = res, status = status.HTTP_200_OK)
 
         except RecoveryLink.DoesNotExist:
             res = {"error": "Данной ссылки не найдено"}
