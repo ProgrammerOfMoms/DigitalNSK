@@ -22,8 +22,11 @@ class SpaceOfSample(APIView):
     def get(self, request):
          if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
-            user = Participant.objects.get(id = id)
-            events = Event.objects.filter(competence = user.competence)
+            if "date" in request.GET:
+                events = Event.objects.filter(date = request.GET["date"])
+            else:
+                user = Participant.objects.get(id = id)
+                events = Event.objects.filter(competence = user.competence)
             res = []
             for event in events:
                 res.append(EventSerializer(event).data)
