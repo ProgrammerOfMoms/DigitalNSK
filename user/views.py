@@ -126,7 +126,7 @@ class Profile(APIView):
     """Редактирование профиля"""
 
     # permission_classes = (IsAuthenticated,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         """Получение информации о пользователе"""
