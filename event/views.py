@@ -24,7 +24,6 @@ class SpaceOfSample(APIView):
             id = request.META["HTTP_ID"]
             user = Participant.objects.get(id = id)
             events = Event.objects.filter(competence = user.competence)
-            
             res = []
             for event in events:
                 res.append(EventSerializer(event).data)

@@ -61,8 +61,9 @@ def test2(data, user):
                 "types": nameOfGroups,
                 "values": val
             }
-            user.competence = nameOfGroups[maxI]
-            user.save()
+            competence = Competence.objects.get(name = nameOfGroups[maxI])
+            competence.participant.add(user)
+            #user.competence.add(competence)
             result = ResultOfTest.objects.create(competence = str(res), test = test)
             user.passedTests.add(result)
         else:
