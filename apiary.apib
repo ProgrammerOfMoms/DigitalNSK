@@ -2,7 +2,6 @@ FORMAT: 1A
 HOST: http://digitalnsk.sibtiger.com:5000/
 
 # DigitalNSK
-
     Описание
 
 ## Пользователь [/user]
@@ -173,7 +172,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             }
 
 ### Восстановление пароля [POST/user/recovery-password/]
-
 + Request (application/json)
 
     + Body
@@ -218,7 +216,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             }
 
 ### Восстановление пароля [DELETE/user/recovery-password/]
-
 + Request (application/json)
 
     + Body
@@ -258,203 +255,29 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 
 
 
-### Авторизация через Вконтакте [POST/user/auth-vk/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
-
-### Авторизация через Instagram [POST/user/auth-inst/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
-
-### Авторизация через Facebook [POST/user/auth-fb/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
-
-### Регистрация через Вконтакте [POST/user/reg-vk/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
-
-### Регистрация через Instagram [POST/user/reg-inst/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
-
-### Регистрация через Facebook [POST/user/reg-fb/]
-##### не готово!!!
-+ Request (application/json)
-
-    + Body
-            {
-
-            }
-
-+ Response 201 (application/json)
-
-    + Body
-            {
-                "data":
-                {
-
-                }
-            }
-
-+ Response 403 (application/json)
-
-    + Body
-
-            {
-                "errors":
-                {
-
-                }
-            }
 
 ## Тестирование [/tests]
-### Получение теста №1 [GET/tests/test1/]
-+ Response 200 (application/json)
 
+### Получение теста[GET/tests?{type}]
++ Parameters
+        + type (number) - Номер теста
++ Request
+    + Headers
+            id: Идентификатор пользователя
++ Response 200 (application/json)
     + Body
             {
-                "status": True,
-                "name": Название теста,
-                "desciption": Описание теста,
-                "questions": [
-                    {
-                        "content": Сам вопрос, 
-                        "answers":[ 
-                            {"content": Сам ответ, "group": Номер группы ответа}
-                        ]
-                    }
-                ]
+                "data": {
+                    "id": "Идентификатор теста",
+                    "description": "Описание теста",
+                    "questions": [
+                        {
+                            "id": "Идентификатор вопроса",
+                            "content": "Сам вопрос",
+                            "answers": [{"id": "Идентификатор ответа", "content": "Сам ответ", "group": "Идентификатор группы"}]
+                        }
+                    ]
+                }
             }
 
 + Response 403 (application/json)
@@ -464,27 +287,25 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": "что-то пошло не так"
             }
 
-### Получение результата теста №1 [POST/tests/test1/]
+### Получение результата теста №1 [POST/tests/]
 + Request (application/json)
-
+    + Headers
+            id: Идентификатор пользователя
     + Body
             {
-                "answers": [массив int (от 1 до 5)] - номера группы ответа
+                "type": 1
+                "answers": [массив int (от 1 до 5) - идентификатор группы ответа] 
             }
 
 + Response 200 (application/json)
 
     + Body
             {
-                "status": true,
-                "additional": нужен ли дополнительный вопрос?(true - нужен/false - не нужно),
-                "description": Описание вопроса ("additional": true),
-                "types": название сфер,
-                "values": [массив int - результат теста №1],
-                "questions": [
-                    {"type": текст ответа, "group": номер сферы}
-                ]
-            }
+    "data": {
+        "values": [массив int - идентификаторы групп ответов],
+        "types": [массив str - название групп ответов]
+    }
+}
 
 + Response 403 (application/json)
     + Body
@@ -493,53 +314,36 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": текст ошибки
             }
 
-### Получение теста №2 [GET/tests/test2/]
-+ Response 200 (application/json)
 
-    + Body
-            {
-                "status": True,
-                "name": Название теста,
-                "desciption": Описание теста,
-                "questions": [
-                    {
-                        "content": Сам вопрос,
-                        "type": Исследуемая компетенция,
-                        "answers":[
-                            {"content": Сам ответ, "group": Номер группы ответа}
-                        ]
-                    }
-                ]
-            }
-
-+ Response 403 (application/json)
     + Body
             {
                 "status": False,
                 "error": "что-то пошло не так"
             }
             
-### Получение результата теста №2 [POST/tests/test2/]
+### Получение результата теста №2 [POST/tests/]
+##### Для получения результатов с дополнительным вопросом нужно отправить два запроса(один до доплнительного вопроса, другой после - в массив ответов добавляется ответ на допю вопрос)
 + Request (application/json)
-
+    + Headers
+            id Идентификатор пользователя
     + Body
             {
-                "answers": [
-                    {"type": Исследуемая компетенция, "group": Номер группы ответа},
-                ]
+                "type": 2
+                "answers": [массив int (от 1 до 5) - идентификатор группы ответа] 
             }
-            
+
 + Response 200 (application/json)
 
     + Body
             {
-                "status": True,
-                "good": [
-                    массив строк - компетенции, которые реализуются в действиях/субъективной оценке
-                ],
-                "bad": [
-                    массив строк - не выявленные компетенции
-                ]
+                "data": {
+                    "values": [массив int - идентификаторы групп ответов],
+                    "types": [массив str - название групп ответов]
+                    "additional": false - если не нужен доп. вопрос/true - если нужен доп. вопрос
+                    Если "additional": true, то 
+                        "description": описание дополнительного вопроса,
+                        "questions": [{"types": "Сам ответ", "group": "Идентификатор группы"}]
+                }
             }
 
 + Response 403 (application/json)
@@ -549,68 +353,27 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": текст ошибки
             }
 
-### Результаты дополнительного вопроса [POST/tests/result-additional/]
-+ Request (application/json)
 
-    + Body
-            {
-                "values": [отпрвить тот же массив, что получен в тесте №1],
-                "answer": номер сферы ответа
-            }
-
-+ Response 200 (application/json)
-
-    + Body
-            {
-                "status": true,
-                "types": [Название сфер],
-                "values": [Показатели для графика]
-            }
-
-+ Response 403 (application/json)
-    + Body
-            {
-                "status": False,
-                "error": текст ошибки
-            }
-
-### Получение теста №3 [POST/tests/test3/]
-+ Request (application/json)
-
-    + Body
-            {
-                "test1": int - результат первого этапа
-            }
-            
-+ Response 200 (application/json)
-
-    + Body
-           {
-                "status": true,
-                "description": описание,
-                "test": [массив строк - вопросы]
-            }
-
-+ Response 403 (application/json)
     + Body
             {
                 "status": False,
                 "error": текст ошибки
             }
             
-### Получение результата теста №3 [POST/tests/result-test3/]
+### Получение результата теста №3 [POST/tests/]
 + Request (application/json)
-
+    + Headers
+            id Идентификатор пользователя
     + Body
             {
-                "answers": [массив int - ответы]
+                "type": 3
+                "id": Идентификатор теста
+                "answers": [массив int (от 1 до 5) - идентификатор группы ответа] 
             }
-            
-+ Response 200 (application/json)
 
++ Response 200 (application/json)
     + Body
             {
-                "status": true,
                 "result": оценка по 10-ти балльной шкале
             }
 

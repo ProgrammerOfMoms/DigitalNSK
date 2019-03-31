@@ -31,7 +31,6 @@ def test1(data, user):
                 if group != -1:
                     val[group] = val[group] + 1
         res = {
-            "status": True,
             "types": types,
             "values": val
         }
@@ -119,7 +118,6 @@ def test3(data, user):
                 res = {"result": sum}
                 result = ResultOfTest.objects.create(competence = str(res), test = test)
                 user.passedTests.add(result)
-                
             else:
                 res = {"error": "Отсутствуют необходимые поля"}
             return res
