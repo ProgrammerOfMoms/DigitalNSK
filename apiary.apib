@@ -283,7 +283,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 + Response 403 (application/json)
     + Body
             {
-                "status": False,
                 "error": "что-то пошло не так"
             }
 
@@ -310,15 +309,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 + Response 403 (application/json)
     + Body
             {
-                "status": False,
                 "error": текст ошибки
-            }
-
-
-    + Body
-            {
-                "status": False,
-                "error": "что-то пошло не так"
             }
             
 ### Получение результата теста №2 [POST/tests/]
@@ -349,17 +340,9 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 + Response 403 (application/json)
     + Body
             {
-                "status": False,
                 "error": текст ошибки
             }
 
-
-    + Body
-            {
-                "status": False,
-                "error": текст ошибки
-            }
-            
 ### Получение результата теста №3 [POST/tests/]
 + Request (application/json)
     + Headers
@@ -380,6 +363,119 @@ HOST: http://digitalnsk.sibtiger.com:5000/
 + Response 403 (application/json)
     + Body
             {
-                "status": False,
+                "error": текст ошибки
+            }
+
+## Пространство проб
+
+### Получение списка мероприятий [GET/event]
+##### По компетенции
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+
++ Response 200 (application/json)
+    + Body
+            {
+                "data": [
+                    {
+                        "id": "Идентификатор мероприятия",
+                        "name": "Название мероприятия",
+                        "img": "Ссылка на изображение",
+                        "date": "Дата проведения",
+                        "time": "Время проведения",
+                        "description": [
+                            {
+                                "id": "Идентификатор этапа",
+                                "name": "Название этапа"
+                            }
+                        ],
+                        "competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "inherent_competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "duration": "Длительность мероприятия",
+                        "venue": "Место проведения",
+                        "format_event": "Формат мероприятия",
+                        "format_task": "Формат задания",
+                        "max_partiсipants": Максимальное количество участников,
+                        "partiсipants": Количество участников,
+                        "count": Вес мероприятия,
+                        "partner": "Название партнера",
+                        "manager_name": "Имя организатора",
+                        "manager_position": "Должность организатора",
+                        "phonenumber": "Номер телефона организатора"
+                    },
+                ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
+
+### Получение списка мероприятий [GET/event?{date}]
+##### По кометенции + дате проведения
++ Parameters
+        + date (string) - Дата в формате DD.MM.YYYY
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+
++ Response 200 (application/json)
+    + Body
+            {
+                "data": [
+                    {
+                        "id": "Идентификатор мероприятия",
+                        "name": "Название мероприятия",
+                        "img": "Ссылка на изображение",
+                        "date": "Дата проведения",
+                        "time": "Время проведения",
+                        "description": [
+                            {
+                                "id": "Идентификатор этапа",
+                                "name": "Название этапа"
+                            }
+                        ],
+                        "competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "inherent_competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "duration": "Длительность мероприятия",
+                        "venue": "Место проведения",
+                        "format_event": "Формат мероприятия",
+                        "format_task": "Формат задания",
+                        "max_partiсipants": Максимальное количество участников,
+                        "partiсipants": Количество участников,
+                        "count": Вес мероприятия,
+                        "partner": "Название партнера",
+                        "manager_name": "Имя организатора",
+                        "manager_position": "Должность организатора",
+                        "phonenumber": "Номер телефона организатора"
+                    },
+                ]
+            }
+
++ Response 403 (application/json)
+    + Body
+            {
                 "error": текст ошибки
             }
