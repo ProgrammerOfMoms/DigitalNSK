@@ -23,14 +23,26 @@ class Competence(models.Model):
     def __str__(self):
         return "id: {}, name: {}".format(self.id, self.name)
 
+class Point(models.Model):
+    """Балл за участие в мероприятии"""
+    competence = models.ForeignKey(Competence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "point")
+    value      = models.IntegerField(verbose_name = "Кол-во баллов")
+    
+    class Meta:
+        verbose_name        = "Балл за участие в мероприятии"
+        verbose_name_plural = "Баллы за участие в мероприятии"
+
+    def __str__(self):
+        return "id: {}, competence: {}, value: {}".format(self.id, self.competence.name, self.value)
+
 class Event(models.Model):
     """Мероприятие"""
     name                = models.CharField(max_length = 50, verbose_name = "Название")
     img                 = models.URLField(verbose_name = "Изображение", blank = True, null = True)
     description         = models.ManyToManyField(EventStage, verbose_name = "Описание", blank = True, related_name = "event")
     #competence      = models.CharField(max_length = 50, verbose_name = "Компетенция", blank = True)
-    competence          = models.ManyToManyField(Competence, verbose_name = "Компетенция(до)", related_name = "event")
-    inherent_competence = models.ManyToManyField(Competence, verbose_name = "Компетенция(после)", related_name = "event_add")
+    competence          = models.ManyToManyField(Competence, verbose_name = "Полезно знать до мероприятия", related_name = "event")
+    points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add")
     date                = models.CharField(max_length = 10, null = True, verbose_name = "Дата проведения")
     time                = models.CharField(max_length = 5, null = True, verbose_name = "Время проведения")
     duration            = models.CharField(max_length = 15, verbose_name = "Длительность", blank = True, null = True)
