@@ -16,6 +16,16 @@ class CompetenceAdmin(admin.ModelAdmin):
     )
 
 admin.site.register(Competence, CompetenceAdmin)
+
+class PointAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "competence",
+        "value"
+    )
+
+admin.site.register(Point, PointAdmin)
+
 class EventAdmin(admin.ModelAdmin):
     list_display = (
         "id",
