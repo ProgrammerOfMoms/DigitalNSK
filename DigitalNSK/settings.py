@@ -88,22 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DigitalNSK.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'digitalnsk',
-        'USER': 'digitalnsk',
-        'PASSWORD': 'Sibtigernstu2017',
-        'HOST': '178.21.10.142',
-        'PORT': '5432',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
