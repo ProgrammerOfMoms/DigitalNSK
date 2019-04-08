@@ -4,6 +4,10 @@ from institution.serialize import InstitutionSerializer
 from testing.serialize import ResultOfTestSerializer
 from user.models import *
 
+from DigitalNSK import settings
+
+import os
+
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
     A ModelSerializer that takes an additional `fields` argument that
@@ -54,10 +58,9 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(email = email, password = password, **validate_data)
     
     def update(self, instance, validate_data):
-
         for key in validate_data.keys():
             if key == "password":
-                instance.set_password(validate_data[key])
+                instance.set_password(validate_data[key])   
             else:
                 setattr(instance, key, validate_data[key])
         

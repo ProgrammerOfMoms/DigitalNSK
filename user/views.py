@@ -12,6 +12,7 @@ from rest_framework.renderers import JSONRenderer
 import coreapi
 import coreschema
 from DigitalNSK import settings
+from user.actions import *
 
 import json
 import copy
@@ -73,8 +74,10 @@ class SignUp(APIView):
             else:
                 res = {'error': 'Пользователь не найден'}
                 return Response(data = res, status=status.HTTP_403_FORBIDDEN)
-            
 
+            if res["id"]["email"] != None:
+                data = linkGenerator(id = res["id"]["id"])
+                send_confirmation_mail.after_response(email = res["id"]["email"], link = data[0])
             return Response(data = res, status=status.HTTP_201_CREATED)
         except Exception as e:
             raise e
@@ -259,6 +262,58 @@ class PasswordRecovery(APIView):
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+
+class ConfirmEmail(APIView):
+    """Подтверждение электронной почты"""
+
+    permission_classes = (AllowAny,)
+
+    def delete(self, request, format=None):
+        try:
+            hash = json.loads(request.body.decode("utf-8"))["hash"]
+            link = RecoveryLink.objects.get(link = hash)
+            user = link.id
+            user.emailConfirmed = True
+            user.save()
+            link.delete()
+            return Response(status = status.HTTP_200_OK)
+
+        except RecoveryLink.DoesNotExist:
+            res = {"error": "Данной ссылки не найдено"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+
+class UploadPhoto(APIView):
+    """Загрузка фотографий"""
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        try:
+            id = request.META["HTTP_ID"]
+            photo = request.FILES["photo"]
+            if getPhotoPath(photo = photo, id = id):
+                return Response(status = status.HTTP_200_OK) 
+            else:
+                res = {"error": "Пользлвателя с данным id не существует"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        try:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            res = {"photo": f"host/media/{user.photo}"}
+            return Response(data = res, status = status.HTTP_200_OK)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 

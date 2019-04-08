@@ -9,4 +9,6 @@ urlpatterns = [
     path('signin/', SignIn.as_view()),
     path('info/', Profile.as_view()),
     path('recovery-password/', PasswordRecovery.as_view()),
+    path('confirm-email/', ConfirmEmail.as_view()),
+    path('upload-photo/', UploadPhoto.as_view()),
 ]

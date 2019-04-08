@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework import permissions
 
+from DigitalNSK import settings
+
+from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -25,6 +29,9 @@ urlpatterns = [
     path('tests/', include("testing.urls")),
     path('event/', include("event.urls"))
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 
 
