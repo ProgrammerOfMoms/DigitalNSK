@@ -293,6 +293,7 @@ class UploadPhoto(APIView):
         # try:
             id = request.META["HTTP_ID"]
             photo = request.FILES["photo"]
+            print("here")
             if getPhotoPath(photo = photo, id = id):
                 return Response(status = status.HTTP_200_OK) 
             else:
