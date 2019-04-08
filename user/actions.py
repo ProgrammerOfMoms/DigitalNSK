@@ -19,7 +19,7 @@ def getPhotoPath(photo, id):
             old_photo = uuid.uuid4().hex
             if old_photo not in os.listdir(media_dir):
                 break
-    f = open(f"{media_dir}/{old_photo}", "wb")
+    f = open(media_dir+"/"+old_photo, "wb")
     f.write(photo.read())
     f.close()
     if user.photo!=old_photo:
