@@ -39,7 +39,6 @@ class SignUp(APIView):
     def post(self, request):
         try:
             data = json.loads(request.body.decode("utf-8"))
-            
 
             if data["id"]["role"] == User.PARTICIPANT:
                 phone = data["id"]["phoneNumber"]
@@ -83,8 +82,6 @@ class SignUp(APIView):
             raise e
             res = {'error': 'Не удалось зарегистрировать пользователя'}
             return Response(data = res, status=status.HTTP_403_FORBIDDEN)
-                
-
 
 
 class SignIn(APIView):

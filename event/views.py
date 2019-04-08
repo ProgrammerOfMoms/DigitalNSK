@@ -31,3 +31,25 @@ class SpaceOfSample(APIView):
             for event in events:
                 res.append(EventSerializer(event).data)
             return Response(data = res, status = status.HTTP_200_OK)
+
+class SignUpEvent(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        data = json.loads(request.body.decode("utf-8"))
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            if "event" in data:
+                event_id = data["event"]
+                user = Participant.objects.get(id = id)
+                event = Event.objects.get(id = event_id)
+                if len(user.events.filter(event = event)) == 0:
+                    progress = Progress.objects.create(progress = -1, event = event)
+                    user.events.add(progress)
+                    return Response(status = status.HTTP_200_OK)
+                else:
+                    return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
