@@ -45,10 +45,10 @@ def test2(data, user):
         answers = data["answers"]
         test = Test.objects.get(mode = 2)
         groups = test.groups.all()
-        nameOfGroups = []
+        nameOfGroups = [" "]*len(groups)
         val = [0] * len(groups)
         for group in groups:
-            nameOfGroups.append(group.name)
+            nameOfGroups[group.key-1] = group.name
         for answer in data["answers"]:
             val[answer-1] = val[answer-1] + 1
 
