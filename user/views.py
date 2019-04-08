@@ -298,8 +298,8 @@ class UploadPhoto(APIView):
             else:
                 res = {"error": "Пользлвателя с данным id не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
-        except:
-            res = {"error": "Неизвестная ошибка"}
+        except Exception as e:
+            res = {"error": e}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
