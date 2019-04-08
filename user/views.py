@@ -290,19 +290,17 @@ class UploadPhoto(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        # try:
+        try:
             id = request.META["HTTP_ID"]
-            print(request.FILES)
             photo = request.FILES["photo"]
-            print("here")
             if getPhotoPath(photo = photo, id = id):
                 return Response(status = status.HTTP_200_OK) 
             else:
                 res = {"error": "Пользлвателя с данным id не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
-        # except:
-        #     res = {"error": "Неизвестная ошибка"}
-        #     return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         try:
