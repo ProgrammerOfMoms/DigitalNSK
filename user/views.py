@@ -308,8 +308,8 @@ class UploadPhoto(APIView):
             user = User.objects.get(id = id)
             res = {"photo": "api.digitalnsk.sibtiger.com/media/"+user.photo}
             return Response(data = res, status = status.HTTP_200_OK)
-        except:
-            res = {"error": "Неизвестная ошибка"}
+        except Exception as e:
+            res = {"error": e}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 
