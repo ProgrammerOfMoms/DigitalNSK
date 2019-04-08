@@ -306,7 +306,10 @@ class UploadPhoto(APIView):
         try:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
-            res = {"photo": "api.digitalnsk.sibtiger.com/media/"+user.photo}
+            if user.photo != "":
+                res = {"photo": "api.digitalnsk.sibtiger.com/media/"+user.photo}
+            else:
+                res = {"photo": None}
             return Response(data = res, status = status.HTTP_200_OK)
         except Exception as e:
             res = {"error": e}
