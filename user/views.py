@@ -292,6 +292,7 @@ class UploadPhoto(APIView):
     def post(self, request):
         # try:
             id = request.META["HTTP_ID"]
+            print(request.FILES)
             photo = request.FILES["photo"]
             print("here")
             if getPhotoPath(photo = photo, id = id):
