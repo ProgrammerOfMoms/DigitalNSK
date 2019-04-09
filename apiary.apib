@@ -250,12 +250,6 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 }
             }
 
-
-
-
-
-
-
 ## Тестирование [/tests]
 
 ### Получение теста[GET/tests?{type}]
@@ -367,9 +361,10 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             }
 
 ## Пространство проб
-
-### Получение списка мероприятий [GET/event]
-##### По компетенции
+### Получение списка мероприятий [GET/event?{date}]
+##### По кометенции + дате проведения
++ Parameters
+        + date (string) - Дата в формате DD.MM.YYYY
 + Request (application/json)
     + Headers
             id Идентификатор пользователя
@@ -384,12 +379,7 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                         "img": "Ссылка на изображение",
                         "date": "Дата проведения",
                         "time": "Время проведения",
-                        "description": [
-                            {
-                                "id": "Идентификатор этапа",
-                                "name": "Название этапа"
-                            }
-                        ],
+                        "description": "Описание мероприятия",
                         "competence": [
                             {
                                 "id": "Идентификатор компетенции",
@@ -423,30 +413,46 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                 "error": текст ошибки
             }
 
-### Получение списка мероприятий [GET/event?{date}]
-##### По кометенции + дате проведения
-+ Parameters
-        + date (string) - Дата в формате DD.MM.YYYY
+### Регистрация на мероприятии[POST/event/signup/]
 + Request (application/json)
     + Headers
             id Идентификатор пользователя
+    + Body
+            {
+                "event": Идентификатор мароприятия
+            }
 
 + Response 200 (application/json)
     + Body
             {
-                "data": [
-                    {
+                "data": null
+            }
+
++ Response 400 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
+
+### Получение информации о мероприятии[POST/event/signup/]
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+    + Body
+            {
+                "event": Идентификатор мароприятия
+            }
+
++ Response 200 (application/json)
+    + Body
+            {
+                {
                         "id": "Идентификатор мероприятия",
                         "name": "Название мероприятия",
                         "img": "Ссылка на изображение",
                         "date": "Дата проведения",
                         "time": "Время проведения",
-                        "description": [
-                            {
-                                "id": "Идентификатор этапа",
-                                "name": "Название этапа"
-                            }
-                        ],
+                        "description": "Описание мероприятия",
                         "competence": [
                             {
                                 "id": "Идентификатор компетенции",
@@ -471,10 +477,9 @@ HOST: http://digitalnsk.sibtiger.com:5000/
                         "manager_position": "Должность организатора",
                         "phonenumber": "Номер телефона организатора"
                     },
-                ]
             }
 
-+ Response 403 (application/json)
++ Response 400 (application/json)
     + Body
             {
                 "error": текст ошибки
