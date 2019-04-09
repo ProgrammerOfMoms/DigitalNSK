@@ -53,3 +53,20 @@ class SignUpEvent(APIView):
                 return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+
+class EventFunc(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            if "event" in request.GET:
+                event_id = request.GET["event"]
+                event = Event.objects.get(id = event_id)
+                res = EventSerializer(event)
+                return Response(data = res.data, status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)

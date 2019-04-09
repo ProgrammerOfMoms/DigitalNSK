@@ -4,5 +4,6 @@ from .views import *
 
 urlpatterns = [
     path('', SpaceOfSample.as_view()),
-    path('signup/', SignUpEvent.as_view())
+    path('signup/', SignUpEvent.as_view()),
+    path('event/', EventFunc.as_view())
 ]
