@@ -63,11 +63,12 @@ class SignUpEvent(APIView):
 class EventFunc(APIView):
     permission_classes = (AllowAny,)
 
-    def get(self, request):
+    def post(self, request):
+        data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
-            if "event" in request.GET:
-                event_id = request.GET["event"]
+            if "event" in data:
+                event_id = data["event"]
                 event = Event.objects.get(id = event_id)
                 res = EventSerializer(event)
                 return Response(data = res.data, status = status.HTTP_200_OK)
