@@ -20,16 +20,21 @@ class SpaceOfSample(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-         if "HTTP_ID" in request.META:
+        flag = True 
+        if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             if "date" in request.GET:
-                events = Event.objects.filter(date = request.GET["date"])
-            else:
                 user = Participant.objects.get(id = id)
-                events = Event.objects.filter(competence = user.competence)
+                events = Event.objects.filter(date = request.GET["date"], competence = user.competence)
             res = []
+            progresses = user.events.all()
+            print(events)
             for event in events:
-                res.append(EventSerializer(event).data)
+                for  progress in progresses:
+                    if progress.event == event:
+                        flag = False
+                if flag:
+                    res.append(EventSerializer(event).data)
             return Response(data = res, status = status.HTTP_200_OK)
 
 class SignUpEvent(APIView):

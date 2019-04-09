@@ -37,7 +37,7 @@ class PointSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     """Сериализация мероприятия"""
-    description         = EventStageSerializer(many = True)
+    #description         = EventStageSerializer(many = True)
     competence          = CompetenceSerializer(many = True)
     points              = PointSerializer(many = True)
 
@@ -67,10 +67,10 @@ class EventSerializer(serializers.ModelSerializer):
         depth = 5
 
     def create(self,validate_data):
-        description = validate_data.get("description")
+        #description = validate_data.get("description")
         competence = validate_data.get("competence")
         inherent_competence = validate_data.get("points")
-        validate_data.pop("description")
+        #validate_data.pop("description")
         validate_data.pop("competence")
         validate_data.pop("points")
         return Event.objects.create(description = description, competence = competence, points = points, **validate_data)
