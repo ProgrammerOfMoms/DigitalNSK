@@ -170,7 +170,10 @@ class Profile(APIView):
                 email = json.loads(request.body.decode("utf-8"))["id"]["email"]
                 user = User.objects.get(email = email)
             updateParticipant = json.loads(request.body.decode("utf-8"))
-            updateParticipant["id"].pop("email")
+            try:
+                updateParticipant["id"].pop("email")
+            except KeyError:
+                pass
                
 
             if user.role == User.PARTICIPANT:
