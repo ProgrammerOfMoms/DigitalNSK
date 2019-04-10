@@ -137,10 +137,14 @@ class Profile(APIView):
         try:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
+            print(user)
 
             if user.role == User.PARTICIPANT:
+                print(user)
                 user = user.participant
+                print(user)
                 serializer = ParticipantSerializer(user)
+                
                 data = serializer.data
                 res = {"id": data["id"]}
                 data.pop("id")
@@ -150,7 +154,8 @@ class Profile(APIView):
         except User.DoesNotExist:
             res = {"error": "Такого пользователя не существует"}
             return Response(data = res, status = status.HTTP_404_NOT_FOUND)
-        except:
+        except Exception as e:
+            raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             
@@ -293,8 +298,9 @@ class UploadPhoto(APIView):
         try:
             id = request.META["HTTP_ID"]
             photo = request.FILES["photo"]
-            if getPhotoPath(photo = photo, id = id):
-                return Response(status = status.HTTP_200_OK) 
+            link_photo = getPhotoPath(photo = photo, id = id)
+            if link_photo:
+                return Response(data = {"photo": "api.digitalnsk.sibtiger.com/media/"+link_photo}, status = status.HTTP_200_OK) 
             else:
                 res = {"error": "Пользлвателя с данным id не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)

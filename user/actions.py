@@ -25,5 +25,5 @@ def getPhotoPath(photo, id):
     if user.photo!=old_photo:
         user.photo = old_photo
         user.save()
-    return True
+    return user.photo
     
