@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from institution.serialize import InstitutionSerializer
 from testing.serialize import ResultOfTestSerializer
+from event.serialize import EventSerializer
 from user.models import *
 
 from DigitalNSK import settings
@@ -28,6 +29,23 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
+
+class ProgressSerializer(serializers.ModelSerializer):
+    """Сериализация прогресса"""
+    event = EventSerializer
+
+    class Meta:
+        model = Progress
+        fields = (
+            "id",
+            "progress",
+            "event"
+        )
+
+    def create(self, validate_data):
+        event = validate_data.get("event")
+        validate_data.pop("event")
+        return Progress.objects.create(event = event, **validate_data)
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализация пользователя"""
@@ -75,13 +93,12 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
     id              = UserSerializer()
     #eduInstitution  = InstitutionSerializer()
     #passedTests     = ResultOfTestSerializer(many = True)
-    #events         = EventSerializer()
+    #events          = EventSerializer()
 
-    
-    
     def create(self, validate_data):
-        print(validate_data)
         user = validate_data.get("id")
+        #progress = validate_data.get("progress")
+        #validate_data.pop("progress")
         validate_data.pop("id")
         serializer = UserSerializer(data = user)
         serializer.is_valid(raise_exception=True)

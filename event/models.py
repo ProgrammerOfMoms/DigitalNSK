@@ -39,7 +39,8 @@ class Event(models.Model):
     """Мероприятие"""
     name                = models.CharField(max_length = 50, verbose_name = "Название")
     img                 = models.URLField(verbose_name = "Изображение", blank = True, null = True)
-    description         = models.ManyToManyField(EventStage, verbose_name = "Описание", blank = True, related_name = "event")
+    description         = models.TextField(verbose_name = "Описание", blank = True, null = True)
+    #description         = models.ManyToManyField(EventStage, verbose_name = "Описание", blank = True, related_name = "event")
     #competence      = models.CharField(max_length = 50, verbose_name = "Компетенция", blank = True)
     competence          = models.ManyToManyField(Competence, verbose_name = "Полезно знать до мероприятия", related_name = "event")
     points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add")
