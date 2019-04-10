@@ -16,7 +16,9 @@ from .serialize import *
 
 import json
 # Create your views here.
-class SpaceOfSample(APIView):
+
+#Пользователь
+class EventList(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
@@ -26,19 +28,34 @@ class SpaceOfSample(APIView):
             if "date" in request.GET:
                 user = Participant.objects.get(id = id)
                 events = Event.objects.filter(date = request.GET["date"], competence = user.competence)
-            res = []
-            progresses = user.events.all()
-            print(events)
-            for event in events:
-                for  progress in progresses:
-                    if progress.event == event:
-                        flag = False
-                if flag:
-                    res.append(EventSerializer(event).data)
-            return Response(data = res, status = status.HTTP_200_OK)
+                res = []
+                progresses = user.events.all()
+                for event in events:
+                    for  progress in progresses:
+                        if progress.event == event:
+                            flag = False
+                    if flag:
+                        res.append(EventSerializer(event).data)
+                return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
 class SignUpEvent(APIView):
     permission_classes = (AllowAny,)
+
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            res = []
+            id = request.META["HTTP_ID"]
+            user = Participant.objects.get(id = id)
+            progresses = user.events.all()
+            for  progress in progresses:
+                res.append(EventSerializer(progress.event).data)
+            return Response(data = res, status = status.HTTP_200_OK)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         data = json.loads(request.body.decode("utf-8"))
@@ -60,7 +77,7 @@ class SignUpEvent(APIView):
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
 
-class EventFunc(APIView):
+class EventInfo(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -76,3 +93,5 @@ class EventFunc(APIView):
                 return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+#Администратор
