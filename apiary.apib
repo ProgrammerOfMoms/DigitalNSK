@@ -435,7 +435,54 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             {
                 "error": текст ошибки
             }
+### Получение списка мероприятий[POST/event/signup/]
+##### на которые пользователь загестрирован
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
 
++ Response 200 (application/json)
+    + Body
+            {
+                "data": [
+                    {
+                        "id": "Идентификатор мероприятия",
+                        "name": "Название мероприятия",
+                        "img": "Ссылка на изображение",
+                        "date": "Дата проведения",
+                        "time": "Время проведения",
+                        "description": "Описание мероприятия",
+                        "competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "inherent_competence": [
+                            {
+                                "id": "Идентификатор компетенции",
+                                "name": "Название компетенции"
+                            }
+                        ],
+                        "duration": "Длительность мероприятия",
+                        "venue": "Место проведения",
+                        "format_event": "Формат мероприятия",
+                        "format_task": "Формат задания",
+                        "max_partiсipants": Максимальное количество участников,
+                        "partiсipants": Количество участников,
+                        "count": Вес мероприятия,
+                        "partner": "Название партнера",
+                        "manager_name": "Имя организатора",
+                        "manager_position": "Должность организатора",
+                        "phonenumber": "Номер телефона организатора"
+                    },
+                ]
+            }
++ Response 400 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
 ### Получение информации о мероприятии[POST/event/event/]
 + Request (application/json)
     + Headers
