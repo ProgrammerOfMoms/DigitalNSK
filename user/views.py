@@ -104,6 +104,7 @@ class SignIn(APIView):
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['jwt'] = "%s" % (getJWT(user))
+                    user_details['photo'] = "%s" % (user.photo)
                     if len(user.participant.passedTests.all())==3:
                         user_details['test'] = True
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
