@@ -16,6 +16,7 @@ from user.actions import *
 
 import json
 import copy
+import datetime
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
@@ -147,6 +148,8 @@ class Profile(APIView):
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
+                if res["id"]["photo"] != "":
+                    res["id"]["photo"] = "api.digitalnsk.sibtiger.com/media/"+res["id"]["photo"]
                 return Response(data = res, status = status.HTTP_200_OK)
         
         except User.DoesNotExist:
@@ -160,7 +163,6 @@ class Profile(APIView):
     
     def put(self, request):
         """Обновление профиля"""
-
         try:
             id = ""
             try:
@@ -177,14 +179,17 @@ class Profile(APIView):
                
 
             if user.role == User.PARTICIPANT:
+                if "password" in updateParticipant["id"]:
+                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateParticipant["id"]["password"][0], password = updateParticipant["id"]["password"][1])
+                    updateParticipant["id"].pop("password")
                 user = user.participant
                 serializer = ParticipantSerializer(user, updateParticipant, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
                 data = serializer.data
-                res = {"id": data["id"]}
-                data.pop("id")
-                res.update(data)
+                res = {"id": data["id"], "eduInstitution": data["eduInstitution"], "level": data["level"]}
+                
+                
                 res["jwt"] = getJWT(user.id)
                 return Response(data = res, status = status.HTTP_200_OK)
             
@@ -194,6 +199,9 @@ class Profile(APIView):
             raise(e)
             res = {"error": "Такого пользователя не существует"}
             return Response(data = res, status = status.HTTP_404_NOT_FOUND)
+        except ValueError:
+            res = {"error": "Пароли не совпадают"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             raise(e)
             res = {"error": "Неизвестная ошибка"}

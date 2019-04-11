@@ -76,12 +76,20 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(email = email, password = password, **validate_data)
     
     def update(self, instance, validate_data):
+        if "password" in validate_data:
+            validate_data.pop("password")
+            
         for key in validate_data.keys():
-            if key == "password":
-                instance.set_password(validate_data[key])   
-            else:
-                setattr(instance, key, validate_data[key])
-        
+            setattr(instance, key, validate_data[key])
+
+        instance.save()
+        return instance
+
+    def update_password(self, instance, old_password, password):
+        if instance.check_password(old_password):
+                instance.set_password(password) 
+        else:
+            raise ValueError
         instance.save()
         return instance
 
@@ -149,4 +157,4 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
             "events",
             "progress"
         )
-        depth = 5
+        depth = 1
