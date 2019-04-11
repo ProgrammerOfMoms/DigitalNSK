@@ -308,7 +308,7 @@ class UploadPhoto(APIView):
             photo = request.FILES["photo"]
             link_photo = getPhotoPath(photo = photo, id = id)
             if link_photo:
-                return Response(data = {"photo": "api.digitalnsk.sibtiger.com/media/"+link_photo}, status = status.HTTP_200_OK) 
+                return Response(data = {"photo": "http://api.digitalnsk.sibtiger.com/media/"+link_photo}, status = status.HTTP_200_OK) 
             else:
                 res = {"error": "Пользлвателя с данным id не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
