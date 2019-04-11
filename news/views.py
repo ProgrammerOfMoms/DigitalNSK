@@ -11,5 +11,16 @@ import datetime
 
 
 
+# class News(APIView):
+#     permission_classes = (AllowAny,)
+
+#     def post(self, request):
+#         try:
+#             data = json.loads(request.body.decode("utf-8"))
+#             serializer = 
+
+
+#         except:
+#             pass
 
 
