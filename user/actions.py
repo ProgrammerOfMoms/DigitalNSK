@@ -27,10 +27,10 @@ def getPhotoPath(photo, id):
     f.write(photo.read())
     f.close()
     if not isfirst:
-        path_to_new_photo = incName(path_to_old_photo)
-        os.rename(path_to_old_photo, path_to_new_photo)
-        user.photo = path_to_new_photo[path_to_new_photo.rfind('/')+1:]
-        user.save()
+            path_to_new_photo = incName(path_to_old_photo)
+            os.rename(path_to_old_photo, path_to_new_photo)
+            user.photo = path_to_new_photo[path_to_new_photo.rfind('/')+1:]
+            user.save()
     else:
         user.photo = old_photo
         user.save()
@@ -51,9 +51,7 @@ def incName(photo):
             number = int(number) + 1
         number = str(number)
         j = 0
-        print(number)
         photo = photo[:start]+"("+number+")"
-        os.rename(old_photo, photo)
     return photo
 
 
