@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -7,10 +6,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.utils import jwt_payload_handler, jwt
-from rest_framework.schemas import ManualSchema
 from rest_framework.renderers import JSONRenderer
-import coreapi
-import coreschema
 from DigitalNSK import settings
 from user.actions import *
 
