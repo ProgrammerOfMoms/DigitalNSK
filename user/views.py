@@ -105,7 +105,10 @@ class SignIn(APIView):
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['jwt'] = "%s" % (getJWT(user))
-                    user_details['photo'] = "%s" % (user.photo)
+                    if user.photo!= "":
+                        user_details['photo'] = "http://api.digitalnsk.sibtiger.com/media/"+user.photo
+                    else:
+                        user_details['photo'] = "%s"  % (user.photo)
                     if len(user.participant.passedTests.all())==3:
                         user_details['test'] = True
                     user_logged_in.send(sender=user.__class__, request=request, user=user)
@@ -149,7 +152,7 @@ class Profile(APIView):
                 data.pop("id")
                 res.update(data)
                 if res["id"]["photo"] != "":
-                    res["id"]["photo"] = "api.digitalnsk.sibtiger.com/media/"+res["id"]["photo"]
+                    res["id"]["photo"] = "http://api.digitalnsk.sibtiger.com/media/"+res["id"]["photo"]
                 return Response(data = res, status = status.HTTP_200_OK)
         
         except User.DoesNotExist:
