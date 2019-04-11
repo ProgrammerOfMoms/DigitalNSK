@@ -13,6 +13,7 @@ from DigitalNSK import settings
 from .models import *
 from user.models import *
 from .serialize import *
+from testing.models import Test
 
 import json
 # Create your views here.
@@ -114,14 +115,13 @@ class EventAdd(APIView):
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
 
-class Excel:
+class Excel(APIView):
     permission_classes = (AllowAny,)
 
     def formXSLX(self):
-        import openpyxl, datetime
-        book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "/data.xslx")
-        date = str(datetime.datetime.now().date())
-        sheet = book[date]
+        import openpyxl
+        book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "/data.xlsx")
+        sheet = book[0]
         users = Participant.objects.all()
         sheet['A1'] = "№"
         sheet['B1'] = "Имя"
@@ -133,18 +133,22 @@ class Excel:
         sheet['H1'] = "Баллы"
         index = 2
         for user in users:
-            i = str(index)
-            sheet['A' + i] = index - 1
-            sheet['B' + i] = user.id.firstName
-            sheet['C' + i] = user.id.lastName
-            sheet['D' + i] = user.id.pstronymic
-            sheet['E' + i] = user.eduInstitution
-            sheet['F' + i] = user.level
-            sheet['G' + i] = user.competence.name
-            res = user.passedTests.get(test = Test.objects.get(name = user.competence.name)).competence
-            sheet['H' + i] = eval(res).result
-            index = index + 1
-        book.save(settings.MEDIA_ROOT + "/data.xslx")
+            if (user.id.id > 400):
+                i = str(index)
+                sheet['A' + i] = index - 1
+                sheet['B' + i] = user.id.firstName
+                sheet['C' + i] = user.id.lastName
+                sheet['D' + i] = user.id.patronymic
+                sheet['E' + i] = user.eduInstitution
+                sheet['F' + i] = user.level
+                try:
+                    sheet['G' + i] = user.competence.name
+                    res = user.passedTests.get(test = Test.objects.get(name = user.competence.name)).competence
+                    sheet['H' + i] = eval(res)["result"]
+                except:
+                    sheet['G' + i] = "Нет кометенции"
+                index = index + 1
+        book.save(settings.MEDIA_ROOT + "/data.xlsx")
 
     def get(self, request):
         if "HTTP_ID" in request.META:
@@ -152,7 +156,6 @@ class Excel:
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
                 self.formXSLX()
-
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
