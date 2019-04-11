@@ -119,12 +119,17 @@ class Excel(APIView):
     permission_classes = (AllowAny,)
 
     def formXSLX(self):
-        import openpyxl
+        import openpyxl, os, datetime
+        date = str(datetime.datetime.now().date())
+        path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
         try:
-            book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "/data.xlsx")
+            book = openpyxl.load_workbook(filename = path)
         except:
-            book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "\\data.xlsx")
-        sheet = book[0]
+            book = openpyxl.Workbook()
+        try:
+            sheet = book[date]
+        except KeyError:
+            sheet = book.create_sheet(date)
         users = Participant.objects.all()
         sheet['A1'] = "№"
         sheet['B1'] = "Имя"
@@ -151,10 +156,7 @@ class Excel(APIView):
                 except:
                     sheet['G' + i] = "Нет кометенции"
                 index = index + 1
-        try:
-            book.save(settings.MEDIA_ROOT + "/data.xlsx")
-        except:
-            book.save(settings.MEDIA_ROOT + "\\data.xlsx")
+            book.save(path)
 
     def get(self, request):
         if "HTTP_ID" in request.META:
