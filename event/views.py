@@ -120,7 +120,10 @@ class Excel(APIView):
 
     def formXSLX(self):
         import openpyxl
-        book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "/data.xlsx")
+        try:
+            book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "/data.xlsx")
+        except:
+            book = openpyxl.load_workbook(filename = settings.MEDIA_ROOT + "\\data.xlsx")
         sheet = book[0]
         users = Participant.objects.all()
         sheet['A1'] = "№"
@@ -148,7 +151,10 @@ class Excel(APIView):
                 except:
                     sheet['G' + i] = "Нет кометенции"
                 index = index + 1
-        book.save(settings.MEDIA_ROOT + "/data.xlsx")
+        try:
+            book.save(settings.MEDIA_ROOT + "/data.xlsx")
+        except:
+            book.save(settings.MEDIA_ROOT + "\\data.xlsx")
 
     def get(self, request):
         if "HTTP_ID" in request.META:
