@@ -38,20 +38,19 @@ def getPhotoPath(photo, id):
     return user.photo
 
 def incName(photo):
-    if photo[-1] != ")":
-        photo = photo + "(1)"
+    if photo.find("_") == -1:
+        photo = photo + "_1"
     else:
         old_photo = copy.copy(photo)
-        start = photo.find("(")
-        end = photo.find(")")
+        start = photo.find("_")
         number = ""
-        for i in range(start+1, end):
+        for i in range(start+1, len(photo)):
             number = number + photo[i]
         if number.isdigit:
             number = int(number) + 1
         number = str(number)
         j = 0
-        photo = photo[:start]+"("+number+")"
+        photo = photo[:start]+"_"+number
     return photo
 
 
