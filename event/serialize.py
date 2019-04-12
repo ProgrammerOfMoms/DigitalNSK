@@ -17,7 +17,9 @@ class CompetenceSerializer(serializers.ModelSerializer):
         model = Competence
         fields = (
             "id",
-            "name"
+            "name",
+            "level",
+            "parent"
         )
 
 class PointSerializer(serializers.ModelSerializer):
