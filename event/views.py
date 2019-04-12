@@ -95,7 +95,7 @@ class EventInfo(APIView):
             return Response(data = res.data, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
-    
+
 
 #Администратор
 class EventAdd(APIView):

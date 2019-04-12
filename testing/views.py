@@ -17,75 +17,93 @@ from .serialize import *
 import json
 
 def test1(data, user):
+    flag = True
     if "answers" in data:
         test = Test.objects.get(mode = 1)
-        temp = test.groups.exclude(name = "Ничего")
-        types = []
-        for _type in temp:
-            types.append(_type.name)
-        length = len(types)
-        val = [0] * length
-        for answer in data["answers"]:
-            group = Group.objects.get(id = answer).key - 1
-            if group < length:
-                if group != -1:
-                    val[group] = val[group] + 1
-        res = {
-            "types": types,
-            "values": val
-        }
-        result = ResultOfTest.objects.create(competence = str(res), test = test)
-        user.passedTests.add(result)
+        mas = user.passedTests.all()
+        for item in mas:
+            if item.test == test:
+                flag = False
+                break
+        if flag:
+            temp = test.groups.exclude(name = "Ничего")
+            types = []
+            for _type in temp:
+                types.append(_type.name)
+            length = len(types)
+            val = [0] * length
+            for answer in data["answers"]:
+                group = Group.objects.get(id = answer).key - 1
+                if group < length:
+                    if group != -1:
+                        val[group] = val[group] + 1
+            res = {
+                "types": types,
+                "values": val
+            }
+            result = ResultOfTest.objects.create(competence = str(res), test = test)
+            user.passedTests.add(result)
+        else:
+            res = {"error": "Пользователь уже проходил данный тест"}
     else:
         res = {"error": "Отсутствуют необходимые поля"}
     return res
 
 def test2(data, user):
+    flag = True
     if "answers" in data:
-        answers = data["answers"]
         test = Test.objects.get(mode = 2)
-        groups = test.groups.all()
-        nameOfGroups = [" "]*len(groups)
-        val = [0] * len(groups)
-        for group in groups:
-            nameOfGroups[group.key-1] = group.name
-        for answer in data["answers"]:
-            val[answer-1] = val[answer-1] + 1
+        mas = user.passedTests.all()
+        for item in mas:
+            if item.test == test:
+                flag = False
+                break
+        if flag:
+            answers = data["answers"]
+            groups = test.groups.all()
+            nameOfGroups = [" "]*len(groups)
+            val = [0] * len(groups)
+            for group in groups:
+                nameOfGroups[group.key-1] = group.name
+            for answer in data["answers"]:
+                val[answer-1] = val[answer-1] + 1
 
-        maximum = max(val)
-        maxI = val.index(maximum)
-        if val.count(maximum) == 1:
-            res = {
-                "additional": False,
-                "types": nameOfGroups,
-                "values": val
-            }
-            competence = Competence.objects.get(name = nameOfGroups[maxI])
-            competence.participant.add(user)
-            #user.competence.add(competence)
-            result = ResultOfTest.objects.create(competence = str(res), test = test)
-            user.passedTests.add(result)
-        else:
-            types = [maxI]
-            for  i in range(maxI+1,len(groups)):
-                if maximum == val[i]:
-                    types.append(i)
-            addQuestion = test.additionalQuestion
-            mas = []
-            answers = addQuestion.answers.all()
-            for item in types:
-                group = {
-                    "types": answers[item].content,
-                    "group": answers[item].group.id
+            maximum = max(val)
+            maxI = val.index(maximum)
+            if val.count(maximum) == 1:
+                res = {
+                    "additional": False,
+                    "types": nameOfGroups,
+                    "values": val
                 }
-                mas.append(group)
-            res = {
-                "additional": True,
-                "values": val,
-                "types": nameOfGroups,
-                "description": addQuestion.content,
-                "questions": mas
-            }
+                competence = Competence.objects.get(name = nameOfGroups[maxI])
+                competence.participant.add(user)
+                #user.competence.add(competence)
+                result = ResultOfTest.objects.create(competence = str(res), test = test)
+                user.passedTests.add(result)
+            else:
+                types = [maxI]
+                for  i in range(maxI+1,len(groups)):
+                    if maximum == val[i]:
+                        types.append(i)
+                addQuestion = test.additionalQuestion
+                mas = []
+                answers = addQuestion.answers.all()
+                for item in types:
+                    group = {
+                        "types": answers[item].content,
+                        "group": answers[item].group.id
+                    }
+                    mas.append(group)
+                res = {
+                    "additional": True,
+                    "values": val,
+                    "types": nameOfGroups,
+                    "description": addQuestion.content,
+                    "questions": mas
+                }
+        else:
+            res = {"error": "Пользователь уже проходил данный тест"}
     else:
         res = {"error": "Отсутствуют необходимые поля"}
     return res
@@ -108,16 +126,25 @@ def test2(data, user):
 
 def test3(data, user):
         try:
+            flag = True
+            id = data["id"] 
+            test = Test.objects.get(id = id)
+            sum = 0
             if "answers" in data:
-                id = data["id"] 
-                test = Test.objects.get(id = id)
-                sum = 0
-                for answer in data["answers"]:
-                    sum = sum + Group.objects.get(id = answer).key
-                sum = sum * 5 / len(data["answers"])
-                res = {"result": sum}
-                result = ResultOfTest.objects.create(competence = str(res), test = test)
-                user.passedTests.add(result)
+                mas = user.passedTests.all()
+                for item in mas:
+                    if item.test == test:
+                        flag = False
+                        break
+                if flag:
+                    for answer in data["answers"]:
+                        sum = sum + Group.objects.get(id = answer).key
+                    sum = sum * 5 / len(data["answers"])
+                    res = {"result": sum}
+                    result = ResultOfTest.objects.create(competence = str(res), test = test)
+                    user.passedTests.add(result)
+                else:
+                    res = {"error": "Пользователь уже проходил данный тест"}
             else:
                 res = {"error": "Отсутствуют необходимые поля"}
             return res
