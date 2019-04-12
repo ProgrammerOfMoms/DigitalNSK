@@ -208,25 +208,25 @@ class Testing(APIView):
                     user = Participant.objects.get(id = id)
                     if data["type"] == 1:
                         res = test1(data = data, user = user)
-                        if "error" in res:
+                        if res == None:
+                            return Response(status = status.HTTP_200_OK)
+                        elif "error" in res:
                             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response(data = res, status = status.HTTP_200_OK)
                     elif data["type"] == 2:
                         res = test2(data = data, user = user)
-                        if "error" in res:
+                        if res == None:
+                            return Response(status = status.HTTP_200_OK)
+                        elif "error" in res:
                             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response(data = res, status = status.HTTP_200_OK)
                     elif data["type"] == 3:
                         res = test3(data = data, user = user)
-                        if "error" in res:
-                            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
-                        else:
-                            return Response(data = res, status = status.HTTP_200_OK)
-                    if data["type"] == 0:
-                        res = test0(data = data, user = user)
-                        if "error" in res:
+                        if res == None:
+                            return Response(status = status.HTTP_200_OK)
+                        elif "error" in res:
                             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response(data = res, status = status.HTTP_200_OK)
