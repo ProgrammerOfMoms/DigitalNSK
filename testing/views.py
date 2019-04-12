@@ -144,7 +144,7 @@ def test3(data, user):
                     result = ResultOfTest.objects.create(competence = str(res), test = test)
                     user.passedTests.add(result)
                 else:
-                    res = {"error": "Пользователь уже проходил данный тест"}
+                    res = None
             else:
                 res = {"error": "Отсутствуют необходимые поля"}
             return res

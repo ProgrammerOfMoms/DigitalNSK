@@ -141,22 +141,38 @@ class Excel(APIView):
         sheet['H1'] = "Баллы"
         index = 2
         for user in users:
-            if (user.id.id > 400):
+            if (user.id_id > 400):
+                person = user.id
                 i = str(index)
+                comp = user.competence
                 sheet['A' + i] = index - 1
-                sheet['B' + i] = user.id.firstName
-                sheet['C' + i] = user.id.lastName
-                sheet['D' + i] = user.id.patronymic
+                sheet['B' + i] = person.firstName
+                sheet['C' + i] = person.lastName
+                sheet['D' + i] = person.patronymic
                 sheet['E' + i] = user.eduInstitution
                 sheet['F' + i] = user.level
-                try:
-                    sheet['G' + i] = user.competence.name
-                    res = user.passedTests.get(test = Test.objects.get(name = user.competence.name)).competence
-                    sheet['H' + i] = eval(res)["result"]
-                except:
+                if  comp == None:
                     sheet['G' + i] = "Нет кометенции"
+                else:
+                    sheet['G' + i] = comp.name
+                    try:
+                        res = user.passedTests.get(test = Test.objects.get(name = comp.name)).competence
+                        sheet['H' + i] = int(eval(res)["result"])
+                    except:
+                        sheet['H' + i] = 0
                 index = index + 1
             book.save(path)
+
+    # def error(self):
+    #     users = Participant.objects.all()
+    #     res = []
+    #     for user in users:
+    #         try:
+    #             if len(user.passedTests.filter(test = Test.objects.get(name = user.competence.name))) > 1:
+    #                 res.append(user.id_id)
+    #         except:
+    #             print(1)
+    #     print(res)
 
     def get(self, request):
         if "HTTP_ID" in request.META:
@@ -164,6 +180,7 @@ class Excel(APIView):
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
                 self.formXSLX()
+                #self.error()
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
