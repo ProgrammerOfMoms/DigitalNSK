@@ -76,7 +76,6 @@ class SignUp(APIView):
                 send_confirmation_mail.after_response(email = res["id"]["email"], link = data[0])
             return Response(data = res, status=status.HTTP_201_CREATED)
         except Exception as e:
-            raise e
             res = {'error': 'Не удалось зарегистрировать пользователя'}
             return Response(data = res, status=status.HTTP_403_FORBIDDEN)
 
