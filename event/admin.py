@@ -12,7 +12,9 @@ admin.site.register(EventStage, EventStageAdmin)
 class CompetenceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "name"
+        "name",
+        "level",
+        "parent"
     )
 
 admin.site.register(Competence, CompetenceAdmin)
