@@ -139,7 +139,6 @@ class Profile(APIView):
         try:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
-            print(user)
 
             if user.role == User.PARTICIPANT:
                 user = user.participant
