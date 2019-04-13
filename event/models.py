@@ -22,7 +22,7 @@ class Competence(models.Model):
         verbose_name_plural = "Компетенции"
 
     def __str__(self):
-        return "id: {}, name: {}".format(self.id, self.name)
+        return "id: {}, name: {}, level: {}, parent: {}".format(self.id, self.name, self.level, self.parent)
 
 class Point(models.Model):
     """Балл за участие в мероприятии"""
