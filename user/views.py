@@ -100,8 +100,13 @@ class SignIn(APIView):
                     user_details['firstName'] = "%s" % (user.firstName)
                     user_details['lastName'] = "%s" % (user.lastName)
                     user_details['jwt'] = "%s" % (getJWT(user))
+                    """
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    """
                     if user.photo!= "":
-                        user_details['photo'] = "http://api.digitalnsk.sibtiger.com/media/"+user.photo
+                        user_details['photo'] = "https://digitalnsk.ru:8000/media/"+user.photo
                     else:
                         user_details['photo'] = "%s"  % (user.photo)
                     if len(user.participant.passedTests.all())==3:
@@ -130,24 +135,27 @@ class Profile(APIView):
 
     def get(self, request):
         """Получение информации о пользователе"""
-        
+
         try:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             print(user)
 
             if user.role == User.PARTICIPANT:
-                print(user)
                 user = user.participant
-                print(user)
                 serializer = ParticipantSerializer(user)
                 
                 data = serializer.data
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
+                """
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                """
                 if res["id"]["photo"] != "":
-                    res["id"]["photo"] = "http://api.digitalnsk.sibtiger.com/media/"+res["id"]["photo"]
+                    res["id"]["photo"] = "https://digitalnsk.ru:8000/media/"+res["id"]["photo"]
                 return Response(data = res, status = status.HTTP_200_OK)
         
         except User.DoesNotExist:
@@ -306,8 +314,13 @@ class UploadPhoto(APIView):
             id = request.META["HTTP_ID"]
             photo = request.FILES["photo"]
             link_photo = getPhotoPath(photo = photo, id = id)
+            """
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            """
             if link_photo:
-                return Response(data = {"photo": "http://api.digitalnsk.sibtiger.com/media/"+link_photo}, status = status.HTTP_200_OK) 
+                return Response(data = {"photo": "https://digitalnsk.ru:8000/media/"+link_photo}, status = status.HTTP_200_OK) 
             else:
                 res = {"error": "Пользлвателя с данным id не существует"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
@@ -320,8 +333,13 @@ class UploadPhoto(APIView):
         try:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
+            """
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            """
             if user.photo != "":
-                res = {"photo": "http://api.digitalnsk.sibtiger.com/media/"+user.photo}
+                res = {"photo": "https://digitalnsk.ru:8000/media/"+user.photo}
             else:
                 res = {"photo": None}
             return Response(data = res, status = status.HTTP_200_OK)

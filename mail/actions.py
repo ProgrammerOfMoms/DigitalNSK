@@ -10,7 +10,7 @@ import string
 def send_confirmation_mail(email, link):
     """Отправка письма для подтверждения email"""
 
-    link = "http://digitalnsk.ru/?hash="+link
+    link = "https://digitalnsk.ru?hash="+link
 
     f = open(settings.STATIC_ROOT+"/mail/confirm_registration.html", 'r')
     html = f.read()
@@ -30,7 +30,7 @@ def send_confirmation_mail(email, link):
 def send_password_recovery_link(email, link):
     """Отправка письма со ссылкой на восстановление пароля"""
 
-    link = "http://digitalnsk.ru/recovery/?hash="+link
+    link = "https://digitalnsk.ru?hash="+link
     #email = "slamvsem@gmail.com" #it's temp line
 
     f = open(settings.STATIC_ROOT+"/mail/recovery.html", 'r')
