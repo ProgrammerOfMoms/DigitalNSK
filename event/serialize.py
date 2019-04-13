@@ -17,10 +17,12 @@ class CompetenceSerializer(serializers.ModelSerializer):
         model = Competence
         fields = (
             "id",
-            "name",
-            "level",
-            "parent"
+            "name"
         )
+
+    def create(self,validate_data):
+        print("competence")
+        return Competence.objects.create(**validate_data)
 
 class PointSerializer(serializers.ModelSerializer):
     """Сериализация баллов"""
@@ -35,6 +37,7 @@ class PointSerializer(serializers.ModelSerializer):
 
     def create(self,validate_data):
         competence = validate_data.get("competence")
+        competence = CompetenceSerializer(competence)
         validate_data.pop("competence")
         return Event.objects.create(competence = competence, **validate_data)
 
@@ -67,8 +70,16 @@ class EventSerializer(serializers.ModelSerializer):
         depth = 5
 
     def create(self,validate_data):
-        competence = validate_data.get("competence")
-        inherent_competence = validate_data.get("points")
+        competences = validate_data.get("competence")
+        masComp = []
+        for competence in competences:
+            masComp.append(CompetenceSerializer(competence))
+        competence = {"competence": masComp}
+        points = validate_data.get("points")
+        masPoint = []
+        for competence in competences:
+            masPoint.append(PointSerializer(points))
+        points = {"points": masPoint}
         validate_data.pop("competence")
         validate_data.pop("points")
         return Event.objects.create(competence = competence, points = points, **validate_data)

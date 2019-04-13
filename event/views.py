@@ -29,19 +29,24 @@ class EventList(APIView):
             usr = User.objects.get(id = id)
             if usr.role == User.ADMINISTRATOR:
                 events = Event.objects.all()
-                return Response(data = events, status = status.HTTP_200_OK)
+                data = []
+                for event in events:
+                    data.append(EventSerializer(event).data)
+                res = {"list": data}
+                return Response(data = res, status = status.HTTP_200_OK)
             else:
                 if "date" in request.GET:
                     user = Participant.objects.get(id = id)
                     events = Event.objects.filter(date = request.GET["date"], competence = user.competence)
-                    res = []
+                    data = []
                     progresses = user.events.all()
                     for event in events:
                         for  progress in progresses:
                             if progress.event == event:
                                 flag = False
                         if flag:
-                            res.append(EventSerializer(event).data)
+                            data.append(EventSerializer(event).data)
+                    res = {"list": data}
                     return Response(data = res, status = status.HTTP_200_OK)
                 else:
                     return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
@@ -53,12 +58,13 @@ class SignUpEvent(APIView):
 
     def get(self, request):
         if "HTTP_ID" in request.META:
-            res = []
+            data = []
             id = request.META["HTTP_ID"]
             user = Participant.objects.get(id = id)
             progresses = user.events.all()
             for  progress in progresses:
-                res.append(EventSerializer(progress.event).data)
+                data.append(EventSerializer(progress.event).data)
+            res = {"list": data}
             return Response(data = res, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
@@ -86,16 +92,17 @@ class SignUpEvent(APIView):
 class EventInfo(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request):
-        data = json.loads(request.body.decode("utf-8"))
-        if "event" in data:
-            event_id = data["event"]
+    def get(self, request):
+        if "event" in request.GET:
+            event_id = request.GET["event"]
             event = Event.objects.get(id = event_id)
             res = EventSerializer(event)
-            return Response(data = res.data, status = status.HTTP_200_OK)
+            data = res.data
+            res = {"id": data}
+            res.update(data)
+            return Response(data = res, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
-
 
 #Администратор
 class EventAdd(APIView):
@@ -107,7 +114,9 @@ class EventAdd(APIView):
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
-                res = EventSerializer(data)
+                serializer = EventSerializer(data = data)
+                serializer.is_valid()
+                serializer.save()
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
