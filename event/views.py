@@ -148,6 +148,7 @@ class Excel(APIView):
         sheet['F1'] = "Класс/курс"
         sheet['G1'] = "Компетенция"
         sheet['H1'] = "Баллы"
+        sheet['I1'] = "Базовые компетенции"
         index = 2
         for user in users:
             if (user.id_id > 400):
@@ -160,6 +161,21 @@ class Excel(APIView):
                 sheet['D' + i] = person.patronymic
                 sheet['E' + i] = user.eduInstitution
                 sheet['F' + i] = user.level
+                try:
+                    listComp = ""
+                    res = eval(user.passedTests.get(test = Test.objects.get(mode = 1)).competence)
+                    types = res["types"]
+                    values = res["values"]
+                    k = 0
+                    for type in types:
+                        if values[k] == 1:
+                            listComp = listComp + type + ", "
+                        k = k + 1
+                except:
+                    listComp = "Нет компетенций"
+                if listComp == "":
+                    listComp = "Нет компетенций"
+                sheet['I' + i] = listComp
                 if  comp == None:
                     sheet['G' + i] = "Нет кометенции"
                 else:

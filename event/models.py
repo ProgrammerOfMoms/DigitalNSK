@@ -14,7 +14,7 @@ class EventStage(models.Model):
 
 class Competence(models.Model):
     """Компетенция"""
-    name   = models.CharField(max_length = 50, verbose_name = "Название")
+    name   = models.CharField(max_length = 80, verbose_name = "Название")
     level  = models.IntegerField(verbose_name = "Уровень", default = 1)
     parent = models.IntegerField(verbose_name = "Родитель(id)", blank = True, default = 0)
     class Meta:
