@@ -24,7 +24,7 @@ class SideCompetenceAdd(models.Model):
 
 class BaseCompetence(models.Model):
     name            = models.CharField(max_length = 50, verbose_name = "Название")
-    subCompetence   = models.ManyToManyField(SideCompetenceAdd, verbose_name = "Субкомпетенции 2 уровня", related_name = "baseComp")
+    subCompetence   = models.ManyToManyField(SideCompetence, verbose_name = "Субкомпетенции 3 уровня", related_name = "baseComp")
 
     class Meta:
         verbose_name        = "Базовая компетенция"
