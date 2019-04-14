@@ -1,14 +1,37 @@
 from django.contrib import admin
 from .models import *
 
-class EventStageAdmin(admin.ModelAdmin):
+class SideCompetenceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name"
     )
 
-admin.site.register(EventStage, EventStageAdmin)
+admin.site.register(SideCompetence, SideCompetenceAdmin)
 
+class SideCompetenceAddAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+    )
+
+admin.site.register(SideCompetenceAdd, SideCompetenceAddAdmin)
+
+class MainCompetenceAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name"
+    )
+
+admin.site.register(MainCompetence, MainCompetenceAdmin)
+
+class BaseCompetenceAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name"
+    )
+
+admin.site.register(BaseCompetence, BaseCompetenceAdmin)
 class CompetenceAdmin(admin.ModelAdmin):
     list_display = (
         "id",

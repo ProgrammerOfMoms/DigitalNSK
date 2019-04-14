@@ -1,13 +1,45 @@
 from django.db import models
 from testing.models import Group
 
-class EventStage(models.Model):
-    """Этап мероприятия"""
-    name = models.CharField(max_length = 50, verbose_name = "Название")
+class SideCompetence(models.Model):
+    name            = models.CharField(max_length = 50, verbose_name = "Название")
 
     class Meta:
-        verbose_name        = "Этап мероприятия"
-        verbose_name_plural = "Этапы мероприятия"
+        verbose_name        = "Субкомпетенция 3 уровня"
+        verbose_name_plural = "Субкомпетенции 3 уровня"
+
+    def __str__(self):
+        return "id: {}, name: {}".format(self.id, self.name)
+
+class SideCompetenceAdd(models.Model):
+    name            = models.CharField(max_length = 50, verbose_name = "Название")
+    subCompetence   = models.ManyToManyField(SideCompetence, verbose_name = "Субкомпетенции 3 уровня", related_name = "sideCompAdd")
+
+    class Meta:
+        verbose_name        = "Субкомпетенция 2 уровня"
+        verbose_name_plural = "Субкомпетенции 2 уровня"
+
+    def __str__(self):
+        return "id: {}, name: {}".format(self.id, self.name)
+
+class BaseCompetence(models.Model):
+    name            = models.CharField(max_length = 50, verbose_name = "Название")
+    subCompetence   = models.ManyToManyField(SideCompetenceAdd, verbose_name = "Субкомпетенции 2 уровня", related_name = "baseComp")
+
+    class Meta:
+        verbose_name        = "Базовая компетенция"
+        verbose_name_plural = "Базовые компетенции"
+
+    def __str__(self):
+        return "id: {}, name: {}".format(self.id, self.name)
+
+class MainCompetence(models.Model):
+    name            = models.CharField(max_length = 50, verbose_name = "Название")
+    subCompetence   = models.ManyToManyField(SideCompetenceAdd, verbose_name = "Субкомпетенции 2 уровня", related_name = "mainComp", blank = True)
+
+    class Meta:
+        verbose_name        = "Основная компетенция"
+        verbose_name_plural = "Основные компетенции"
 
     def __str__(self):
         return "id: {}, name: {}".format(self.id, self.name)
@@ -61,4 +93,3 @@ class Event(models.Model):
 
     def __str__(self):
         return "id: {}, name: {}".format(self.id, self.name)
-
