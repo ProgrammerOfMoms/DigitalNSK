@@ -45,7 +45,6 @@ admin.site.register(Competence, CompetenceAdmin)
 class PointAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "competence",
         "value"
     )
 

@@ -58,7 +58,7 @@ class Competence(models.Model):
 
 class Point(models.Model):
     """Балл за участие в мероприятии"""
-    competence = models.ForeignKey(Competence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "point")
+    competence = models.ForeignKey(SideCompetence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "point", null = True)
     value      = models.IntegerField(verbose_name = "Кол-во баллов")
     
     class Meta:
@@ -73,8 +73,8 @@ class Event(models.Model):
     name                = models.CharField(max_length = 50, verbose_name = "Название")
     img                 = models.URLField(verbose_name = "Изображение", blank = True, null = True)
     description         = models.TextField(verbose_name = "Описание", blank = True, null = True)
-    competence          = models.ManyToManyField(Competence, verbose_name = "Полезно знать до мероприятия", related_name = "event")
-    points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add")
+    competence          = models.ManyToManyField(SideCompetence, verbose_name = "Полезно знать до мероприятия", related_name = "event", blank = True)
+    points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add", blank = True)
     date                = models.CharField(max_length = 10, null = True, verbose_name = "Дата проведения")
     time                = models.CharField(max_length = 5, null = True, verbose_name = "Время проведения")
     venue               = models.TextField(verbose_name = "Место проведения", null = True)
