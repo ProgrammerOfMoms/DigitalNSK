@@ -114,7 +114,7 @@ class EventSerializer(serializers.ModelSerializer):
             "date",
             "time",
             "description",
-            "mainCompetence"
+            "mainCompetence",
             "competence",
             "points",
             "venue",
