@@ -4,5 +4,6 @@ from .views import *
 
 
 urlpatterns = [
-    path('', Testing.as_view())
+    path('', Testing.as_view()),
+    path('ger/', func.as_view())
 ]

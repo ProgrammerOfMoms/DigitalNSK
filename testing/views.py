@@ -243,3 +243,17 @@ class Testing(APIView):
             res = {"error": "Не указан id пользователя"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             
+class func(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        users = Participant.objects.all()
+        test = Test.objects.get(mode = 2)
+        for user in users:
+            if len(user.passedTests.filter(test = test)) == 1:
+                result = eval(user.passedTests.get(test = test).competence)
+                t = result["types"]
+                v = result["values"]
+                competence = Competence.objects.get(name = t[v.index(max(v))])
+                competence.participant.add(user)
+        return Response(status = status.HTTP_200_OK)        
