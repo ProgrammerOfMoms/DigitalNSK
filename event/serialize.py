@@ -103,6 +103,7 @@ class EventSerializer(serializers.ModelSerializer):
     #description         = EventStageSerializer(many = True)
     competence          = SideCompetenceSerializer(many = True)
     points              = PointSerializer(many = True)
+    mainCompetence      = MainCompetenceSerializer(many = True)
 
     class Meta:
         model = Event
@@ -113,6 +114,7 @@ class EventSerializer(serializers.ModelSerializer):
             "date",
             "time",
             "description",
+            "mainCompetence"
             "competence",
             "points",
             "venue",
@@ -127,6 +129,11 @@ class EventSerializer(serializers.ModelSerializer):
         depth = 5
 
     def create(self,validate_data):
+        mainCompetences = validate_data.get("mainCompetence")
+        masComp = []
+        for competence in mainCompetences:
+            masComp.append(MainCompetenceSerializer(competence))
+        mainCompetences = {"mainCompetence": masComp}
         competences = validate_data.get("competence")
         masComp = []
         for competence in competences:
@@ -139,4 +146,4 @@ class EventSerializer(serializers.ModelSerializer):
         points = {"points": masPoint}
         validate_data.pop("competence")
         validate_data.pop("points")
-        return Event.objects.create(competence = competence, points = points, **validate_data)
+        return Event.objects.create(mainCompetence = mainCompetences, competence = competence, points = points, **validate_data)
