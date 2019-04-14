@@ -86,8 +86,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-
-
 class Progress(models.Model):
     """Модель прогресса участника"""
 
@@ -96,8 +94,6 @@ class Progress(models.Model):
     class Meta:
         verbose_name        = "Прогресс"
         verbose_name_plural = "Прогресс"
-
-
 
 class Participant(models.Model):
     """Модель участника"""
@@ -121,7 +117,9 @@ class Participant(models.Model):
 
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
     eduInstitution  = models.CharField(max_length = 50,verbose_name = "Учебное учреждение", blank = True, null = True)
-    competence      = models.ForeignKey(Competence, verbose_name = "Компетенция", null = True, blank = True, on_delete = models.CASCADE, related_name= "participant" )
+    baseCompetences = models.ManyToManyField(Competence, verbose_name = "Базовые компетенции", blank = True, related_name= "participant_b")
+    mainCompetence  = models.ForeignKey(Competence, verbose_name = "Основная компетенция", null = True, blank = True, on_delete = models.CASCADE, related_name= "participant_m" )
+    sideCompetences = models.ManyToManyField(Competence, verbose_name = "Побочные компетенции", blank = True, related_name= "participant_s")
     level           = models.CharField(choices = CHOICES_OF_LEVEL, default = CLASS_8, verbose_name = "Класс/курс", max_length = 20, blank = True)
 
     vkURL           = models.URLField(verbose_name= "Ссылка на vkontakte", blank = True)
