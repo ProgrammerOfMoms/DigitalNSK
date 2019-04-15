@@ -98,6 +98,18 @@ class UserSerializer(serializers.ModelSerializer):
 class ParticipantSerializer(DynamicFieldsModelSerializer):
     """Сериализация участника"""
 
+    class Meta:
+        model = Participant
+        fields = (
+            "id",
+            "eduInstitution",
+            "level",
+            "vkURL",
+            "instURL",
+            "fbURL",
+        )
+        depth = 1
+
     id              = UserSerializer()
     #eduInstitution  = InstitutionSerializer()
     #passedTests     = ResultOfTestSerializer(many = True)
@@ -144,17 +156,4 @@ class ParticipantSerializer(DynamicFieldsModelSerializer):
         return instance
 
 
-    class Meta:
-        model = Participant
-        fields = (
-            "id",
-            "eduInstitution",
-            "level",
-            "vkURL",
-            "instURL",
-            "fbURL",
-            "passedTests",
-            "events",
-            "progress"
-        )
-        depth = 1
+    

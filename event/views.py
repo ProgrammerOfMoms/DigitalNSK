@@ -107,6 +107,26 @@ class EventInfo(APIView):
 class EventAdd(APIView):
     permission_classes = (AllowAny,)
 
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                mas = MainCompetence.objects.all()
+                data = []
+                for item in mas:
+                    data.append(MainCompetenceSerializer(item).data)
+                temp = []
+                mas = BaseCompetence.objects.all()
+                for item in mas:
+                    temp.append(BaseCompetenceSerializer(item).data)
+                res = {"mainCompetence": data, "baseCompetence": temp}
+                return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
     def post(self, request):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
@@ -115,7 +135,6 @@ class EventAdd(APIView):
             if user.role == User.ADMINISTRATOR:
                 serializer = EventSerializer(data = data)
                 serializer.is_valid(raise_exception = True)
-
                 serializer.save()
                 return Response(status = status.HTTP_200_OK)
             else:

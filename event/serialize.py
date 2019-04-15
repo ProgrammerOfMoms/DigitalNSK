@@ -23,32 +23,13 @@ class SideCompetenceAddSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            "subCompetence"
         )
 
     def create(self,validate_data):
-        competence = validate_data.get("subCompetence")
-        competence = SideCompetenceSerializer(competence)
-        validate_data.pop("subCompetence")
-        return SideCompetenceAdd.objects.create(subCompetence = competence, **validate_data)
-
-class BaseCompetenceSerializer(serializers.ModelSerializer):
-    """Сериализация компетенции"""
-    subCompetence = SideCompetenceAddSerializer(many = True)
-
-    class Meta:
-        model = BaseCompetence
-        fields = (
-            "id",
-            "name",
-            "subCompetence"
-        )
-
-    def create(self,validate_data):
-        competence = validate_data.get("subCompetence")
-        competence = SideCompetenceAddSerializer(competence)
-        validate_data.pop("subCompetence")
-        return BaseCompetence.objects.create(subCompetence = competence, **validate_data)
+        #competence = validate_data.get("subCompetence")
+        #competence = SideCompetenceSerializer(competence)
+        #validate_data.pop("subCompetence")
+        return SideCompetenceAdd.objects.create(**validate_data)
 
 class MainCompetenceSerializer(serializers.ModelSerializer):
     """Сериализация компетенции"""
@@ -58,7 +39,7 @@ class MainCompetenceSerializer(serializers.ModelSerializer):
         model = MainCompetence
         fields = (
             "id",
-            "name",
+            "name"
         )
 
     def create(self,validate_data):

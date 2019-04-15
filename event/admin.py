@@ -25,13 +25,6 @@ class MainCompetenceAdmin(admin.ModelAdmin):
 
 admin.site.register(MainCompetence, MainCompetenceAdmin)
 
-class BaseCompetenceAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name"
-    )
-
-admin.site.register(BaseCompetence, BaseCompetenceAdmin)
 class CompetenceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
