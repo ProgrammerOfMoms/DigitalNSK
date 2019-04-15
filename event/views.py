@@ -181,7 +181,7 @@ class Excel(APIView):
             if (user.id_id > 400):
                 person = user.id
                 i = str(index)
-                comp = user.competence
+                comp = user.mainCompetence
                 sheet['A' + i] = index - 1
                 sheet['B' + i] = person.firstName
                 sheet['C' + i] = person.lastName
