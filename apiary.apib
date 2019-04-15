@@ -559,3 +559,55 @@ HOST: http://digitalnsk.sibtiger.com:5000/
             {
                 "error": текст ошибки
             }
+
+### Получение списка мероприятий[POST/event/signup/]
+##### на которые пользователь загестрирован
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+    + Body
+            {
+                "name": "Название",
+                "img": "Ссылка на изображение",
+                "date": "Дата в формате DD.MM.YYYY",
+                "time": "Время в формате HH:MM",
+                "description": "Описание",
+                "mainCompetence": [ массив основных компетенций
+                    {
+                        "name": "Название компетенции"
+                    }
+                ],
+                "competence": [ массив компетенций
+                    {
+                        "name": "Название компетенции"
+                    }
+                ],
+                "points": [ массив выходных компетенций
+                    {
+                        "value": Баллы за входные кометенции,
+                        "competence": {
+                            "name": "Название компетенции"
+                        }
+                    },
+                ],
+                "venue": "Место проведения",
+                "format_event": "Формат мероприятия",
+                "max_partiсipants": "Максимальное количество участников",
+                "partiсipants": "Количество участников",
+                "partner": "Партнер",
+                "manager_name": "Имя организатора",
+                "manager_position": "Должность организатора",
+                "phonenumber": "Телефон организатора"
+            }
+
++ Response 200 (application/json)
+    + Body
+            {
+                "data": null
+            }
+
++ Response 400 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
