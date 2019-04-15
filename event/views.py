@@ -112,15 +112,20 @@ class EventAdd(APIView):
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
-                mas = MainCompetence.objects.all()
-                data = []
+                main = MainCompetence.objects.filter(isBase = False)
+                mas = SideCompetence.objects.all()
+                data1 = {}
+                for item in main:
+                    data1[item.name] = []
+                data2 = []
                 for item in mas:
-                    data.append(MainCompetenceSerializer(item).data)
-                temp = []
-                mas = BaseCompetence.objects.all()
-                for item in mas:
-                    temp.append(BaseCompetenceSerializer(item).data)
-                res = {"mainCompetence": data, "baseCompetence": temp}
+                    print(item)
+                    temp = item.overCompetence.overCompetence
+                    if temp.isBase == True:
+                        data2.append(item.name)
+                    else:
+                        data1[temp.name].append(item.name)
+                res = {"mainCompetencies": data1, "baseCompetencies": data2}
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
