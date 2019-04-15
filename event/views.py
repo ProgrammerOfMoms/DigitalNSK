@@ -119,13 +119,16 @@ class EventAdd(APIView):
                     data1[item.name] = []
                 data2 = []
                 for item in mas:
-                    print(item)
                     temp = item.overCompetence.overCompetence
                     if temp.isBase == True:
                         data2.append(item.name)
                     else:
                         data1[temp.name].append(item.name)
-                res = {"mainCompetencies": data1, "baseCompetencies": data2}
+                data = []
+                for item in main:
+                    temp = {"competence": item.name, "subCompetencies": data1[item.name]}
+                    data.append(temp)
+                res = {"mainCompetencies": data, "baseCompetencies": data2}
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
