@@ -76,7 +76,7 @@ def test2(data, user):
                     "types": nameOfGroups,
                     "values": val
                 }
-                competence = Competence.objects.get(name = nameOfGroups[maxI])
+                competence = MainCompetence.objects.get(name = nameOfGroups[maxI])
                 competence.participant.add(user)
                 #user.competence.add(competence)
                 result = ResultOfTest.objects.create(competence = str(res), test = test)
@@ -172,7 +172,7 @@ class Testing(APIView):
                         data.pop("id")
                         res.update(data)
                     else:
-                        test = Test.objects.get(name = user.competence.name)
+                        test = Test.objects.get(name = user.mainCompetence.name)
                         serializer = TestSerializer(test)
                         data = serializer.data
                         res = {"id": data["id"]}
@@ -188,7 +188,7 @@ class Testing(APIView):
                         data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(mode = 2))).data
                         res["test2"] = eval(data["competence"])
                     if length >= 3:
-                        data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(name = user.competence.name))).data
+                        data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(name = user.mainCompetence.name))).data
                         res["test3"] = eval(data["competence"])
                     return Response(data = res, status = status.HTTP_200_OK)
             else:
@@ -254,6 +254,7 @@ class func(APIView):
                 result = eval(user.passedTests.get(test = test).competence)
                 t = result["types"]
                 v = result["values"]
-                competence = Competence.objects.get(name = t[v.index(max(v))])
+                print(t[v.index(max(v))])
+                competence = MainCompetence.objects.get(name = t[v.index(max(v))])
                 competence.participant.add(user)
         return Response(status = status.HTTP_200_OK)        
