@@ -635,3 +635,25 @@ HOST: http://digitalnsk.ru:8000/
             {
                 "error": текст ошибки
             }
+
+### Удаление мероприятия [DELETE/event/edit/]
++ Request (application/json)
+
+    + Body
+            {
+                "event": идентификатор мероприятия
+            }
+
++ Response 200 (application/json)
+
+    + Body
+            {
+                "data": null
+            }
+
++ Response 400 (application/json)
+
+    + Body
+            {
+                "error": текст ошибки
+            }
