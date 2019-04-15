@@ -129,20 +129,26 @@ class EventSerializer(serializers.ModelSerializer):
 
     def create(self,validate_data):
         mainCompetences = validate_data.get("mainCompetence")
-        masComp = []
-        for competence in mainCompetences:
-            masComp.append(MainCompetenceSerializer(competence))
-        mainCompetences = {"mainCompetence": masComp}
         competences = validate_data.get("competence")
-        masComp = []
-        for competence in competences:
-            masComp.append(SideCompetenceSerializer(competence))
-        competence = {"competence": masComp}
         points = validate_data.get("points")
-        masPoint = []
-        for competence in competences:
-            masPoint.append(PointSerializer(points))
-        points = {"points": masPoint}
+        validate_data.pop("mainCompetence")
         validate_data.pop("competence")
         validate_data.pop("points")
-        return Event.objects.create(mainCompetence = mainCompetences, competence = competence, points = points, **validate_data)
+        event = Event.objects.create(**validate_data)
+        masMainComp = []
+        for item in mainCompetences:
+            competence = MainCompetence.objects.get(name = item["name"])
+            competence.event_m.add(event)
+        
+        masSideComp = []
+        for item in competences:
+            competence = SideCompetence.objects.get(name = item["name"])
+            competence.event.add(event)
+
+        masPoint = []
+        for item in points:
+            competence = SideCompetence.objects.get(name = item["competence"]["name"])
+            point = Point.objects.create(competence = competence, value = item["value"])
+            point.event_add.add(event)
+        
+        return Event.objects.get(**validate_data)

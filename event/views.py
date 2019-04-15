@@ -38,18 +38,13 @@ class EventList(APIView):
                 if "date" in request.GET:
                     user = Participant.objects.get(id = id)
                     events = Event.objects.filter(date = request.GET["date"])
-                    progress = user.progress.all()
-                    mainCompetence = user.mainCompetence
-                    for item in progress:
-                        competences.append(item.competence)
+                    userEvents = user.events.all()
+                    competence = user.mainCompetence
                     data = []
-                    progresses = user.events.all()
                     for event in events:
-                        for  progress in progresses:
-                            if progress.event == event:
-                                flag = False
-                        if flag:
+                        if event not in userEvents and competence in event.mainCompetence.all():
                             data.append(EventSerializer(event).data)
+                            break                            
                     res = {"list": data}
                     return Response(data = res, status = status.HTTP_200_OK)
                 else:
@@ -119,7 +114,8 @@ class EventAdd(APIView):
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
                 serializer = EventSerializer(data = data)
-                serializer.is_valid()
+                serializer.is_valid(raise_exception = True)
+
                 serializer.save()
                 return Response(status = status.HTTP_200_OK)
             else:
