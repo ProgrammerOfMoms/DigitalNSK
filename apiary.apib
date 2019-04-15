@@ -560,6 +560,31 @@ HOST: http://digitalnsk.ru:8000/
                 "error": текст ошибки
             }
 
+### Вывод списка компетенций[GET/event/add/]
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+
++ Response 200 (application/json)
+    + Body
+            {
+                "data": {
+                    "baseCompetencies": [массив строк - названия базовых компетенций],
+                    "mainCompetencies": [ массив основных компетенций
+                        {
+                            "subCompetencies": [массив строк - названия суб-компетенций],
+                            "competence": "Название компетенции"
+                        },
+                    ]
+                }
+            }
+
++ Response 400 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
+
 ### Добавление мероприятия[POST/event/add/]
 + Request (application/json)
     + Headers
