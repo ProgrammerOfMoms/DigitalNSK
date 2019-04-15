@@ -238,3 +238,25 @@ class Excel(APIView):
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+class EventEdit(APIView):
+    permission_classes = (AllowAny,)
+
+    def delete(self, request):
+        data = json.loads(request.body.decode("utf-8"))
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                if "event" in data:
+                    try:
+                        Event.objects.filter(id = data["event"]).delete()
+                    except:
+                        return Response(data = {"error": "Мероприятия не существует"}, status = status.HTTP_400_BAD_REQUEST)
+                    return Response(status = status.HTTP_200_OK)
+                else:
+                    return Response(data = {"error": "Нет нужных полей"}, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
