@@ -123,6 +123,8 @@ class Participant(models.Model):
     points          = models.IntegerField(verbose_name = "Баллы по основной компетенции", blank = True, null = True)
     progressComp    = models.ManyToManyField(Progress, verbose_name = "Прогресс", blank = True, related_name= "participant")
 
+    events          = models.ManyToManyField(Event, verbose_name = "Мероприятия", related_name = "participant", blank = True)
+
     vkURL           = models.URLField(verbose_name= "Ссылка на vkontakte", blank = True)
     instURL         = models.URLField(verbose_name= "Ссылка на instagram", blank = True)
     fbURL           = models.URLField(verbose_name= "Ссылка на facebook", blank = True)

@@ -37,7 +37,11 @@ class EventList(APIView):
             else:
                 if "date" in request.GET:
                     user = Participant.objects.get(id = id)
-                    events = Event.objects.filter(date = request.GET["date"], competence = user.competence)
+                    events = Event.objects.filter(date = request.GET["date"])
+                    progress = user.progress.all()
+                    mainCompetence = user.mainCompetence
+                    for item in progress:
+                        competences.append(item.competence)
                     data = []
                     progresses = user.events.all()
                     for event in events:
