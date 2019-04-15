@@ -162,7 +162,6 @@ class Testing(APIView):
                 _type = request.GET["type"]
                 user = Participant.objects.get(id = id)
                 length = len(user.passedTests.all())
-                print(length)
                 if length < int(_type):
                     if _type != "3":
                         test = Test.objects.get(mode = _type)
@@ -204,7 +203,6 @@ class Testing(APIView):
             id = request.META["HTTP_ID"]
             if "type" in data:
                 #try:
-                    print(data["type"])
                     user = Participant.objects.get(id = id)
                     if data["type"] == 1:
                         res = test1(data = data, user = user)
@@ -254,7 +252,6 @@ class func(APIView):
                 result = eval(user.passedTests.get(test = test).competence)
                 t = result["types"]
                 v = result["values"]
-                print(t[v.index(max(v))])
                 competence = MainCompetence.objects.get(name = t[v.index(max(v))])
                 competence.participant.add(user)
         return Response(status = status.HTTP_200_OK)        
