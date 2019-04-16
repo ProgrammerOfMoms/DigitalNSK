@@ -257,6 +257,6 @@ class func(APIView):
                 competence = MainCompetence.objects.get(name = t[v.index(max(v))])
                 competence.participant.add(user)
                 test3 = Test.objects.get(name = t[v.index(max(v))])
-                user.points = eval(user.passedTests.get(test = test).competence)["result"]
+                user.points = eval(user.passedTests.get(test = test3).competence)["result"]
                 user.save()
         return Response(status = status.HTTP_200_OK)        
