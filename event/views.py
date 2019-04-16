@@ -183,7 +183,7 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
-            if (user.id_id > 0):
+            if (user.id_id > 400):
                 person = user.id
                 i = str(index)
                 comp = user.mainCompetence
