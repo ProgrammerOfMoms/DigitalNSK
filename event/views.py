@@ -78,11 +78,15 @@ class SignUpEvent(APIView):
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
                 event = Event.objects.get(id = event_id)
-                if event not in user.events.all():
-                    event.participant.add(user)
-                    return Response(status = status.HTTP_200_OK)
+                if event.participants < event.max_participants:
+                    event.participants = event.participants + 1
+                    if event not in user.events.all():
+                        event.participant.add(user)
+                        return Response(status = status.HTTP_200_OK)
+                    else:
+                        return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
+                    return Response(data = {"error": "Много участников"}, status = status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
@@ -96,9 +100,13 @@ class SignUpEvent(APIView):
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
                 event = Event.objects.get(id = event_id)
-                if event in user.events.all():
-                    event.participant.remove(user)
-                    return Response(status = status.HTTP_200_OK)
+                if event.participants > 0:
+                    event.participants = event.participants - 1
+                    if event in user.events.all():
+                        event.participant.remove(user)
+                        return Response(status = status.HTTP_200_OK)
+                    else:
+                        return Response(data = {"error": "Пользователь не учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response(data = {"error": "Пользователь не учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
             else:
