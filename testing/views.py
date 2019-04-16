@@ -254,7 +254,6 @@ class func(APIView):
                 result = eval(user.passedTests.filter(test = test)[0].competence)
                 t = result["types"]
                 v = result["values"]
-                print(t[v.index(max(v))])
                 competence = MainCompetence.objects.get(name = t[v.index(max(v))])
                 competence.participant.add(user)
                 test3 = Test.objects.get(name = t[v.index(max(v))])
