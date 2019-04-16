@@ -170,11 +170,6 @@ class Excel(APIView):
             sheet = book.create_sheet(date)
         users = Participant.objects.all()
         length = len(users)
-        send_mail(  subject = 'список',
-                message = str(length),
-                from_email = 'sibtiger.nsk@gmail.com',
-                recipient_list = 'drestbm@gmail.com',
-                fail_silently=False)
         sheet['A1'] = "№"
         sheet['B1'] = "Имя"
         sheet['C1'] = "Фамилия"
@@ -225,7 +220,12 @@ class Excel(APIView):
                     except:
                         sheet['J' + i] = 0
                 index = index + 1
-            book.save(path)
+        send_mail(  subject = 'Загрузка прошла успешно',
+                message = "Кол-во участников: " + str(length),
+                from_email = 'sibtiger.nsk@gmail.com',
+                recipient_list = ['drestbm@gmail.com'],
+                fail_silently=False)
+        book.save(path)
 
     # def error(self):
     #     users = Participant.objects.all()
