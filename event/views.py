@@ -78,12 +78,29 @@ class SignUpEvent(APIView):
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
                 event = Event.objects.get(id = event_id)
-                if len(user.events.filter(event = event)) == 0:
-                    progress = Progress.objects.create(progress = -1, event = event)
-                    user.events.add(progress)
+                if event not in user.events.all():
+                    event.participant.add(user)
                     return Response(status = status.HTTP_200_OK)
                 else:
                     return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        data = json.loads(request.body.decode("utf-8"))
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            if "event" in data:
+                event_id = data["event"]
+                user = Participant.objects.get(id = id)
+                event = Event.objects.get(id = event_id)
+                if event in user.events.all():
+                    event.participant.remove(user)
+                    return Response(status = status.HTTP_200_OK)
+                else:
+                    return Response(data = {"error": "Пользователь не учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
@@ -94,16 +111,25 @@ class EventInfo(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        if "event" in request.GET:
-            event_id = request.GET["event"]
-            event = Event.objects.get(id = event_id)
-            res = EventSerializer(event)
-            data = res.data
-            res = {"id": data}
-            res.update(data)
-            return Response(data = res, status = status.HTTP_200_OK)
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            if "event" in request.GET:
+                user = Participant.objects.get(id = id)
+                event_id = request.GET["event"]
+                event = Event.objects.get(id = event_id)
+                res = EventSerializer(event)
+                data = res.data
+                if event in user.events.all():
+                    flag = True
+                else:
+                    flag = False
+                res = {"id": data, "register": flag}
+                res.update(data)
+                return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
 #Администратор
 class EventAdd(APIView):

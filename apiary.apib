@@ -424,6 +424,27 @@ HOST: http://digitalnsk.ru:8000/
                 "error": текст ошибки
             }
 
+### Удаление с мероприятия[DELETE/event/signup/]
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+    + Body
+            {
+                "event": Идентификатор мароприятия
+            }
+
++ Response 200 (application/json)
+    + Body
+            {
+                "data": null
+            }
+
++ Response 400 (application/json)
+    + Body
+            {
+                "error": текст ошибки
+            }
+
 ### Регистрация на мероприятии[POST/event/signup/]
 + Request (application/json)
     + Headers
@@ -502,14 +523,13 @@ HOST: http://digitalnsk.ru:8000/
             {
                 "error": текст ошибки
             }
-### Получение информации о мероприятии[POST/event/event/]
+### Получение информации о мероприятии[GET/event/event?{event}]
++ Parameters
+        + event (number) - Идентификатор мероприятия
 + Request (application/json)
     + Headers
             id Идентификатор пользователя
-    + Body
-            {
-                "event": Идентификатор мароприятия
-            }
+
 
 + Response 200 (application/json)
     + Body
@@ -517,6 +537,7 @@ HOST: http://digitalnsk.ru:8000/
                 "data": {
                     "id": Идентификатор мероприятия,
                     "name": "Название",
+                    "register": true - участвует в мероприятии/false - не участвует в мероприятии,
                     "img": "Ссылка на изображение",
                     "date": "Дата в формате DD.MM.YYYY",
                     "time": "Время в формате HH:MM",
