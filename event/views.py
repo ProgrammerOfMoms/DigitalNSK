@@ -215,8 +215,7 @@ class Excel(APIView):
                 else:
                     sheet['I' + i] = comp.name
                     try:
-                        res = user.passedTests.get(test = Test.objects.get(name = comp.name)).competence
-                        sheet['J' + i] = int(eval(res)["result"])
+                        sheet['J' + i] = user.points
                     except:
                         sheet['J' + i] = 0
                 index = index + 1
