@@ -230,7 +230,7 @@ class Excel(APIView):
     #             print(1)
     #     print(res)
 
-    def get(self, request):
+    def post(self, request):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
