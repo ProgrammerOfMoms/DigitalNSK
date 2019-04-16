@@ -173,9 +173,11 @@ class Excel(APIView):
         sheet['D1'] = "Отчество"
         sheet['E1'] = "Учебное заведение"
         sheet['F1'] = "Класс/курс"
-        sheet['G1'] = "Компетенция"
-        sheet['H1'] = "Баллы"
-        sheet['I1'] = "Базовые компетенции"
+        sheet['G1'] = "Телефон"
+        sheet['H1'] = "Почта"
+        sheet['I1'] = "Компетенция"
+        sheet['J1'] = "Баллы"
+        sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
             if (user.id_id > 400):
@@ -188,6 +190,8 @@ class Excel(APIView):
                 sheet['D' + i] = person.patronymic
                 sheet['E' + i] = user.eduInstitution
                 sheet['F' + i] = user.level
+                sheet['G' + i] = person.phoneNumber
+                sheet['H' + i] = person.email
                 try:
                     listComp = ""
                     res = eval(user.passedTests.get(test = Test.objects.get(mode = 1)).competence)
@@ -202,16 +206,16 @@ class Excel(APIView):
                     listComp = "Нет компетенций"
                 if listComp == "":
                     listComp = "Нет компетенций"
-                sheet['I' + i] = listComp
+                sheet['K' + i] = listComp
                 if  comp == None:
-                    sheet['G' + i] = "Нет кометенции"
+                    sheet['I' + i] = "Нет кометенции"
                 else:
-                    sheet['G' + i] = comp.name
+                    sheet['I' + i] = comp.name
                     try:
                         res = user.passedTests.get(test = Test.objects.get(name = comp.name)).competence
-                        sheet['H' + i] = int(eval(res)["result"])
+                        sheet['J' + i] = int(eval(res)["result"])
                     except:
-                        sheet['H' + i] = 0
+                        sheet['J' + i] = 0
                 index = index + 1
             book.save(path)
 
