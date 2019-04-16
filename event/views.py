@@ -231,11 +231,12 @@ class Excel(APIView):
     #     print(res)
 
     def post(self, request):
+        import threading
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
-                self.formXSLX()
+                threading.Thread(target=self.formXSLX).start()
                 #self.error()
                 return Response(status = status.HTTP_200_OK)
             else:
