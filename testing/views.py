@@ -89,12 +89,14 @@ def test2(data, user):
                 addQuestion = test.additionalQuestion
                 mas = []
                 answers = addQuestion.answers.all()
-                for item in types:
-                    group = {
-                        "types": answers[item].content,
-                        "group": answers[item].group.id
-                    }
-                    mas.append(group)
+                for item in answers:
+                    key = item.group.key-1
+                    if  key in types:
+                        group = {
+                            "types": answers[key].content,
+                            "group": answers[key].group.id
+                        }
+                        mas.append(group)
                 res = {
                     "additional": True,
                     "values": val,
