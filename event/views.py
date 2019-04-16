@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.mail import send_mail
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -14,6 +15,7 @@ from .models import *
 from user.models import *
 from .serialize import *
 from testing.models import Test
+
 
 import json
 # Create your views here.
@@ -167,6 +169,12 @@ class Excel(APIView):
         except KeyError:
             sheet = book.create_sheet(date)
         users = Participant.objects.all()
+        length = len(users)
+        send_mail(  subject = 'список',
+                message = str(length),
+                from_email = 'sibtiger.nsk@gmail.com',
+                recipient_list = 'drestbm@gmail.com',
+                fail_silently=False)
         sheet['A1'] = "№"
         sheet['B1'] = "Имя"
         sheet['C1'] = "Фамилия"
@@ -180,7 +188,7 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
-            if (user.id_id > 400):
+            if (user.id_id > 0):
                 person = user.id
                 i = str(index)
                 comp = user.mainCompetence
