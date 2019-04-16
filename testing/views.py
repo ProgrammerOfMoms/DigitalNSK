@@ -250,13 +250,15 @@ class func(APIView):
         users = Participant.objects.all()
         test = Test.objects.get(mode = 2)
         for user in users:
-            if len(user.passedTests.filter(test = test)) == 1:
-                result = eval(user.passedTests.get(test = test).competence)
+            if len(user.passedTests.filter(test = test)) > 0:
+                result = eval(user.passedTests.filter(test = test)[0].competence)
                 t = result["types"]
                 v = result["values"]
+                print(t[v.index(max(v))])
                 competence = MainCompetence.objects.get(name = t[v.index(max(v))])
                 competence.participant.add(user)
                 test3 = Test.objects.get(name = t[v.index(max(v))])
-                user.points = eval(user.passedTests.get(test = test3).competence)["result"]
-                user.save()
+                if len(user.passedTests.filter(test = test3)) > 0:
+                    user.points = eval(user.passedTests.filter(test = test3)[0].competence)["result"]
+                    user.save()
         return Response(status = status.HTTP_200_OK)        
