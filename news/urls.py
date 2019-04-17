@@ -5,5 +5,5 @@ from news.views import *
 
 
 urlpatterns = [
-    
+    path("add/", News.as_view()),
 ]

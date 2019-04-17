@@ -5,7 +5,7 @@ from django.db import models
 class News(models.Model):
 
     html_code       = models.TextField(verbose_name = "html код новости")
-    photo           = models.URLField(verbose_name = "Картинка к новости")
+    photo           = models.TextField(verbose_name = "Картинка к новости")
     date            = models.DateField(verbose_name = "Дата публикации", auto_now=True)
 
     class Meta:

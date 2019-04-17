@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'testing',
     'institution',
     'mail',
+    'news',
 ]
 
 MIDDLEWARE = [
