@@ -26,6 +26,7 @@ class NewsView(APIView):
     def post(self, request):
         try:
             html_code = request.FILES["html_code"].read().decode("utf-8")
+            title = request.FILES["title"].read().decode("utf-8")
             
             bphoto = request.FILES["photo"].read()
             photo_dir = settings.MEDIA_ROOT+"/news/"
@@ -36,7 +37,7 @@ class NewsView(APIView):
             f = open(photo_dir+photo, mode = 'wb')
             f.write(bphoto)
             f.close()
-            data = {"html_code": html_code, "photo": "https://digitalnsk.ru/media/news/"+photo}
+            data = {"html_code": html_code, "photo": "https://digitalnsk.ru/media/news/"+photo, "title": title}
             serializer = NewsSerializer(data = data)
             serializer.is_valid(raise_exception = True)
             serializer.save()
@@ -58,6 +59,7 @@ class NewsView(APIView):
                 serializer = NewsSerializer(news)
                 data = {
                         "id": serializer.data["id"],
+                        "title": serializer.data["title"],
                         "html_code": serializer.data["html_code"],
                         "photo": "https://digitalnsk.ru/media/news/"+serializer.data["photo"],
                         "date": serializer.data["date"]}
@@ -68,6 +70,7 @@ class NewsView(APIView):
                 for item in news:
                     data["news"].append({
                         "id": item.id,
+                        "title": item.title,
                         "html_code": item.html_code,
                         "photo": "https://digitalnsk.ru/media/news/"+item.photo,
                         "date": item.date})

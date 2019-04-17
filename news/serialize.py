@@ -16,7 +16,8 @@ class NewsSerializer(serializers.ModelSerializer):
             'id',
             'html_code',
             'photo',
-            'date'
+            'date',
+            'title',
         )
     
     def create(self, validate_data):
