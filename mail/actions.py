@@ -39,7 +39,7 @@ def send_password_recovery_link(email, link):
     a = soup.find(id = "root")
     a["href"] = link
     htmlMsg = str(soup)
-    send_mail(  subject = 'Восстаноление пароля',
+    send_mail(  subject = 'Восстановление пароля',
                 message = ' ',
                 html_message= htmlMsg,
                 from_email = 'sibtiger.nsk@gmail.com',
