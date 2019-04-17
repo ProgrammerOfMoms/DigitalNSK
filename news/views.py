@@ -36,7 +36,7 @@ class NewsView(APIView):
             f = open(photo_dir+photo, mode = 'wb')
             f.write(bphoto)
             f.close()
-            data = {"html_code": html_code, "photo": photo}
+            data = {"html_code": html_code, "photo": "https://digitalnsk.ru/media/news/"+photo}
             serializer = NewsSerializer(data = data)
             serializer.is_valid(raise_exception = True)
             serializer.save()
