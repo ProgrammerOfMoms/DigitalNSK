@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from news.serialize import NewsSerializer
+from news.models import News
 from DigitalNSK import settings
 
 
@@ -52,16 +53,12 @@ class News(APIView):
     def get(self, request):
         try:
             if "id" in request.GET:
-                print("tut")
                 id = request.GET["id"]
-                print(id)
-                # news = News.objects.get(id = id)
-                # print(news)
-                # # serializer = NewsSerializer(news)
-                # # print(serializer)
-                return Response(data = {}, status = status.HTTP_200_OK)
+                news = News.objects.get(id = id)
+                serializer = NewsSerializer(news)
+                return Response(data = serializer.data, status = status.HTTP_200_OK)
             else:
-                print("ttt")
+                pass
         except:
             pass
 
