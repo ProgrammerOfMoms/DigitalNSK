@@ -19,7 +19,7 @@ import random
 
 
 
-class News(APIView):
+class NewsView(APIView):
     
     permission_classes = (AllowAny,)
 
@@ -56,11 +56,25 @@ class News(APIView):
                 id = request.GET["id"]
                 news = News.objects.get(id = id)
                 serializer = NewsSerializer(news)
-                return Response(data = serializer.data, status = status.HTTP_200_OK)
+                data = {
+                        "id": serializer.data["id"],
+                        "html_code": serializer.data["html_code"],
+                        "photo": "https://digitalnsk.ru/media/news/"+serializer.data["photo"],
+                        "date": serializer.data["date"]}
+                return Response(data = data, status = status.HTTP_200_OK)
             else:
-                pass
+                news = News.objects.all()
+                data = {"news": []}
+                for item in news:
+                    data["news"].append({
+                        "id": item.id,
+                        "html_code": item.html_code,
+                        "photo": "https://digitalnsk.ru/media/news/"+item.photo,
+                        "date": item.date})
+                return Response(data = data, status = status.HTTP_200_OK)
         except:
-            pass
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 
 
