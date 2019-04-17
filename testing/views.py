@@ -76,7 +76,7 @@ def test2(data, user):
                     "types": nameOfGroups,
                     "values": val
                 }
-                competence = Competence.objects.get(name = nameOfGroups[maxI])
+                competence = MainCompetence.objects.get(name = nameOfGroups[maxI])
                 competence.participant.add(user)
                 #user.competence.add(competence)
                 result = ResultOfTest.objects.create(competence = str(res), test = test)
@@ -89,12 +89,14 @@ def test2(data, user):
                 addQuestion = test.additionalQuestion
                 mas = []
                 answers = addQuestion.answers.all()
-                for item in types:
-                    group = {
-                        "types": answers[item].content,
-                        "group": answers[item].group.id
-                    }
-                    mas.append(group)
+                for item in answers:
+                    key = item.group.key-1
+                    if  key in types:
+                        group = {
+                            "types": answers[key].content,
+                            "group": answers[key].group.id
+                        }
+                        mas.append(group)
                 res = {
                     "additional": True,
                     "values": val,
@@ -162,7 +164,6 @@ class Testing(APIView):
                 _type = request.GET["type"]
                 user = Participant.objects.get(id = id)
                 length = len(user.passedTests.all())
-                print(length)
                 if length < int(_type):
                     if _type != "3":
                         test = Test.objects.get(mode = _type)
@@ -172,7 +173,7 @@ class Testing(APIView):
                         data.pop("id")
                         res.update(data)
                     else:
-                        test = Test.objects.get(name = user.competence.name)
+                        test = Test.objects.get(name = user.mainCompetence.name)
                         serializer = TestSerializer(test)
                         data = serializer.data
                         res = {"id": data["id"]}
@@ -188,7 +189,7 @@ class Testing(APIView):
                         data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(mode = 2))).data
                         res["test2"] = eval(data["competence"])
                     if length >= 3:
-                        data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(name = user.competence.name))).data
+                        data = ResultOfTestSerializer(user.passedTests.get(test = Test.objects.get(name = user.mainCompetence.name))).data
                         res["test3"] = eval(data["competence"])
                     return Response(data = res, status = status.HTTP_200_OK)
             else:
@@ -204,7 +205,6 @@ class Testing(APIView):
             id = request.META["HTTP_ID"]
             if "type" in data:
                 #try:
-                    print(data["type"])
                     user = Participant.objects.get(id = id)
                     if data["type"] == 1:
                         res = test1(data = data, user = user)
@@ -243,3 +243,21 @@ class Testing(APIView):
             res = {"error": "Не указан id пользователя"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             
+class func(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        users = Participant.objects.all()
+        test = Test.objects.get(mode = 2)
+        for user in users:
+            if len(user.passedTests.filter(test = test)) > 0:
+                result = eval(user.passedTests.filter(test = test)[0].competence)
+                t = result["types"]
+                v = result["values"]
+                competence = MainCompetence.objects.get(name = t[v.index(max(v))])
+                competence.participant.add(user)
+                test3 = Test.objects.get(name = t[v.index(max(v))])
+                if len(user.passedTests.filter(test = test3)) > 0:
+                    user.points = eval(user.passedTests.filter(test = test3)[0].competence)["result"]
+                    user.save()
+        return Response(status = status.HTTP_200_OK)        

@@ -12,7 +12,7 @@ def send_confirmation_mail(email, link):
 
     link = "https://digitalnsk.ru?hash="+link
 
-    f = open(settings.STATIC_ROOT+"/mail/confirm_registration.html", 'r')
+    f = open(settings.STATIC_ROOT+"/mail/confirm_registration.html", 'r', encoding = "utf-8")
     html = f.read()
     soup = BeautifulSoup(html, "html.parser")
     a = soup.find(id = "root")
@@ -33,7 +33,7 @@ def send_password_recovery_link(email, link):
     link = "https://digitalnsk.ru?hash="+link
     #email = "slamvsem@gmail.com" #it's temp line
 
-    f = open(settings.STATIC_ROOT+"/mail/recovery.html", 'r')
+    f = open(settings.STATIC_ROOT+"/mail/recovery.html", 'r', encoding = "utf-8")
     html = f.read()
     soup = BeautifulSoup(html, "html.parser")
     a = soup.find(id = "root")

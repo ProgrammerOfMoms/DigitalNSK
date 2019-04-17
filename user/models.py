@@ -5,9 +5,9 @@ from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
 
-from testing.models import ResultOfTest
+from testing.models import *
 from institution.models import Institution
-from event.models import Competence, Event
+from event.models import *
 
 
 class UserManager(BaseUserManager):
@@ -86,18 +86,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-
-
 class Progress(models.Model):
     """Модель прогресса участника"""
 
-    progress = models.IntegerField(verbose_name = "Прогресс", default = 0)
-    event    = models.ForeignKey(Event, on_delete = models.CASCADE, verbose_name = "Мероприятие", related_name = "progress", blank = True, null = True)
+    progress    = models.IntegerField(verbose_name = "Прогресс", default = 0)
+    competence  = models.ForeignKey(SideCompetence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "progress", blank = True, null = True)
     class Meta:
         verbose_name        = "Прогресс"
         verbose_name_plural = "Прогресс"
-
-
 
 class Participant(models.Model):
     """Модель участника"""
@@ -121,17 +117,21 @@ class Participant(models.Model):
 
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
     eduInstitution  = models.CharField(max_length = 50,verbose_name = "Учебное учреждение", blank = True, null = True)
-    competence      = models.ForeignKey(Competence, verbose_name = "Компетенция", null = True, blank = True, on_delete = models.CASCADE, related_name= "participant" )
     level           = models.CharField(choices = CHOICES_OF_LEVEL, default = CLASS_8, verbose_name = "Класс/курс", max_length = 20, blank = True)
+
+    mainCompetence  = models.ForeignKey(MainCompetence, verbose_name = "Основная компетенция", null = True, blank = True, on_delete = models.CASCADE, related_name= "participant" )
+    points          = models.IntegerField(verbose_name = "Баллы по основной компетенции", blank = True, null = True)
+    progressComp    = models.ManyToManyField(Progress, verbose_name = "Прогресс", blank = True, related_name= "participant")
+
+    events          = models.ManyToManyField(Event, verbose_name = "Мероприятия", related_name = "participant", blank = True)
 
     vkURL           = models.URLField(verbose_name= "Ссылка на vkontakte", blank = True)
     instURL         = models.URLField(verbose_name= "Ссылка на instagram", blank = True)
     fbURL           = models.URLField(verbose_name= "Ссылка на facebook", blank = True)
+    #Временно
     passedTests     = models.ManyToManyField(ResultOfTest, verbose_name = "Результаты тестов", related_name= "participant", blank = True)
-    events          = models.ManyToManyField(Progress, related_name= "participant", verbose_name = "Мероприятия", blank = True)
-    progress        = models.FloatField(verbose_name = "Прогресс", default=0, blank = True)
+    #!!!!!!!!!!!!!
     mailing         = models.BooleanField(default=False)
-
 
     class Meta:
         verbose_name        = "Участник"

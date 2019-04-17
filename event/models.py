@@ -1,20 +1,43 @@
 from django.db import models
 from testing.models import Group
 
-class EventStage(models.Model):
-    """Этап мероприятия"""
-    name = models.CharField(max_length = 50, verbose_name = "Название")
+class MainCompetence(models.Model):
+    name   = models.CharField(max_length = 50, verbose_name = "Название")
+    isBase = models.BooleanField(verbose_name = "Базовая?", default = False)
 
     class Meta:
-        verbose_name        = "Этап мероприятия"
-        verbose_name_plural = "Этапы мероприятия"
+        verbose_name        = "Основная компетенция"
+        verbose_name_plural = "Основные компетенции"
+
+    def __str__(self):
+        return "id: {}, name: {}, base: {}".format(self.id, self.name, self.isBase)
+
+class SideCompetenceAdd(models.Model):
+    name            = models.CharField(max_length = 50, verbose_name = "Название")
+    overCompetence = models.ForeignKey(MainCompetence, on_delete = models.CASCADE, verbose_name = "Компетенция 1 уровня", related_name = "side", null = True)
+
+    class Meta:
+        verbose_name        = "Субкомпетенция 2 уровня"
+        verbose_name_plural = "Субкомпетенции 2 уровня"
+
+    def __str__(self):
+        return "id: {}, name: {}".format(self.id, self.name)
+
+
+class SideCompetence(models.Model):
+    name   = models.CharField(max_length = 50, verbose_name = "Название")
+    overCompetence = models.ForeignKey(SideCompetenceAdd, on_delete = models.CASCADE, verbose_name = "Компетенция 2 уровня", related_name = "side", null = True)
+
+    class Meta:
+        verbose_name        = "Субкомпетенция 3 уровня"
+        verbose_name_plural = "Субкомпетенции 3 уровня"
 
     def __str__(self):
         return "id: {}, name: {}".format(self.id, self.name)
 
 class Competence(models.Model):
     """Компетенция"""
-    name   = models.CharField(max_length = 50, verbose_name = "Название")
+    name   = models.CharField(max_length = 80, verbose_name = "Название")
     level  = models.IntegerField(verbose_name = "Уровень", default = 1)
     parent = models.IntegerField(verbose_name = "Родитель(id)", blank = True, default = 0)
     class Meta:
@@ -22,11 +45,11 @@ class Competence(models.Model):
         verbose_name_plural = "Компетенции"
 
     def __str__(self):
-        return "id: {}, name: {}".format(self.id, self.name)
+        return "id: {}, name: {}, level: {}, parent: {}".format(self.id, self.name, self.level, self.parent)
 
 class Point(models.Model):
     """Балл за участие в мероприятии"""
-    competence = models.ForeignKey(Competence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "point")
+    competence = models.ForeignKey(SideCompetence, on_delete = models.CASCADE, verbose_name = "Компетенция", related_name = "point", null = True)
     value      = models.IntegerField(verbose_name = "Кол-во баллов")
     
     class Meta:
@@ -34,15 +57,17 @@ class Point(models.Model):
         verbose_name_plural = "Баллы за участие в мероприятии"
 
     def __str__(self):
-        return "id: {}, competence: {}, value: {}".format(self.id, self.competence.name, self.value)
+        return "id: {}, value: {}".format(self.id, self.value)
 
 class Event(models.Model):
     """Мероприятие"""
     name                = models.CharField(max_length = 50, verbose_name = "Название")
     img                 = models.URLField(verbose_name = "Изображение", blank = True, null = True)
     description         = models.TextField(verbose_name = "Описание", blank = True, null = True)
-    competence          = models.ManyToManyField(Competence, verbose_name = "Полезно знать до мероприятия", related_name = "event")
-    points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add")
+    mainCompetence      = models.ManyToManyField(MainCompetence, verbose_name = "Основные компетенции", related_name = "event_m", blank = True)
+    #mainCompetence      = models.ForeignKey(MainCompetence, verbose_name = "Основная компетенция", related_name = "event_m", blank = True, on_delete = models.CASCADE)
+    competence          = models.ManyToManyField(SideCompetence, verbose_name = "Полезно знать до мероприятия", related_name = "event", blank = True)
+    points              = models.ManyToManyField(Point, verbose_name = "Навыки, которые будем прокачивать", related_name = "event_add", blank = True)
     date                = models.CharField(max_length = 10, null = True, verbose_name = "Дата проведения")
     time                = models.CharField(max_length = 5, null = True, verbose_name = "Время проведения")
     venue               = models.TextField(verbose_name = "Место проведения", null = True)
@@ -61,4 +86,3 @@ class Event(models.Model):
 
     def __str__(self):
         return "id: {}, name: {}".format(self.id, self.name)
-
