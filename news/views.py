@@ -25,10 +25,10 @@ class NewsView(APIView):
 
     def post(self, request):
         try:
-            html_code = request.FILES["html_code"].read().decode("utf-8")
-            title = request.FILES["title"].read().decode("utf-8")
+            html_code = request.FILES.get("html_code", "Нет кода").read().decode("utf-8")
+            title = request.FILES.get("title", "Нет заголовка").read().decode("utf-8")
             
-            bphoto = request.FILES["photo"].read()
+            bphoto = request.FILES.get("photo", b"no photo").read()
             photo_dir = settings.MEDIA_ROOT+"/news/"
             while True:
                 photo = uuid.uuid4().hex
