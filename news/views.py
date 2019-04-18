@@ -25,8 +25,8 @@ class NewsView(APIView):
 
     def post(self, request):
         try:
-            html_code = request.POST.get("html_code").decode("utf-8")
-            title = request.POST.get("title").decode("utf-8")
+            html_code = request.POST.get("html_code")
+            title = request.POST.get("title")
             print(html_code, title)
             
             bphoto = request.FILES.get("photo", b"no photo").read()
