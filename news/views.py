@@ -47,7 +47,8 @@ class NewsView(APIView):
             data["date"] = d["date"]
 
             return Response(data = data, status = status.HTTP_201_CREATED)
-        except:
+        except Exception as e:
+            raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
     
