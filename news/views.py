@@ -75,7 +75,8 @@ class NewsView(APIView):
                         "photo": "https://digitalnsk.ru/media/news/"+item.photo,
                         "date": item.date})
                 return Response(data = data, status = status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
