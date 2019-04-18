@@ -61,9 +61,9 @@ class SignUpEvent(APIView):
             data = []
             id = request.META["HTTP_ID"]
             user = Participant.objects.get(id = id)
-            progresses = user.events.all()
-            for  progress in progresses:
-                data.append(EventSerializer(progress.event).data)
+            events = user.events.all()
+            for event in events:
+                data.append(EventSerializer(event).data)
             res = {"list": data}
             return Response(data = res, status = status.HTTP_200_OK)
         else:
