@@ -190,7 +190,6 @@ class EventAdd(APIView):
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
-
 class Excel(APIView):
     permission_classes = (AllowAny,)
 
