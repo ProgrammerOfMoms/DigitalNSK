@@ -44,7 +44,7 @@ class EventList(APIView):
                     competence = user.mainCompetence
                     data = []
                     for event in events:
-                        if event not in userEvents and competence == event.mainCompetence:
+                        if (event not in userEvents and competence == event.mainCompetence) or event.mainCompetence.name == "Базовая компетенция":
                             data.append(EventSerializer(event).data)
                     res = {"list": data}
                     return Response(data = res, status = status.HTTP_200_OK)
