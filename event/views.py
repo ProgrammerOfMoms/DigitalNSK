@@ -311,6 +311,24 @@ class EventEdit(APIView):
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
+class Func(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                events = Event.objects.all()
+                for event in events:
+                    event.mainComp = event.mainCompetence.all()[0]
+                    event.save()
+                return Response(status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
 class EventParticipants(APIView):
     permission_classes = (AllowAny,)
     def get(self, request):
