@@ -61,9 +61,9 @@ class SignUpEvent(APIView):
             data = []
             id = request.META["HTTP_ID"]
             user = Participant.objects.get(id = id)
-            progresses = user.events.all()
-            for  progress in progresses:
-                data.append(EventSerializer(progress.event).data)
+            events = user.events.all()
+            for event in events:
+                data.append(EventSerializer(event).data)
             res = {"list": data}
             return Response(data = res, status = status.HTTP_200_OK)
         else:
@@ -115,7 +115,6 @@ class SignUpEvent(APIView):
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
-
 class EventInfo(APIView):
     permission_classes = (AllowAny,)
 
@@ -163,9 +162,13 @@ class EventAdd(APIView):
                         data1[temp.name].append(item.name)
                 data = []
                 for item in main:
-                    temp = {"competence": item.name, "subCompetencies": data1[item.name]}
-                    data.append(temp)
-                res = {"mainCompetencies": data, "baseCompetencies": data2}
+                    if item.name != "Базовая компетенция":
+                        temp = {"competence": item.name, "subCompetencies": data1[item.name]}
+                        data.append(temp)
+                    else:
+                        temp = {"competence": item.name, "subCompetencies": data2}
+                        data.append(temp)
+                res = {"Competencies": data}
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
@@ -303,6 +306,24 @@ class EventEdit(APIView):
                     return Response(status = status.HTTP_200_OK)
                 else:
                     return Response(data = {"error": "Нет нужных полей"}, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+class Func(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                events = Event.objects.all()
+                for event in events:
+                    event.mainComp = event.mainCompetence.all()[0]
+                    event.save()
+                return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:

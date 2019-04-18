@@ -383,12 +383,10 @@ HOST: http://digitalnsk.ru:8000/
                             "date": "Дата в формате DD.MM.YYYY",
                             "time": "Время в формате HH:MM",
                             "description": "Описание",
-                            "mainCompetence": [ массив основных компетенций
-                                {
+                            "mainCompetence": {
                                     "id": "Идентификатор компетенции,
                                     "name": "Название компетенции"
-                                }
-                            ],
+                                },
                             "competence": [ массив компетенций
                                 {
                                     "id": "Идентификатор компетенции,
@@ -430,7 +428,7 @@ HOST: http://digitalnsk.ru:8000/
             id Идентификатор пользователя
     + Body
             {
-                "event": Идентификатор мароприятия
+                "event": Идентификатор мероприятия
             }
 
 + Response 200 (application/json)
@@ -483,12 +481,10 @@ HOST: http://digitalnsk.ru:8000/
                             "date": "Дата в формате DD.MM.YYYY",
                             "time": "Время в формате HH:MM",
                             "description": "Описание",
-                            "mainCompetence": [ массив основных компетенций
-                                {
+                            "mainCompetence": {
                                     "id": "Идентификатор компетенции,
                                     "name": "Название компетенции"
-                                }
-                            ],
+                                },
                             "competence": [ массив компетенций
                                 {
                                     "id": "Идентификатор компетенции,
@@ -542,12 +538,10 @@ HOST: http://digitalnsk.ru:8000/
                     "date": "Дата в формате DD.MM.YYYY",
                     "time": "Время в формате HH:MM",
                     "description": "Описание",
-                    "mainCompetence": [ массив основных компетенций
-                        {
+                    "mainCompetence": {
                             "id": "Идентификатор компетенции,
                             "name": "Название компетенции"
-                        }
-                    ],
+                        },
                     "competence": [ массив компетенций
                         {
                             "id": "Идентификатор компетенции,
@@ -590,13 +584,10 @@ HOST: http://digitalnsk.ru:8000/
     + Body
             {
                 "data": {
-                    "baseCompetencies": [массив строк - названия базовых компетенций],
-                    "mainCompetencies": [ массив основных компетенций
-                        {
+                    "Competencies":{
                             "subCompetencies": [массив строк - названия суб-компетенций],
                             "competence": "Название компетенции"
                         },
-                    ]
                 }
             }
 
@@ -617,11 +608,9 @@ HOST: http://digitalnsk.ru:8000/
                 "date": "Дата в формате DD.MM.YYYY",
                 "time": "Время в формате HH:MM",
                 "description": "Описание",
-                "mainCompetence": [ массив основных компетенций
-                    {
+                "mainCompetence": {
                         "name": "Название компетенции"
-                    }
-                ],
+                },
                 "competence": [ массив компетенций
                     {
                         "name": "Название компетенции"
