@@ -162,7 +162,7 @@ class EventAdd(APIView):
                         data1[temp.name].append(item.name)
                 data = []
                 for item in main:
-                    if item.name == "Базовая компетенция":
+                    if item.name != "Базовая компетенция":
                         temp = {"competence": item.name, "subCompetencies": data1[item.name]}
                         data.append(temp)
                     else:
