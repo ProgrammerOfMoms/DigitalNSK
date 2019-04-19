@@ -15,7 +15,8 @@ from .models import *
 from user.models import *
 from .serialize import *
 from testing.models import Test
-
+import uuid
+import os
 
 import json
 # Create your views here.
@@ -181,9 +182,28 @@ class EventAdd(APIView):
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
+                if "photo" in data:
+                    photo = data["photo"]
+                    data.pop("photo")
+                #else:
+                #    photo = ""
                 serializer = EventSerializer(data = data)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
+                #if photo != "":
+                print(type(photo))
+                media_dir = settings.MEDIA_ROOT
+                while True:
+                    name = uuid.uuid4().hex
+                    if name not in os.listdir(media_dir):
+                        break
+                path = os.path.join(media_dir, name)
+                f = open(path, "wb")
+                f.write(bytes(photo, encoding = 'utf-8'))
+                f.close()
+                event = Event.objects.get(id = serializer.data["id"])
+                event.img = "https://digitalnsk.ru:8000/media/" + name
+                event.save()
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
