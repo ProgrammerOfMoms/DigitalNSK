@@ -63,7 +63,7 @@ class NewsView(APIView):
                         "id": serializer.data["id"],
                         "title": serializer.data["title"],
                         "html_code": serializer.data["html_code"],
-                        "photo": "https://digitalnsk.ru/media/news/"+serializer.data["photo"],
+                        "photo": serializer.data["photo"],
                         "date": serializer.data["date"]}
                 return Response(data = data, status = status.HTTP_200_OK)
             else:
@@ -74,7 +74,7 @@ class NewsView(APIView):
                         "id": item.id,
                         "title": item.title,
                         "html_code": item.html_code,
-                        "photo": "https://digitalnsk.ru/media/news/"+item.photo,
+                        "photo": item.photo,
                         "date": item.date})
                 return Response(data = data, status = status.HTTP_200_OK)
         except:
