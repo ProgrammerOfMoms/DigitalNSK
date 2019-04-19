@@ -62,7 +62,7 @@ class Point(models.Model):
 class Event(models.Model):
     """Мероприятие"""
     name                = models.CharField(max_length = 50, verbose_name = "Название")
-    img                 = models.URLField(verbose_name = "Изображение", blank = True, null = True)
+    img                 = models.ImageField(upload_to = "Events", blank = True, verbose_name = "Изображение")
     description         = models.TextField(verbose_name = "Описание", blank = True, null = True)
     mainCompetence      = models.ForeignKey(MainCompetence, verbose_name = "Основная компетенция", related_name = "event", blank = True, on_delete = models.CASCADE, null = True)
     competence          = models.ManyToManyField(SideCompetence, verbose_name = "Полезно знать до мероприятия", related_name = "event", blank = True)

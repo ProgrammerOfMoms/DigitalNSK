@@ -177,31 +177,24 @@ class EventAdd(APIView):
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
+            
             if user.role == User.ADMINISTRATOR:
+                data = request.data
                 if "photo" in data:
                     photo = data["photo"]
                     data.pop("photo")
                 else:
                     photo = ""
-                serializer = EventSerializer(data = data)
+                serializer = EventSerializer(data = eval(data["data"]))
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
                 if photo != "":
-                    media_dir = settings.MEDIA_ROOT
-                    while True:
-                        name = uuid.uuid4().hex
-                        if name not in os.listdir(media_dir):
-                            break
-                    path = os.path.join(media_dir, name)
-                    f = open(path, "wb")
-                    f.write(bytes(photo, encoding = 'utf-8'))
-                    f.close()
+                    photo.name = "event.jpg"
                     event = Event.objects.get(id = serializer.data["id"])
-                    event.img = "https://digitalnsk.ru:8000/media/" + name
+                    event.img = photo
                     event.save()
                 return Response(status = status.HTTP_200_OK)
             else:
@@ -220,6 +213,8 @@ class Excel(APIView):
             book = openpyxl.load_workbook(filename = path)
         except:
             book = openpyxl.Workbook()
+        sheet = book["Sheet"]
+        book.remove(sheet)
         try:
             sheet = book[date]
         except KeyError:
