@@ -15,9 +15,8 @@ from .models import *
 from user.models import *
 from .serialize import *
 from testing.models import Test
-import uuid
-import os
 
+import os
 import json
 # Create your views here.
 
@@ -204,7 +203,7 @@ class EventAdd(APIView):
 class Excel(APIView):
     permission_classes = (AllowAny,)
 
-    def formXSLX(self):
+    def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
         date = str(datetime.datetime.now().date())
         path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
@@ -233,8 +232,8 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
-            if (user.id_id > 400):
-                person = user.id
+            person = user.id
+            if user.id_id > 400 and person.date_joined.date() < to.date() and person.date_joined.date() > _from.date():
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
@@ -269,11 +268,14 @@ class Excel(APIView):
                     except:
                         sheet['J' + i] = 0
                 index = index + 1
-        send_mail(  subject = 'Загрузка прошла успешно',
-                message = "Кол-во участников: " + str(length),
-                from_email = 'sibtiger.nsk@gmail.com',
-                recipient_list = ['drestbm@gmail.com'],
-                fail_silently=False)
+        msg = EmailMessage(
+            subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
+            body = "Загрузка прошла успешно",
+            from_email = "sibtiger.nsk@gmail.com",
+            to = [email]
+        )
+        msg.attach_file(path)
+        msg.send()
         book.save(path)
 
     # def error(self):
@@ -288,13 +290,17 @@ class Excel(APIView):
     #     print(res)
 
     def post(self, request):
-        import threading
+        import threading, datetime
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
-                threading.Thread(target=self.formXSLX).start()
-                #self.error()
+                data = json.loads(request.body.decode("utf-8"))
+                if "email" in data and  "from" in data and "to" in data:
+                    email = data["email"]
+                    _from = datetime.datetime.strptime(data["from"], '%d.%m.%Y')
+                    to = datetime.datetime.strptime(data["to"], '%d.%m.%Y')
+                    threading.Thread(target=self.formXSLX, args=(to,_from,email) ).start()
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
