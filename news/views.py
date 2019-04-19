@@ -27,7 +27,7 @@ class NewsView(APIView):
         try:
             html_code = request.POST.get("html_code")
             title = request.POST.get("title")
-            print(html_code, title)
+
             
             bphoto = request.FILES.get("photo", b"no photo").read()
             photo_dir = settings.MEDIA_ROOT+"/news/"
