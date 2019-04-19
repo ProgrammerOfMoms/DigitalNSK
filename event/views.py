@@ -268,18 +268,25 @@ class Excel(APIView):
                     except:
                         sheet['J' + i] = 0
                 index = index + 1
-        msg = EmailMessage(
-            subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
-            body = "Загрузка прошла успешно",
-            from_email = "sibtiger.nsk@gmail.com",
-            to = [email]
-        )
-        print(msg)
-        msg.attach_file(path)
-        print(msg)
-        msg.send()
         book.save(path)
-
+        try:
+            msg = EmailMessage(
+                subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
+                body = "Загрузка прошла успешно",
+                from_email = "sibtiger.nsk@gmail.com",
+                to = [email]
+            )
+            msg.attach_file(path)
+            msg.send()
+        except:
+            msg = EmailMessage(
+                subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
+                body = "Загрузка прошла успешно",
+                from_email = "sibtiger.nsk@gmail.com",
+                to = [email]
+            )
+            #msg.attach_file(path)
+            msg.send()
     # def error(self):
     #     users = Participant.objects.all()
     #     res = []
