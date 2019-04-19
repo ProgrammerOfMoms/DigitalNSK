@@ -231,7 +231,6 @@ class Excel(APIView):
         index = 2
         for user in users:
             person = user.id
-            print(user.id_id)
             if user.id_id > 400 and person.date_joined.date() < to.date() and person.date_joined.date() > _from.date():
                 i = str(index)
                 comp = user.mainCompetence
@@ -268,7 +267,6 @@ class Excel(APIView):
                         sheet['J' + i] = 0
                 index = index + 1
         book.save(path)
-        print("============================")
         try:
             msg = EmailMessage(
                 subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
