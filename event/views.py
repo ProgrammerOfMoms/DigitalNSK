@@ -29,7 +29,7 @@ class EventList(APIView):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             usr = User.objects.get(id = id)
-            if usr.role == User.ADMINISTRATOR:
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
                 events = Event.objects.all()
                 data = []
                 for event in events:
@@ -73,6 +73,12 @@ class SignUpEvent(APIView):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
+            usr = User.objects.get(id = id)
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
+                if "email" in data:
+                    id = User.objects.get(email = data["email"]).id
+                else:
+                    return Response(data = {"error": "Отсутствует поле email"}, status = status.HTTP_400_BAD_REQUEST)
             if "event" in data:
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
@@ -82,7 +88,7 @@ class SignUpEvent(APIView):
                     event.save()
                     if event not in user.events.all():
                         event.participant.add(user)
-                        return Response(status = status.HTTP_200_OK)
+                        return Response(status = status.HTTP_204_NO_CONTENT)
                     else:
                         return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
                 else:
@@ -96,6 +102,11 @@ class SignUpEvent(APIView):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
+                if "id" in data:
+                    id = data["id"]
+                else:
+                    return Response(data = {"error": "Отсутствует поле id"}, status = status.HTTP_400_BAD_REQUEST)
             if "event" in data:
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
@@ -379,7 +390,7 @@ class EventParticipants(APIView):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
-            if user.role == User.ADMINISTRATOR:
+            if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
                 if "event" in request.GET:
                     event = Event.objects.get(id = request.GET["event"])
                     participants = event.participant.all()
@@ -396,6 +407,33 @@ class EventParticipants(APIView):
                     return Response(data = data, status = status.HTTP_200_OK)
                 else:
                     return Response(data = {"error": "Отсутствует обязательное поле"}, status = status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+
+class EventPoints(APIView):
+    permission_classes = (AllowAny,)
+    
+    def put(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            data = json.loads(request.body.decode("utf-8"))
+            if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
+                if "competence" in data and "value" in data and "id" in data:
+                    participant = Participant.objects.get(id = data["id"])
+                    competence = SideCompetence.objects.get(id = data["competence"])
+                    if len(participant.progressComp.filter(competence = competence)) == 0:
+                        progress = Progress.objects.create(progress = data["value"])
+                        competence.progress.add(progress)
+                        participant.progressComp.add(progress)
+                    else:
+                        progress = participant.progressComp.filter(competence = competence)[0]
+                        progress.progress = progress.progress + data["value"]
+                        progress.save()
+                    return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:

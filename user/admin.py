@@ -10,8 +10,15 @@ class UserAdmin(admin.ModelAdmin):
         'email',
         'role',
     )
-    
+
 admin.site.register(User, UserAdmin)
+
+class ProgressAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'progress',
+    )
+admin.site.register(Progress, ProgressAdmin)
 
 class ParticipantAdmin(admin.ModelAdmin):
     list_display = (

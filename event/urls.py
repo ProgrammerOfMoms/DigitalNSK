@@ -11,4 +11,5 @@ urlpatterns = [
     path('participants/', EventParticipants.as_view()),
     #path('ger/', Func.as_view()),
     path('db/', Excel.as_view()),
+    path('points/', EventPoints.as_view())
 ]

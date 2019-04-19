@@ -432,6 +432,7 @@ HOST: http://digitalnsk.ru:8000/
     + Body
             {
                 "event": Идентификатор мероприятия
+                "id": Идентификатор участника(только если удаляет админ или тьютор)
             }
 
 + Response 200 (application/json)
@@ -453,6 +454,7 @@ HOST: http://digitalnsk.ru:8000/
     + Body
             {
                 "event": Идентификатор мароприятия
+                "email": Почта участнико(только если регистрирует админ или тьютор)
             }
 
 + Response 200 (application/json)
@@ -744,19 +746,39 @@ HOST: http://digitalnsk.ru:8000/
 
     + Body
             {
-    "data": {
-        "list": [   массив участников
-            {
-                "firstName": "Имя",
-                "lastName": "Фамилия",
-                "email": "Почта",
-                "phoneNumber": "Номер телефона"
+                "data": {
+                    "list": [   массив участников
+                        {
+                            "firstName": "Имя",
+                            "lastName": "Фамилия",
+                            "email": "Почта",
+                            "phoneNumber": "Номер телефона"
+                        }
+                    ],
+                    "name": "Название мероприятия",
+                    "id": идентификатор мероприятия
+                }
             }
-        ],
-        "name": "Название мероприятия",
-        "id": идентификатор мероприятия
-    }
-}
+
++ Response 400 (application/json)
+
+    + Body
+            {
+                "error": текст ошибки
+            }
+
+### Получение участников мероприятия [PUT/event/points/]
++ Request (application/json)
+    + Headers
+            id Идентификатор пользователя
+    + Body
+            {
+                "value": Баллы,
+                "competence": Идентификатор компетенции,
+                "id": Идентификатор участника
+            }
+
++ Response 204 (application/json)
 
 + Response 400 (application/json)
 
