@@ -211,8 +211,6 @@ class Excel(APIView):
             book = openpyxl.load_workbook(filename = path)
         except:
             book = openpyxl.Workbook()
-        sheet = book["Sheet"]
-        book.remove(sheet)
         try:
             sheet = book[date]
         except KeyError:
@@ -233,6 +231,7 @@ class Excel(APIView):
         index = 2
         for user in users:
             person = user.id
+            print(user.id_id)
             if user.id_id > 400 and person.date_joined.date() < to.date() and person.date_joined.date() > _from.date():
                 i = str(index)
                 comp = user.mainCompetence
@@ -269,6 +268,7 @@ class Excel(APIView):
                         sheet['J' + i] = 0
                 index = index + 1
         book.save(path)
+        print("============================")
         try:
             msg = EmailMessage(
                 subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
@@ -281,11 +281,10 @@ class Excel(APIView):
         except:
             msg = EmailMessage(
                 subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
-                body = "Загрузка прошла успешно",
+                body = "Что-то пошло не так, повторите попытку позжу",
                 from_email = "sibtiger.nsk@gmail.com",
-                to = [email]
+                to = [email, "drestbm@gmail.com"]
             )
-            #msg.attach_file(path)
             msg.send()
     # def error(self):
     #     users = Participant.objects.all()
