@@ -213,6 +213,8 @@ class Excel(APIView):
             book = openpyxl.Workbook()
         try:
             sheet = book[date]
+            book.remove(sheet)
+            sheet = book.create_sheet(date)
         except KeyError:
             sheet = book.create_sheet(date)
         users = Participant.objects.all()
