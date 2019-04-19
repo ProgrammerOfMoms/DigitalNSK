@@ -291,6 +291,24 @@ class Excel(APIView):
 class EventEdit(APIView):
     permission_classes = (AllowAny,)
 
+    def post(self, request):
+        data = json.loads(request.body.decode("utf-8"))
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                idEvent = data["id"]
+                data.pop("id")
+                event = Event.objects.get(id = idEvent)
+                serializer = EventSerializer(event, data)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+                return Response(data = serializer.data, status = status.HTTP_200_OK)
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
@@ -331,18 +349,27 @@ class Func(APIView):
 class EventParticipants(APIView):
     permission_classes = (AllowAny,)
     def get(self, request):
-        pass
-    #     if "HTTP_ID" in request.META:
-    #         id = request.META["HTTP_ID"]
-    #         user = User.objects.get(id = id)
-    #         if user.role == User.ADMINISTRATOR:
-    #             if "event" in request.GET:
-    #             event = Event.objects.get(id = request.GET["event"])
-    #             participants = event.participant.all()
-    #             data = {"list": []}
-    #             for item in participants:
-    #                 data["list"].append(item)
-    #         else:
-    #             return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
-    #     else:
-    #         return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            if user.role == User.ADMINISTRATOR:
+                if "event" in request.GET:
+                    event = Event.objects.get(id = request.GET["event"])
+                    participants = event.participant.all()
+                    data = {"list": [], "name": event.name, "id": event.id}
+                    for item in participants:
+                        user = item.id
+                        temp = {
+                            "firstName": user.firstName,
+                            "lastName": user.lastName,
+                            "email": user.email,
+                            "phoneNumber": user.phoneNumber
+                        }
+                        data["list"].append(temp)
+                    return Response(data = data, status = status.HTTP_200_OK)
+                else:
+                    return Response(data = {"error": "Отсутствует обязательное поле"}, status = status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
