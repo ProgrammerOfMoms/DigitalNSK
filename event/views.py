@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -274,7 +274,9 @@ class Excel(APIView):
             from_email = "sibtiger.nsk@gmail.com",
             to = [email]
         )
+        print(msg)
         msg.attach_file(path)
+        print(msg)
         msg.send()
         book.save(path)
 
