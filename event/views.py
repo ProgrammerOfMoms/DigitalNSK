@@ -180,7 +180,6 @@ class EventAdd(APIView):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
-            
             if user.role == User.ADMINISTRATOR:
                 data = request.data
                 if "photo" in data:
