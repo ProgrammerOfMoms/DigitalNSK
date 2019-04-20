@@ -767,14 +767,18 @@ HOST: http://digitalnsk.ru:8000/
                 "error": текст ошибки
             }
 
-### Получение участников мероприятия [PUT/event/points/]
+### Выставление баллов участнику [PUT/event/points/]
 + Request (application/json)
     + Headers
             id Идентификатор пользователя
     + Body
             {
-                "value": Баллы,
-                "competence": Идентификатор компетенции,
+                "list": [
+                    {
+                        "value": Баллы,
+                        "competence": Идентификатор компетенции
+                    },
+                ]
                 "id": Идентификатор участника
             }
 

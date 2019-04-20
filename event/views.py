@@ -422,17 +422,19 @@ class EventPoints(APIView):
             user = User.objects.get(id = id)
             data = json.loads(request.body.decode("utf-8"))
             if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
-                if "competence" in data and "value" in data and "id" in data:
+                if  "list" in data and "id" in data:
+                    mas = data["list"]
                     participant = Participant.objects.get(id = data["id"])
-                    competence = SideCompetence.objects.get(id = data["competence"])
-                    if len(participant.progressComp.filter(competence = competence)) == 0:
-                        progress = Progress.objects.create(progress = data["value"])
-                        competence.progress.add(progress)
-                        participant.progressComp.add(progress)
-                    else:
-                        progress = participant.progressComp.filter(competence = competence)[0]
-                        progress.progress = progress.progress + data["value"]
-                        progress.save()
+                    for item in mas:
+                        competence = SideCompetence.objects.get(id = item["competence"])
+                        if len(participant.progressComp.filter(competence = competence)) == 0:
+                            progress = Progress.objects.create(progress = item["value"])
+                            competence.progress.add(progress)
+                            participant.progressComp.add(progress)
+                        else:
+                            progress = participant.progressComp.filter(competence = competence)[0]
+                            progress.progress = progress.progress + item["value"]
+                            progress.save()
                     return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
