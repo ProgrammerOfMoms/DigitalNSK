@@ -44,7 +44,7 @@ class EventList(APIView):
                     competence = user.mainCompetence
                     data = []
                     for event in events:
-                        if (event not in userEvents and competence == event.mainCompetence) or event.mainCompetence.name == "Базовая компетенция":
+                        if event not in userEvents and (competence == event.mainCompetence or event.mainCompetence.name == "Базовая компетенция"):
                             data.append(EventSerializer(event).data)
                     res = {"list": data}
                     return Response(data = res, status = status.HTTP_200_OK)
@@ -411,7 +411,6 @@ class EventParticipants(APIView):
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
-
 
 class EventPoints(APIView):
     permission_classes = (AllowAny,)
