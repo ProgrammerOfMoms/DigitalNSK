@@ -242,7 +242,7 @@ class Excel(APIView):
         index = 2
         for user in users:
             person = user.id
-            if user.id_id > 400 and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
+            if user.id_id > 2700: #and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
