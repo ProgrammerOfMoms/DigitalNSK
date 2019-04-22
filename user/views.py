@@ -180,7 +180,9 @@ class Profile(APIView):
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 serializer = UserSerializer(user)
+                res = {}
                 data = serializer.data
+                res.update(data)
                 return Response(data = data, status = status.HTTP_200_OK)
         
         except User.DoesNotExist:
@@ -202,12 +204,17 @@ class Profile(APIView):
             except KeyError:
                 email = json.loads(request.body.decode("utf-8"))["id"]["email"]
                 user = User.objects.get(email = email)
-            updateInfo = json.loads(request.body.decode("utf-8"))
+            try:
+                updateInfo = json.loads(request.body.decode("utf-8"))
+            except:
+                if "data" in request.data:
+                    updateInfo = request.data["data"]
             try:
                 updateInfo["id"].pop("email")
-            except KeyError:
+            except:
                 pass
-               
+            
+            
 
             if user.role == User.PARTICIPANT:
                 if "password" in updateInfo["id"]:
@@ -224,11 +231,27 @@ class Profile(APIView):
                 res["jwt"] = getJWT(user.id)
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
+                bphoto = request.FILES.get("photo", b"no photo").read()
+                photo_dir = settings.MEDIA_ROOT+"/other_roles/"
+                while True:
+                    photo = uuid.uuid4().hex
+                    if photo not in os.listdir(photo_dir):
+                        break
+                f = open(photo_dir+photo, mode = 'wb')
+                f.write(bphoto)
+                f.close()
+                try:
+                    updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
+                except:
+                    updateInfo = json.loads(updateInfo.read())
+                    updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
                 serializer = UserSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
                 data = serializer.data
-                data["jwt"] = getJWT(user.id)
+                res = {"jwt": getJWT(user)}
+                res.update(data)
+
                 return Response(data = data, status = status.HTTP_200_OK)
 
         except User.DoesNotExist as e:
@@ -239,6 +262,7 @@ class Profile(APIView):
             res = {"error": "Пароли не совпадают"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            raise e
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
