@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -15,9 +15,8 @@ from .models import *
 from user.models import *
 from .serialize import *
 from testing.models import Test
-import uuid
-import os
 
+import os
 import json
 # Create your views here.
 
@@ -30,7 +29,7 @@ class EventList(APIView):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             usr = User.objects.get(id = id)
-            if usr.role == User.ADMINISTRATOR:
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
                 events = Event.objects.all()
                 data = []
                 for event in events:
@@ -45,7 +44,7 @@ class EventList(APIView):
                     competence = user.mainCompetence
                     data = []
                     for event in events:
-                        if (event not in userEvents and competence == event.mainCompetence) or event.mainCompetence.name == "Базовая компетенция":
+                        if event not in userEvents and (competence == event.mainCompetence or event.mainCompetence.name == "Базовая компетенция"):
                             data.append(EventSerializer(event).data)
                     res = {"list": data}
                     return Response(data = res, status = status.HTTP_200_OK)
@@ -74,6 +73,12 @@ class SignUpEvent(APIView):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
+            usr = User.objects.get(id = id)
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
+                if "email" in data:
+                    id = User.objects.get(email = data["email"]).id
+                else:
+                    return Response(data = {"error": "Отсутствует поле email"}, status = status.HTTP_400_BAD_REQUEST)
             if "event" in data:
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
@@ -83,7 +88,7 @@ class SignUpEvent(APIView):
                     event.save()
                     if event not in user.events.all():
                         event.participant.add(user)
-                        return Response(status = status.HTTP_200_OK)
+                        return Response(status = status.HTTP_204_NO_CONTENT)
                     else:
                         return Response(data = {"error": "Пользователь уже учавствует в данном мероприятии"}, status = status.HTTP_400_BAD_REQUEST)
                 else:
@@ -97,6 +102,12 @@ class SignUpEvent(APIView):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
+            usr = User.objects.get(id = id)
+            if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
+                if "id" in data:
+                    id = data["id"]
+                else:
+                    return Response(data = {"error": "Отсутствует поле id"}, status = status.HTTP_400_BAD_REQUEST)
             if "event" in data:
                 event_id = data["event"]
                 user = Participant.objects.get(id = id)
@@ -204,7 +215,7 @@ class EventAdd(APIView):
 class Excel(APIView):
     permission_classes = (AllowAny,)
 
-    def formXSLX(self):
+    def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
         date = str(datetime.datetime.now().date())
         path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
@@ -212,8 +223,6 @@ class Excel(APIView):
             book = openpyxl.load_workbook(filename = path)
         except:
             book = openpyxl.Workbook()
-        sheet = book["Sheet"]
-        book.remove(sheet)
         try:
             sheet = book[date]
         except KeyError:
@@ -233,8 +242,8 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
-            if (user.id_id > 400):
-                person = user.id
+            person = user.id
+            if user.id_id > 2700: #and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
@@ -269,13 +278,24 @@ class Excel(APIView):
                     except:
                         sheet['J' + i] = 0
                 index = index + 1
-        send_mail(  subject = 'Загрузка прошла успешно',
-                message = "Кол-во участников: " + str(length),
-                from_email = 'sibtiger.nsk@gmail.com',
-                recipient_list = ['drestbm@gmail.com'],
-                fail_silently=False)
         book.save(path)
-
+        try:
+            msg = EmailMessage(
+                subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
+                body = "Загрузка прошла успешно",
+                from_email = "sibtiger.nsk@gmail.com",
+                to = [email]
+            )
+            msg.attach_file(path)
+            msg.send()
+        except:
+            msg = EmailMessage(
+                subject = "Выгрузка базы данных" + str(datetime.datetime.now().date()),
+                body = "Что-то пошло не так, повторите попытку позжу",
+                from_email = "sibtiger.nsk@gmail.com",
+                to = [email, "drestbm@gmail.com"]
+            )
+            msg.send()
     # def error(self):
     #     users = Participant.objects.all()
     #     res = []
@@ -288,13 +308,17 @@ class Excel(APIView):
     #     print(res)
 
     def post(self, request):
-        import threading
+        import threading, datetime
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR:
-                threading.Thread(target=self.formXSLX).start()
-                #self.error()
+                data = json.loads(request.body.decode("utf-8"))
+                if "email" in data and  "from" in data and "to" in data:
+                    email = data["email"]
+                    _from = datetime.datetime.strptime(data["from"], '%d.%m.%Y')
+                    to = datetime.datetime.strptime(data["to"], '%d.%m.%Y')
+                    threading.Thread(target=self.formXSLX, args=(to,_from,email) ).start()
                 return Response(status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
@@ -365,7 +389,7 @@ class EventParticipants(APIView):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
-            if user.role == User.ADMINISTRATOR:
+            if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
                 if "event" in request.GET:
                     event = Event.objects.get(id = request.GET["event"])
                     participants = event.participant.all()
@@ -382,6 +406,34 @@ class EventParticipants(APIView):
                     return Response(data = data, status = status.HTTP_200_OK)
                 else:
                     return Response(data = {"error": "Отсутствует обязательное поле"}, status = status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+class EventPoints(APIView):
+    permission_classes = (AllowAny,)
+    
+    def put(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            user = User.objects.get(id = id)
+            data = json.loads(request.body.decode("utf-8"))
+            if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
+                if  "list" in data and "id" in data:
+                    mas = data["list"]
+                    participant = Participant.objects.get(id = data["id"])
+                    for item in mas:
+                        competence = SideCompetence.objects.get(id = item["competence"])
+                        if len(participant.progressComp.filter(competence = competence)) == 0:
+                            progress = Progress.objects.create(progress = item["value"])
+                            competence.progress.add(progress)
+                            participant.progressComp.add(progress)
+                        else:
+                            progress = participant.progressComp.filter(competence = competence)[0]
+                            progress.progress = progress.progress + item["value"]
+                            progress.save()
+                    return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:

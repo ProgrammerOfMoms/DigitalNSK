@@ -120,7 +120,7 @@ class SignIn(APIView):
                         user_details['photo'] = "https://digitalnsk.ru:8000/media/"+user.photo
                     else:
                         user_details['photo'] = "%s"  % (user.photo)
-                    if user.role != User.ADMINISTRATOR:
+                    if user.role == User.PARTICIPANT:
                         if len(user.participant.passedTests.all())==3:
                             user_details['test'] = True
                     user_logged_in.send(sender=user.__class__, request=request, user=user)

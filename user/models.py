@@ -95,6 +95,9 @@ class Progress(models.Model):
         verbose_name        = "Прогресс"
         verbose_name_plural = "Прогресс"
 
+    def __str__(self):
+        return "value:{} competence:{}".format(self.progress, self.competence.name)
+
 class Participant(models.Model):
     """Модель участника"""
 
