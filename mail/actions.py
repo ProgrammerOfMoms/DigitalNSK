@@ -46,4 +46,13 @@ def send_password_recovery_link(email, link):
                 recipient_list = [email],
                 fail_silently=False)
 
+@after_response.enable
+def send_password_for_tutor(email, password):
+    send_mail(  subject = 'Ваш пароль тьютора',
+                message = 'Ваш пароль тьютора '+password+".\n Не сообщайте этот пароль никому. Также рекомендуем Вам изменить его на собственный. С уважением, команда DigitalNSK.",
+                from_email = 'sibtiger.nsk@gmail.com',
+                recipient_list = [email],
+                fail_silently=False)
+
+
 

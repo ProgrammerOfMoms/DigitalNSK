@@ -38,7 +38,7 @@ class SignUp(APIView):
         try:
             data = json.loads(request.body.decode("utf-8"))
 
-            if data["id"]["role"] == User.PARTICIPANT:
+            if "id" in data and data["id"]["role"] == User.PARTICIPANT:
                 phone = data["id"]["phoneNumber"]
                 serializer = ParticipantSerializer(data = data)
                 serializer.is_valid(raise_exception=True)
@@ -55,12 +55,16 @@ class SignUp(APIView):
             elif "role" in data:
                 password = uuid.uuid4().hex
                 data["password"] = password
+                phone = data["phoneNumber"]
                 serializer = UserSerializer(data = data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-                res = serializer.data
-                user = User.objects.get(email = data.email)
-                res["jwt"] = getJWT(user)
+                data = serializer.data
+                user = User.objects.get(email = data["email"])
+                user.phoneNumber = phone
+                user.save()
+                res = {"jwt": getJWT(user)}
+                res.update(data)
 
             # elif user["id"]["role"] == User.PARTNER:
             #     serializer = PartnerSerializer(data = role)
@@ -77,13 +81,11 @@ class SignUp(APIView):
             else:
                 res = {'error': 'Пользователь не найден'}
                 return Response(data = res, status=status.HTTP_403_FORBIDDEN)
-
-            if "id" in res and res["id"]["email"] != None:
+            if type(res["id"])!=int and "role" in res["id"] and res["id"]["email"] != None:
                 data = linkGenerator(id = res["id"]["id"])
                 send_confirmation_mail.after_response(email = res["id"]["email"], link = data[0])
             elif "email" in res and res["email"]!=None:
-                data = linkGenerator(id = res.id)
-                # send_confirmation_mail.after_response(email = res.email, link = data[0])
+                send_password_for_tutor.after_response(email = res["email"], password = password)
             return Response(data = res, status=status.HTTP_201_CREATED)
         except Exception as e:
             res = {'error': 'Не удалось зарегистрировать пользователя'}
@@ -285,7 +287,6 @@ class PasswordRecovery(APIView):
         try:
             data = json.loads(request.body.decode("utf-8"))["id"]
             link = RecoveryLink.objects.get(link = data["hash"])
-            print(link)
             if not link.active:
                 res = {"error": "Данной ссылки не найдено"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
