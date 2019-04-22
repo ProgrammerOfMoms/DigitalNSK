@@ -102,6 +102,7 @@ class SignUpEvent(APIView):
         data = json.loads(request.body.decode("utf-8"))
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
+            usr = User.objects.get(id = id)
             if usr.role == User.ADMINISTRATOR or usr.role == User.TUTOR:
                 if "id" in data:
                     id = data["id"]
