@@ -216,7 +216,7 @@ class Excel(APIView):
 
     def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
-        date = str(datetime.datetime.now())
+        date = str(datetime.datetime.now().date())
         path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
         try:
             book = openpyxl.load_workbook(filename = path)
