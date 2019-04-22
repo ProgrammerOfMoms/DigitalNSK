@@ -13,6 +13,7 @@ from user.actions import *
 import json
 import copy
 import datetime
+import uuid
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
@@ -51,10 +52,16 @@ class SignUp(APIView):
                 res.update(data)
                 res["jwt"] = getJWT(user)
 
-            # elif user["id"]["role"] == User.TUTOR:
-            #     serializer = TutorSerializer(data = role)
-            #     serializer.is_valid(raise_exception=True)
-            #     serializer.save()
+            elif "role" in data:
+                password = uuid.uuid4().hex
+                data["password"] = password
+                serializer = UserSerializer(data = data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                res = serializer.data
+                user = User.objects.get(email = data.email)
+                res["jwt"] = getJWT(user)
+
             # elif user["id"]["role"] == User.PARTNER:
             #     serializer = PartnerSerializer(data = role)
             #     serializer.is_valid(raise_exception=True)
@@ -71,9 +78,12 @@ class SignUp(APIView):
                 res = {'error': 'Пользователь не найден'}
                 return Response(data = res, status=status.HTTP_403_FORBIDDEN)
 
-            if res["id"]["email"] != None:
+            if "id" in res and res["id"]["email"] != None:
                 data = linkGenerator(id = res["id"]["id"])
                 send_confirmation_mail.after_response(email = res["id"]["email"], link = data[0])
+            elif "email" in res and res["email"]!=None:
+                data = linkGenerator(id = res.id)
+                # send_confirmation_mail.after_response(email = res.email, link = data[0])
             return Response(data = res, status=status.HTTP_201_CREATED)
         except Exception as e:
             res = {'error': 'Не удалось зарегистрировать пользователя'}
@@ -128,6 +138,14 @@ class SignIn(APIView):
             res = {'error': 'Пользователь не найден'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
 
+class VKSignIn(APIView):
+    """Авторизация через vk"""
+    # permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+
+    def post(self, reauest):
+        pass
+
 
 class Profile(APIView):
     """Редактирование профиля"""
@@ -158,6 +176,10 @@ class Profile(APIView):
                 if res["id"]["photo"] != "":
                     res["id"]["photo"] = "https://digitalnsk.ru:8000/media/"+res["id"]["photo"]
                 return Response(data = res, status = status.HTTP_200_OK)
+            else:
+                serializer = UserSerializer(user)
+                data = serializer.data
+                return Response(data = data, status = status.HTTP_200_OK)
         
         except User.DoesNotExist:
             res = {"error": "Такого пользователя не существует"}
@@ -178,19 +200,19 @@ class Profile(APIView):
             except KeyError:
                 email = json.loads(request.body.decode("utf-8"))["id"]["email"]
                 user = User.objects.get(email = email)
-            updateParticipant = json.loads(request.body.decode("utf-8"))
+            updateInfo = json.loads(request.body.decode("utf-8"))
             try:
-                updateParticipant["id"].pop("email")
+                updateInfo["id"].pop("email")
             except KeyError:
                 pass
                
 
             if user.role == User.PARTICIPANT:
-                if "password" in updateParticipant["id"]:
-                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateParticipant["id"]["password"][0], password = updateParticipant["id"]["password"][1])
-                    updateParticipant["id"].pop("password")
+                if "password" in updateInfo["id"]:
+                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateInfo["id"]["password"][0], password = updateInfo["id"]["password"][1])
+                    updateInfo["id"].pop("password")
                 user = user.participant
-                serializer = ParticipantSerializer(user, updateParticipant, partial = True)
+                serializer = ParticipantSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
                 data = serializer.data
@@ -199,8 +221,13 @@ class Profile(APIView):
                 
                 res["jwt"] = getJWT(user.id)
                 return Response(data = res, status = status.HTTP_200_OK)
-            
-            """Здесь остальные роли"""
+            else:
+                serializer = UserSerializer(user, updateInfo, partial = True)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+                data = serializer.data
+                data["jwt"] = getJWT(user.id)
+                return Response(data = data, status = status.HTTP_200_OK)
 
         except User.DoesNotExist as e:
             raise(e)
@@ -213,6 +240,7 @@ class Profile(APIView):
             raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
 
 
 class PasswordRecovery(APIView):
