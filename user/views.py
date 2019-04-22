@@ -239,7 +239,24 @@ class Profile(APIView):
             res = {"error": "Пароли не совпадают"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            raise(e)
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+class TutorList(APIView):
+    """Получение списка тьюторов"""
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        """Попрвить чтобы мог поучить только админ"""
+        try:
+            tutors = User.objects.filter(role = User.TUTOR)
+            res = {"tutors": []}
+            for tutor in tutors:
+                serializer = UserSerializer(tutor)
+                res["tutors"].append(serializer.data)
+            return Response(data = res, status = status.HTTP_200_OK)
+
+        except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
