@@ -216,7 +216,7 @@ class Excel(APIView):
 
     def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
-        date = str(datetime.datetime.now().date())
+        date = str(datetime.datetime.now())
         path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
         try:
             book = openpyxl.load_workbook(filename = path)
@@ -224,8 +224,6 @@ class Excel(APIView):
             book = openpyxl.Workbook()
         try:
             sheet = book[date]
-            book.remove(sheet)
-            sheet = book.create_sheet(date)
         except KeyError:
             sheet = book.create_sheet(date)
         users = Participant.objects.all()
@@ -244,7 +242,7 @@ class Excel(APIView):
         index = 2
         for user in users:
             person = user.id
-            if user.id_id > 400 and person.date_joined.date() < to.date() and person.date_joined.date() > _from.date():
+            if user.id_id > 400 and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
