@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     lastName        = models.CharField(max_length = 20, verbose_name = "Фамилия")
     patronymic      = models.CharField(max_length = 20, verbose_name = "Отчество", blank = True)
     password        = models.TextField(verbose_name = "Пароль")
-    photo           = models.URLField(verbose_name="Фото", blank = True)
+    photo           = models.TextField(verbose_name="Фото", blank = True)
     phoneNumber     = models.TextField(max_length = 50, blank = True)
     role            = models.CharField(verbose_name = "Роль", choices = CHOICES_OF_ROLE, default = PARTICIPANT, max_length = 20)
     emailConfirmed  = models.BooleanField(verbose_name = "Email подтвержден", default = False)
