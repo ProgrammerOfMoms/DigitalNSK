@@ -209,6 +209,10 @@ class Profile(APIView):
             except:
                 if "data" in request.data:
                     updateInfo = request.data["data"]
+                elif "data" in request.POST:
+                    updateInfo = request.POST.get("data")
+                if type(updateInfo) == str:
+                    updateInfo = json.loads(updateInfo)
             try:
                 updateInfo["id"].pop("email")
             except:
