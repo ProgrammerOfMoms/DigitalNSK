@@ -397,6 +397,7 @@ class EventParticipants(APIView):
                     for item in participants:
                         user = item.id
                         temp = {
+                            "id": user.id,
                             "firstName": user.firstName,
                             "lastName": user.lastName,
                             "email": user.email,
