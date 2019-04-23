@@ -98,6 +98,19 @@ class Progress(models.Model):
     def __str__(self):
         return "value:{} competence:{}".format(self.progress, self.competence.name)
 
+class EventPoints(models.Model):
+    """Модель баллов выставленных за мероприятие"""
+
+    points = models.ManyToManyField(Progress, verbose_name = "Баллы", related_name = "event_points", blank = True)
+    event  = models.ForeignKey(Event, verbose_name = "Мероприятия", related_name = "event_points", blank = True, on_delete = models.CASCADE)
+
+    class Meta:
+        verbose_name        = "Балл мероприятий"
+        verbose_name_plural = "Баллы мероприятий"
+
+    def __str__(self):
+        return "event:{}".format(self.event.name)
+
 class Participant(models.Model):
     """Модель участника"""
 
@@ -127,6 +140,7 @@ class Participant(models.Model):
     progressComp    = models.ManyToManyField(Progress, verbose_name = "Прогресс", blank = True, related_name= "participant")
 
     events          = models.ManyToManyField(Event, verbose_name = "Мероприятия", related_name = "participant", blank = True)
+    pointsEvent     = models.ManyToManyField(EventPoints, verbose_name = "Баллы за мероприятия", related_name = "participant", blank = True)
 
     vkURL           = models.URLField(verbose_name= "Ссылка на vkontakte", blank = True)
     instURL         = models.URLField(verbose_name= "Ссылка на instagram", blank = True)
