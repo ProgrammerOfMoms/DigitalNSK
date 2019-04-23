@@ -133,21 +133,34 @@ class EventInfo(APIView):
     def get(self, request):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
-            if "event" in request.GET:
-                user = Participant.objects.get(id = id)
-                event_id = request.GET["event"]
-                event = Event.objects.get(id = event_id)
-                res = EventSerializer(event)
-                data = res.data
-                if event in user.events.all():
-                    flag = True
+            user = User.objects.get(id = id)
+            if user.role == User.PARTICIPANT:
+                if "event" in request.GET:
+                    user = Participant.objects.get(id = id)
+                    event_id = request.GET["event"]
+                    event = Event.objects.get(id = event_id)
+                    res = EventSerializer(event)
+                    data = res.data
+                    if event in user.events.all():
+                        flag = True
+                    else:
+                        flag = False
+                    res = {"id": data, "register": flag}
+                    res.update(data)
+                    return Response(data = res, status = status.HTTP_200_OK)
                 else:
-                    flag = False
-                res = {"id": data, "register": flag}
-                res.update(data)
-                return Response(data = res, status = status.HTTP_200_OK)
+                    return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
+                if "event" in request.GET:
+                    event_id = request.GET["event"]
+                    event = Event.objects.get(id = event_id)
+                    res = EventSerializer(event)
+                    data = res.data
+                    res = {"id": data}
+                    res.update(data)
+                    return Response(data = res, status = status.HTTP_200_OK)
+                else:
+                    return Response(data = {"error": "Отсутствуют нужные поля"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
 
