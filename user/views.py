@@ -249,6 +249,9 @@ class Profile(APIView):
                 except:
                     updateInfo = json.loads(updateInfo.read())
                     updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
+                if "password" in updateInfo:
+                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateInfo["password"][0], password = updateInfo["password"][1])
+                    updateInfo.pop("password")
                 serializer = UserSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
