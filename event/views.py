@@ -255,8 +255,10 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
+            print(index)
             person = user.id
-            if user.id_id > 2936: #and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
+            date = person.date_joined.date()
+            if user.id_id > 400 and date <= to and date >= _from:
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
@@ -290,7 +292,7 @@ class Excel(APIView):
                         sheet['J' + i] = user.points
                     except:
                         sheet['J' + i] = 0
-                index = index + 1
+            index = index + 1
         book.save(path)
         try:
             msg = EmailMessage(
@@ -329,8 +331,8 @@ class Excel(APIView):
                 data = json.loads(request.body.decode("utf-8"))
                 if "email" in data and  "from" in data and "to" in data:
                     email = data["email"]
-                    _from = datetime.datetime.strptime(data["from"], '%d.%m.%Y')
-                    to = datetime.datetime.strptime(data["to"], '%d.%m.%Y')
+                    _from = datetime.datetime.strptime(data["from"], '%d.%m.%Y').date()
+                    to = datetime.datetime.strptime(data["to"], '%d.%m.%Y').date()
                     threading.Thread(target=self.formXSLX, args=(to,_from,email) ).start()
                 return Response(status = status.HTTP_200_OK)
             else:
