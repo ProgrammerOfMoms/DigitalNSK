@@ -230,16 +230,16 @@ class Excel(APIView):
 
     def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
-        date = str(datetime.datetime.now())
+        date = str(datetime.datetime.now().date())
         path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
         try:
             book = openpyxl.load_workbook(filename = path)
         except:
             book = openpyxl.Workbook()
-        try:
+        if date in book.get_sheet_names():
             sheet = book[date]
-        except KeyError:
-            sheet = book.create_sheet(date)
+            book.remove_sheet(sheet)
+        sheet = book.create_sheet(date)
         users = Participant.objects.all()
         length = len(users)
         sheet['A1'] = "№"
@@ -333,7 +333,7 @@ class Excel(APIView):
                     _from = datetime.datetime.strptime(data["from"], '%d.%m.%Y').date()
                     to = datetime.datetime.strptime(data["to"], '%d.%m.%Y').date()
                     threading.Thread(target=self.formXSLX, args=(to,_from,email) ).start()
-                return Response(status = status.HTTP_200_OK)
+                return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
