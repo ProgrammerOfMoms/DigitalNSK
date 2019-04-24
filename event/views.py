@@ -255,7 +255,6 @@ class Excel(APIView):
         sheet['K1'] = "Базовые компетенции"
         index = 2
         for user in users:
-            print(index)
             person = user.id
             date = person.date_joined.date()
             if user.id_id > 400 and date <= to and date >= _from:
