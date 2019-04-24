@@ -260,7 +260,9 @@ class Excel(APIView):
         for user in users:
             person = user.id
             date = person.date_joined.date()
+            print(date,to,_from)
             if user.id_id > 400 and date <= to and date >= _from:
+                print(index)
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
@@ -294,7 +296,7 @@ class Excel(APIView):
                         sheet['J' + i] = user.points
                     except:
                         sheet['J' + i] = 0
-            index = index + 1
+                index = index + 1
         book.save(path)
         try:
             msg = EmailMessage(
