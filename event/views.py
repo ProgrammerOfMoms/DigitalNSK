@@ -257,7 +257,6 @@ class Excel(APIView):
         for user in users:
             person = user.id
             date = person.date_joined.date()
-            print(index)
             if user.id_id > 400 and date <= to and date >= _from:
                 i = str(index)
                 comp = user.mainCompetence
