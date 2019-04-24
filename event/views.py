@@ -256,7 +256,7 @@ class Excel(APIView):
         index = 2
         for user in users:
             person = user.id
-            if user.id_id > 2700: #and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
+            if user.id_id > 2936: #and person.date_joined.date() <= to.date() and person.date_joined.date() >= _from.date():
                 i = str(index)
                 comp = user.mainCompetence
                 sheet['A' + i] = index - 1
@@ -428,25 +428,68 @@ class EventParticipants(APIView):
 class EventPointsAdd(APIView):
     permission_classes = (AllowAny,)
     
+    # def get(self, request):
+    #     if "HTTP_ID" in request.META:
+    #         id = request.META["HTTP_ID"]
+    #         user = User.objects.get(id = id)
+    #         if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
+    #             if "event" in request.GET and "id" in request.GET:
+    #                 participant = Participant.objects.get(id = request.GET["id"])
+    #                 event = Event.objects.get(id = request.GET["event"])
+    #                 points = participant.pointsEvent.filter(event = event)
+    #                 if len(points) == 0:
+    #                     #вернуть 0
+    #                 elif len(points) == 1:
+    #                     #вернуть баллы
+    #         else:
+    #             return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+    #     else:
+    #         return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)      
+    
     def put(self, request):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
             user = User.objects.get(id = id)
             data = json.loads(request.body.decode("utf-8"))
             if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
-                if  "list" in data and "id" in data:
+                if  "list" in data and "id" in data and "event" in data:
                     mas = data["list"]
                     participant = Participant.objects.get(id = data["id"])
-                    for item in mas:
-                        competence = SideCompetence.objects.get(id = item["competence"])
-                        if len(participant.progressComp.filter(competence = competence)) == 0:
-                            progress = Progress.objects.create(progress = item["value"])
-                            competence.progress.add(progress)
-                            participant.progressComp.add(progress)
-                        else:
+                    event = Event.objects.get(id = data["event"])
+                    points = participant.pointsEvent.filter(event = event)
+                    if len(points) == 0:
+                        eventPoints = EventPoints.objects.create(event = event)
+                        for item in mas:
+                            competence = SideCompetence.objects.get(id = item["competence"])
+                            if len(participant.progressComp.filter(competence = competence)) == 0:
+                                progress = Progress.objects.create(progress = item["value"])
+                                competence.progress.add(progress)
+                                participant.progressComp.add(progress)
+
+                                progressPoints = Progress.objects.create(progress = item["value"])
+                                competence.progress.add(progressPoints)
+                                eventPoints.points.add(progressPoints)
+                            else:
+                                progress = participant.progressComp.filter(competence = competence)[0]
+                                progress.progress = progress.progress + item["value"]
+                                progress.save()
+
+                                progressPoints = Progress.objects.create(progress = item["value"])
+                                competence.progress.add(progressPoints)
+                                eventPoints.points.add(progressPoints)
+                        participant.pointsEvent.add(eventPoints)
+                    elif len(points) == 1:
+                        points = points[0]
+                        for item in mas:
+                            competence = SideCompetence.objects.get(id = item["competence"])
+                            progressPoints = points.points.filter(competence = competence)[0]
+                            value = progressPoints.progress
                             progress = participant.progressComp.filter(competence = competence)[0]
-                            progress.progress = progress.progress + item["value"]
+                            progress.progress = progress.progress - value + item["value"]
                             progress.save()
+
+                            progressPoints.progress = item["value"]
+                            progressPoints.save
                     return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
