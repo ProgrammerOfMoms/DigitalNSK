@@ -18,6 +18,7 @@ from testing.models import Test
 
 import os
 import json
+import uuid
 # Create your views here.
 
 #Пользователь
@@ -231,15 +232,16 @@ class Excel(APIView):
     def formXSLX(self, to, _from, email):
         import openpyxl, os, datetime
         date = str(datetime.datetime.now().date())
-        path = os.path.join(settings.MEDIA_ROOT, "data.xlsx")
-        try:
-            book = openpyxl.load_workbook(filename = path)
-        except:
-            book = openpyxl.Workbook()
-        if date in book.get_sheet_names():
-            sheet = book[date]
-            book.remove_sheet(sheet)
-        sheet = book.create_sheet(date)
+        while True:
+            hash = uuid.uuid1.hex()
+            path = os.path.join(settings.MEDIA_ROOT, "db_" + date + "_" hash + ".xlsx")
+            try:
+                book = openpyxl.load_workbook(filename = path)
+            except:
+                book = openpyxl.Workbook()
+                break
+        sheet = book["Sheet"]
+        sheet.title = "DataBase"
         users = Participant.objects.all()
         length = len(users)
         sheet['A1'] = "№"
