@@ -234,7 +234,7 @@ class Excel(APIView):
         date = str(datetime.datetime.now().date())
         while True:
             hash = uuid.uuid1.hex()
-            path = os.path.join(settings.MEDIA_ROOT, "db_" + date + "_" hash + ".xlsx")
+            path = os.path.join(settings.MEDIA_ROOT, "db_" + date + "_" + hash + ".xlsx")
             try:
                 book = openpyxl.load_workbook(filename = path)
             except:
