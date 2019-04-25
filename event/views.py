@@ -410,10 +410,17 @@ class EventParticipants(APIView):
             user = User.objects.get(id = id)
             if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
                 if "event" in request.GET:
+                    flag = True
                     event = Event.objects.get(id = request.GET["event"])
                     participants = event.participant.all()
                     data = {"list": [], "name": event.name, "id": event.id}
                     for item in participants:
+                        
+                        points = item.pointsEvent.filter(event = event)
+                        if len(points) == 0:
+                            flag = True
+                        else:
+                            flag = False
                         user = item.id
                         temp = {
                             "id": user.id,
@@ -421,6 +428,7 @@ class EventParticipants(APIView):
                             "lastName": user.lastName,
                             "email": user.email,
                             "phoneNumber": user.phoneNumber
+                            "points": flag
                         }
                         data["list"].append(temp)
                     return Response(data = data, status = status.HTTP_200_OK)
@@ -434,23 +442,23 @@ class EventParticipants(APIView):
 class EventPointsAdd(APIView):
     permission_classes = (AllowAny,)
     
-    # def get(self, request):
-    #     if "HTTP_ID" in request.META:
-    #         id = request.META["HTTP_ID"]
-    #         user = User.objects.get(id = id)
-    #         if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
-    #             if "event" in request.GET and "id" in request.GET:
-    #                 participant = Participant.objects.get(id = request.GET["id"])
-    #                 event = Event.objects.get(id = request.GET["event"])
-    #                 points = participant.pointsEvent.filter(event = event)
-    #                 if len(points) == 0:
-    #                     #вернуть 0
-    #                 elif len(points) == 1:
-    #                     #вернуть баллы
-    #         else:
-    #             return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
-    #     else:
-    #         return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)      
+    #def get(self, request):
+    #    if "HTTP_ID" in request.META:
+    #        id = request.META["HTTP_ID"]
+    #        user = User.objects.get(id = id)
+    #        if user.role == User.ADMINISTRATOR or user.role == User.TUTOR:
+    #            if "event" in request.GET and "id" in request.GET:
+    #                participant = Participant.objects.get(id = request.GET["id"])
+    #                event = Event.objects.get(id = request.GET["event"])
+    #                points = participant.pointsEvent.filter(event = event)
+    #                if len(points) == 0:
+    #                    return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_200_OK
+    #                elif len(points) == 1:
+                        #вернуть баллы
+    #        else:
+    #            return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+    #    else:
+    #        return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)    
     
     def put(self, request):
         if "HTTP_ID" in request.META:
