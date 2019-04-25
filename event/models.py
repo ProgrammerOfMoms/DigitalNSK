@@ -61,7 +61,7 @@ class Point(models.Model):
 
 class Event(models.Model):
     """Мероприятие"""
-    name                = models.CharField(max_length = 50, verbose_name = "Название")
+    name                = models.CharField(max_length = 150, verbose_name = "Название")
     img                 = models.ImageField(upload_to = "Events", blank = True, verbose_name = "Изображение")
     description         = models.TextField(verbose_name = "Описание", blank = True, null = True)
     mainCompetence      = models.ForeignKey(MainCompetence, verbose_name = "Основная компетенция", related_name = "event", blank = True, on_delete = models.CASCADE, null = True)
