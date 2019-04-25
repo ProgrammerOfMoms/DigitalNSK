@@ -475,18 +475,16 @@ class EventPointsAdd(APIView):
                         competence = SideCompetence.objects.get(id = item["id"])
                         if len(participant.progressComp.filter(competence = competence)) == 0:
                             progress = Progress.objects.create(progress = item["value"])
-                            point = competence.progress.add(progress)
                             participant.progressComp.add(progress)
                         else:
                             progress = participant.progressComp.filter(competence = competence)[0]
                             progress.progress = progress.progress + item["value"]
-                            point = progress.progress
                             progress.save()
                         progressPoints = Progress.objects.create(progress = item["value"])
                         competence.progress.add(progressPoints)
                         eventPoints.points.add(progressPoints)
                         participant.pointsEvent.add(eventPoints)
-                    return Response(data = {"point": point}, status = status.HTTP_200_OK)
+                    return Response(data = {"point": len(participant.pointsEvent.all())}, status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
