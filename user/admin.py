@@ -22,7 +22,7 @@ admin.site.register(Progress, ProgressAdmin)
 
 class EventPointsAdmin(admin.ModelAdmin):
     list_display = (
-        'id'
+        'id',
     )
 admin.site.register(EventPoints, EventPointsAdmin)
 
