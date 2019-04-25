@@ -20,6 +20,12 @@ class ProgressAdmin(admin.ModelAdmin):
     )
 admin.site.register(Progress, ProgressAdmin)
 
+class EventPointsAdmin(admin.ModelAdmin):
+    list_display = (
+        'id'
+    )
+admin.site.register(EventPoints, EventPointsAdmin)
+
 class ParticipantAdmin(admin.ModelAdmin):
     list_display = (
         'id',

@@ -470,7 +470,6 @@ class EventPointsAdd(APIView):
                     mas = data["list"]
                     participant = Participant.objects.get(id = data["id"])
                     event = Event.objects.get(id = data["event"])
-                    points = participant.pointsEvent.filter(event = event)
                     eventPoints = EventPoints.objects.create(event = event)
                     for item in mas:
                         competence = SideCompetence.objects.get(id = item["id"])
@@ -478,18 +477,13 @@ class EventPointsAdd(APIView):
                             progress = Progress.objects.create(progress = item["value"])
                             competence.progress.add(progress)
                             participant.progressComp.add(progress)
-
-                            progressPoints = Progress.objects.create(progress = item["value"])
-                            competence.progress.add(progressPoints)
-                            eventPoints.points.add(progressPoints)
                         else:
                             progress = participant.progressComp.filter(competence = competence)[0]
                             progress.progress = progress.progress + item["value"]
                             progress.save()
-
-                            progressPoints = Progress.objects.create(progress = item["value"])
-                            competence.progress.add(progressPoints)
-                            eventPoints.points.add(progressPoints)
+                        progressPoints = Progress.objects.create(progress = item["value"])
+                        competence.progress.add(progressPoints)
+                        eventPoints.points.add(progressPoints)
                         participant.pointsEvent.add(eventPoints)
                     return Response(status = status.HTTP_204_NO_CONTENT)
             else:
