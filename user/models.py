@@ -109,7 +109,7 @@ class EventPoints(models.Model):
         verbose_name_plural = "Баллы мероприятий"
 
     def __str__(self):
-        return "event:{}".format(self.event.name)
+        return "id: event:{}".format(self.id, self.event.name)
 
 class Participant(models.Model):
     """Модель участника"""

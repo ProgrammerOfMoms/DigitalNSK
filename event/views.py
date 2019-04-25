@@ -484,7 +484,7 @@ class EventPointsAdd(APIView):
                         competence.progress.add(progressPoints)
                         eventPoints.points.add(progressPoints)
                         participant.pointsEvent.add(eventPoints)
-                    return Response(data = {"point": len(participant.pointsEvent.all())}, status = status.HTTP_200_OK)
+                    return Response(data = {"point": str(participant.pointsEvent.all()[0])}, status = status.HTTP_200_OK)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
