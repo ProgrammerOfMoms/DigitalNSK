@@ -97,7 +97,10 @@ class Progress(models.Model):
         verbose_name_plural = "Прогресс"
 
     def __str__(self):
-        return "value:{} competence:{}".format(self.progress, self.competence.name)
+        if self.competence != None:
+            return "value:{} competence:{}".format(self.progress, self.competence.name)
+        else:
+            return "value:{}".format(self.progress)
 
 class EventPoints(models.Model):
     """Модель баллов выставленных за мероприятие"""
