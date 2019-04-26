@@ -357,7 +357,7 @@ class EventEdit(APIView):
                 idEvent = data["id"]
                 data.pop("id")
                 event = Event.objects.get(id = idEvent)
-                serializer = EventSerializer(event, data)
+                serializer = EventEditSerializer(event, data)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
                 return Response(data = serializer.data, status = status.HTTP_200_OK)

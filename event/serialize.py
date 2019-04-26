@@ -135,3 +135,57 @@ class EventSerializer(serializers.ModelSerializer):
     def update(self, instance, validate_data):
         event = Event.objects.filter(id = instance.id).update(**validate_data)
         return Event.objects.get(**validate_data)
+
+class EventEditSerializer(serializers.ModelSerializer):
+    """Сериализация мероприятия для редактирования"""
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "name",
+            "img",
+            "date",
+            "time",
+            "description",
+            "mainCompetence",
+            "competence",
+            "points",
+            "venue",
+            "format_event",
+            "max_partiсipants",
+            "partiсipants",
+            "partner",
+            "manager_name",
+            "manager_position",
+            "phonenumber"
+        )
+        depth = 5
+
+    def create(self,validate_data):
+        mainCompetence = validate_data.get("mainCompetence")
+        validate_data.pop("mainCompetence")
+
+        competences = validate_data.get("competence")
+        validate_data.pop("competence")
+
+        points = validate_data.get("points")
+        validate_data.pop("points")
+
+        event = Event.objects.create(**validate_data)
+        competence = MainCompetence.objects.get(name = mainCompetence["name"])
+        competence.event.add(event)
+        masSideComp = []
+        for item in competences:
+            competence = SideCompetence.objects.get(name = item["name"])
+            competence.event.add(event)
+        masPoint = []
+        for item in points:
+            competence = SideCompetence.objects.get(name = item["competence"]["name"])
+            point = Point.objects.create(competence = competence, value = item["value"])
+            point.event_add.add(event)
+        return Event.objects.get(**validate_data)
+
+    def update(self, instance, validate_data):
+        event = Event.objects.filter(id = instance.id).update(**validate_data)
+        return Event.objects.get(**validate_data)
