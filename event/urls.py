@@ -9,7 +9,7 @@ urlpatterns = [
     path('add/', EventAdd.as_view()),
     path('edit/', EventEdit.as_view()),
     path('participants/', EventParticipants.as_view()),
-    #path('ger/', Func.as_view()),
+    # path('ger/', Func.as_view()),
     path('db/', Excel.as_view()),
     path('points/', EventPointsAdd.as_view()),
     path('progress/', PrivateProgress.as_view())
