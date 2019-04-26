@@ -500,11 +500,33 @@ class PrivateProgress(APIView):
             list1name = []
             list1value = []
             list2 = []
+            sum = 0
             for item in progressComp:
                 list1name.append(item.competence.name)
                 list1value.append(item.progress)
+                sum = sum + item.progress
             for item in progressEvent:
                 list2.append(EventPointsSerializer(item).data)
-            return Response(data = {"progress": {"names": list1name, "values": list1value}, "history": list2}, status = status.HTTP_200_OK)
+            if 0 <= sum  and sum <= 25:
+                _status = Participant.s1
+            elif 25 < sum  and sum <= 50:
+                _status = Participant.s2
+            elif 50 < sum  and sum <= 100:
+                _status = Participant.s3
+            elif 100 < sum  and sum <= 150:
+                _status = Participant.s4
+            elif 150 < sum  and sum <= 200:
+                _status = Participant.s5
+            elif 200 < sum  and sum <= 250:
+                _status = Participant.s6
+            elif 250 < sum  and sum <= 300:
+                _status = Participant.s7
+            elif 300 < sum  and sum <= 350:
+                _status = Participant.s8
+            elif 350 < sum:
+                _status = Participant.s9
+            participant.status = _status
+            participant.save()
+            return Response(data = {"status": _status ,"points": sum,"progress": {"names": list1name, "values": list1value}, "history": list2}, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)

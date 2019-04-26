@@ -115,6 +115,28 @@ class EventPoints(models.Model):
 class Participant(models.Model):
     """Модель участника"""
 
+    s1 = "Ученик"
+    s2 = "Студент"
+    s3 = "Бакалавр"
+    s4 = "Магистрант"
+    s5 = "Аспирант"
+    s6 = "Доцент"
+    s7 = "Профессор"
+    s8 = "Кандидат цифровых наук"
+    s9 = "Доктор цифровых наук"
+
+    CHOICES_OF_STATUS = (
+        (s1,"Ученик"),
+        (s2,"Студент"),
+        (s3,"Бакалавр"),
+        (s4,"Магистрант"),
+        (s5,"Аспирант"),
+        (s6,"Доцент"),
+        (s7,"Профессор"),
+        (s8,"Кандидат цифровых наук"),
+        (s9,"Доктор цифровых наук"),
+    )
+
     CLASS_8     = "8 класс"
     CLASS_9     = "9 класс"
     CLASS_10    = "10 класс"
@@ -135,6 +157,7 @@ class Participant(models.Model):
     id              = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True, related_name = "participant", verbose_name = "Пользователь")
     eduInstitution  = models.CharField(max_length = 50,verbose_name = "Учебное учреждение", blank = True, null = True)
     level           = models.CharField(choices = CHOICES_OF_LEVEL, default = CLASS_8, verbose_name = "Класс/курс", max_length = 20, blank = True)
+    status          = models.CharField(choices = CHOICES_OF_STATUS, default = s1, verbose_name = "Статус", max_length = 30, blank = True)
 
     mainCompetence  = models.ForeignKey(MainCompetence, verbose_name = "Основная компетенция", null = True, blank = True, on_delete = models.CASCADE, related_name= "participant" )
     points          = models.IntegerField(verbose_name = "Баллы по основной компетенции", blank = True, null = True)
