@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from institution.serialize import InstitutionSerializer
 from testing.serialize import ResultOfTestSerializer
-from event.serialize import EventSerializer
+from event.serialize import *
 from user.models import *
 
 from DigitalNSK import settings
@@ -29,24 +29,6 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
-
-class ProgressSerializer(serializers.ModelSerializer):
-    """Сериализация прогресса"""
-    event = EventSerializer
-
-    class Meta:
-        model = Progress
-        fields = (
-            "id",
-            "progress",
-            "event"
-        )
-
-    def create(self, validate_data):
-        event = validate_data.get("event")
-        validate_data.pop("event")
-        return Progress.objects.create(event = event, **validate_data)
-
 class UserSerializer(serializers.ModelSerializer):
     """Сериализация пользователя"""
 
@@ -68,32 +50,71 @@ class UserSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {'password': {'write_only': True}}
         depth = 5
-    
+
     def create(self, validate_data):
         email = validate_data.get("email")
         password = validate_data.get("password")
         validate_data.pop("email")
         validate_data.pop("password")
         return User.objects.create_user(email = email, password = password, **validate_data)
-    
+
     def update(self, instance, validate_data):
         if "password" in validate_data:
             validate_data.pop("password")
-            
         for key in validate_data.keys():
             setattr(instance, key, validate_data[key])
-
         instance.save()
         return instance
 
     def update_password(self, instance, old_password, password):
         if instance.check_password(old_password):
-                instance.set_password(password) 
+            instance.set_password(password)
         else:
             raise ValueError
         instance.save()
         return instance
 
+class ProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Progress
+        fields = (
+            "id",
+            "progress",
+            "competence"
+        )
+        depth = 2
+
+    competence = SideCompetenceSerializer()
+
+    def create(self, validate_data):
+        competence = validate_data.get("competence")
+        validate_data.pop("competence")
+        competence = SideCompetenceSerializer(competence)
+        return Progress.objects.create(competence = competence.data, **validate_data)
+
+class EventPointsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventPoints
+        fields = (
+            "id",
+            "points",
+            "event"
+        )
+        depth = 3
+
+    points     = ProgressSerializer(many = True)
+    event      = EventSerializer()
+
+    def create(self, validate_data):
+        points = validate_data.get("points")
+        validate_data.pop("points")
+        event = validate_data.get("event")
+        validate_data.pop("event")
+        event = EventSerializer(event)
+        data = []
+        for point in points:
+            data.append(EventPointsSerializer(point).data)
+        return Progress.objects.create(event = event, points = data, **validate_data)
 
 
 class ParticipantSerializer(DynamicFieldsModelSerializer):

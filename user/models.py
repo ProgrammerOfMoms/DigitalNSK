@@ -8,6 +8,7 @@ from django.contrib.auth.models import (
 from testing.models import *
 from institution.models import Institution
 from event.models import *
+from user.models import *
 
 
 class UserManager(BaseUserManager):

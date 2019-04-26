@@ -14,6 +14,7 @@ from DigitalNSK import settings
 from .models import *
 from user.models import *
 from .serialize import *
+from user.serialize import *
 from testing.models import Test
 
 import os
@@ -415,7 +416,6 @@ class EventParticipants(APIView):
                     participants = event.participant.all()
                     data = {"list": [], "name": event.name, "id": event.id}
                     for item in participants:
-                        
                         points = item.pointsEvent.filter(event = event)
                         if len(points) == 0:
                             flag = True
@@ -433,7 +433,7 @@ class EventParticipants(APIView):
                         data["list"].append(temp)
                     return Response(data = data, status = status.HTTP_200_OK)
                 else:
-                    return Response(data = {"error": "Отсутствует обязательное поле"}, status = status.HTTP_400_BAD_REQUEST)   
+                    return Response(data = {"error": "Отсутствует обязательное поле"}, status = status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
         else:
@@ -441,7 +441,6 @@ class EventParticipants(APIView):
 
 class EventPointsAdd(APIView):
     permission_classes = (AllowAny,)
-    
     #def get(self, request):
     #    if "HTTP_ID" in request.META:
     #        id = request.META["HTTP_ID"]
@@ -458,8 +457,7 @@ class EventPointsAdd(APIView):
     #        else:
     #            return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
     #    else:
-    #        return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)    
-    
+    #        return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
     def put(self, request):
         if "HTTP_ID" in request.META:
             id = request.META["HTTP_ID"]
@@ -484,8 +482,27 @@ class EventPointsAdd(APIView):
                         competence.progress.add(progressPoints)
                         eventPoints.points.add(progressPoints)
                         participant.pointsEvent.add(eventPoints)
-                    return Response(data = {"point": str(participant.pointsEvent.all()[0])}, status = status.HTTP_200_OK)
+                    return Response(status = status.HTTP_204_NO_CONTENT)
             else:
                 return Response(data = {"error": "В доступе отказано"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
+
+class PrivateProgress(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        if "HTTP_ID" in request.META:
+            id = request.META["HTTP_ID"]
+            participant = Participant.objects.get(id = id)
+            progressComp = participant.progressComp.all()
+            progressEvent = participant.pointsEvent.all()
+            list1 = []
+            list2 = []
+            for item in progressComp:
+                list1.append(ProgressSerializer(item).data)
+            for item in progressEvent:
+                list2.append(EventPointsSerializer(item).data)
+            return Response(data = {"progress": list1, "history": list2}, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
