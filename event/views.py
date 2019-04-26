@@ -497,12 +497,14 @@ class PrivateProgress(APIView):
             participant = Participant.objects.get(id = id)
             progressComp = participant.progressComp.all()
             progressEvent = participant.pointsEvent.all()
-            list1 = []
+            list1name = []
+            list1value = []
             list2 = []
             for item in progressComp:
-                list1.append(ProgressSerializer(item).data)
+                list1name.append(item.competence.name)
+                list1value.append(item.progress)
             for item in progressEvent:
                 list2.append(EventPointsSerializer(item).data)
-            return Response(data = {"progress": list1, "history": list2}, status = status.HTTP_200_OK)
+            return Response(data = {"progress": {"names": list1name, "values": list1value}, "history": list2}, status = status.HTTP_200_OK)
         else:
             return Response(data = {"error": "Отсутствует id пользователя"}, status = status.HTTP_400_BAD_REQUEST)
