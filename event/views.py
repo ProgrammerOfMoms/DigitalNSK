@@ -485,7 +485,7 @@ class EventPointsAdd(APIView):
                     for item in mas:
                         competence = SideCompetence.objects.get(id = item["id"])
                         if len(participant.progressComp.filter(competence = competence)) == 0:
-                            progress = Progress.objects.create(progress = item["value"])
+                            progress = Progress.objects.create(progress = item["value"], competence = competence)
                             participant.progressComp.add(progress)
                         else:
                             progress = participant.progressComp.filter(competence = competence)[0]
