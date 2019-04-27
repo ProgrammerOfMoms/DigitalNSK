@@ -251,8 +251,8 @@ class Profile(APIView):
                         updateInfo = json.loads(updateInfo.read())
                         updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
                 if "password" in updateInfo:
-                    res = {"error": "Password field is not supported"}
-                    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateInfo["password"][0], password = updateInfo["password"][1])
+                    updateInfo.pop("password")
                 serializer = UserSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
@@ -290,6 +290,29 @@ class TutorList(APIView):
 
         except:
             res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            id = request.META["HTTP_ID"]
+            admin = User.objects.get(id = id)
+            if admin.role == User.ADMINISTRATOR:
+                if "email" in data:
+                    user = User.objects.get(email = email)
+                    if user.role == User.TUTOR:
+                        user.delete()
+                    else:
+                        res = {"error": "It's not tutor"}
+                        return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+                else:
+                    res = {"error": "Wrong data"}
+                    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                res = {"error": "Permission denied"}
+                return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {"error": "Unknown error"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 
@@ -423,6 +446,18 @@ class UploadPhoto(APIView):
                 res = {"photo": None}
             return Response(data = res, status = status.HTTP_200_OK)
         except Exception as e:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
+
+class FeedBack(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            send_feedback_msg(data["name"], data["email"], data["msg"])
+        except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
