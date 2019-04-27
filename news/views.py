@@ -80,6 +80,17 @@ class NewsView(APIView):
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request):
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            if "id" in data:
+                news = News.objects.get(id = data["id"])
+                news.delete()
+                return Response(status = status.HTTP_204_NO_CONTENT)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
 
 
