@@ -260,7 +260,7 @@ class Profile(APIView):
                 res = {"jwt": getJWT(user)}
                 res.update(data)
 
-                return Response(data = data, status = status.HTTP_200_OK)
+                return Response(data = res, status = status.HTTP_200_OK)
 
         except User.DoesNotExist as e:
             raise(e)
