@@ -251,7 +251,7 @@ class Profile(APIView):
                         updateInfo = json.loads(updateInfo.read())
                         updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
                 if "password" in updateInfo:
-                     res = {"error": "Password field is not supported"}
+                    res = {"error": "Password field is not supported"}
                     return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                 serializer = UserSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
