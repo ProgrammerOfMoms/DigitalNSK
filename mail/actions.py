@@ -30,7 +30,7 @@ def send_confirmation_mail(email, link):
 def send_password_recovery_link(email, link):
     """Отправка письма со ссылкой на восстановление пароля"""
 
-    link = "https://digitalnsk.ru?hash="+link
+    link = "https://digitalnsk.ru/recovery?hash="+link
     #email = "slamvsem@gmail.com" #it's temp line
 
     f = open(settings.STATIC_ROOT+"/mail/recovery.html", 'r', encoding = "utf-8")
