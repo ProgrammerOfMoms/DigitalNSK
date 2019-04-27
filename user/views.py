@@ -189,7 +189,6 @@ class Profile(APIView):
             res = {"error": "Такого пользователя не существует"}
             return Response(data = res, status = status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            raise(e)
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
             
@@ -235,23 +234,25 @@ class Profile(APIView):
                 res["jwt"] = getJWT(user.id)
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
-                bphoto = request.FILES.get("photo", b"no photo").read()
-                photo_dir = settings.MEDIA_ROOT+"/other_roles/"
-                while True:
-                    photo = uuid.uuid4().hex
-                    if photo not in os.listdir(photo_dir):
-                        break
-                f = open(photo_dir+photo, mode = 'wb')
-                f.write(bphoto)
-                f.close()
-                try:
-                    updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
-                except:
-                    updateInfo = json.loads(updateInfo.read())
-                    updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
+                if "photo" in request.FILES:
+                    fl = True
+                    bphoto = request.FILES.get("photo", b"no photo").read()
+                    photo_dir = settings.MEDIA_ROOT+"/other_roles/"
+                    while True:
+                        photo = uuid.uuid4().hex
+                        if photo not in os.listdir(photo_dir):
+                            break
+                    f = open(photo_dir+photo, mode = 'wb')
+                    f.write(bphoto)
+                    f.close()
+                    try:
+                        updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
+                    except:
+                        updateInfo = json.loads(updateInfo.read())
+                        updateInfo["photo"] = "https://digitalnsk.ru/media/other_roles/"+photo
                 if "password" in updateInfo:
-                    UserSerializer.update_password(UserSerializer, instance = user, old_password = updateInfo["password"][0], password = updateInfo["password"][1])
-                    updateInfo.pop("password")
+                     res = {"error": "Password field is not supported"}
+                    return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
                 serializer = UserSerializer(user, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
