@@ -58,8 +58,8 @@ def send_password_for_tutor(email, password):
 def send_feedback_msg(name, email, msg):
     send_mail(  subject = 'Помогайка',
                 message = msg,
-                from_email = 'sibtiger.nsk@gmail.com',
-                recipient_list = [email],
+                from_email = email,
+                recipient_list = ['sibtiger.nsk@gmail.com'],
                 fail_silently=False)
 
 
