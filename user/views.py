@@ -306,7 +306,7 @@ class TutorList(APIView):
             admin = User.objects.get(id = id)
             if admin.role == User.ADMINISTRATOR:
                 if "email" in data:
-                    user = User.objects.get(email = email)
+                    user = User.objects.get(email = data["email"])
                     if user.role == User.TUTOR:
                         user.delete()
                         return Response(status = status.HTTP_204_NO_CONTENT)
@@ -320,7 +320,6 @@ class TutorList(APIView):
                 res = {"error": "Permission denied"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except:
-            raise
             res = {"error": "Unknown error"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
