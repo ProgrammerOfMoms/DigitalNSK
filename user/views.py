@@ -320,6 +320,7 @@ class TutorList(APIView):
                 res = {"error": "Permission denied"}
                 return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
         except:
+            raise
             res = {"error": "Unknown error"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
