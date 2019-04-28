@@ -13,4 +13,5 @@ urlpatterns = [
     path('upload-photo/', UploadPhoto.as_view()),
     path('tutors/', TutorList.as_view()),
     path('feedback/', FeedBack.as_view()),
+    path('test/', TestClass.as_view()),
 ]

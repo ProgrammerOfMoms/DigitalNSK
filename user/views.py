@@ -26,6 +26,13 @@ def getJWT(user):
     payload = jwt_payload_handler(user)
     return jwt.encode(payload, settings.SECRET_KEY)
 
+class TestClass(APIView):
+    """Тест токена"""
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, requset):
+        serializer = UserSerializer(requset.user)
+        return Response(serializer.data, status = status.HTTP_200_OK)
 
 class SignUp(APIView):
     """Регистрация через email и password"""
@@ -302,6 +309,7 @@ class TutorList(APIView):
                     user = User.objects.get(email = email)
                     if user.role == User.TUTOR:
                         user.delete()
+                        return Response(status = status.HTTP_204_NO_CONTENT)
                     else:
                         res = {"error": "It's not tutor"}
                         return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
