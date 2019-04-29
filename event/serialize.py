@@ -122,6 +122,8 @@ class EventSerializer(serializers.ModelSerializer):
 
         date = datetime.datetime.strptime(validate_data["date"], '%d.%m.%Y').date()
         if date < datetime.datetime.now().date():
+            validate_data["active"] = False
+        else:
             validate_data["active"] = True
 
         event = Event.objects.create(**validate_data)
