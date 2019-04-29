@@ -121,12 +121,6 @@ class EventSerializer(serializers.ModelSerializer):
         points = validate_data.get("points")
         validate_data.pop("points")
 
-        date = datetime.datetime.strptime(validate_data["date"], '%d.%m.%Y').date()
-        if date < datetime.datetime.now().date():
-            validate_data["active"] = False
-        else:
-            validate_data["active"] = True
-
         event = Event.objects.create(**validate_data)
         competence = MainCompetence.objects.get(name = mainCompetence["name"])
         competence.event.add(event)

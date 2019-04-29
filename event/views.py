@@ -33,6 +33,12 @@ class EventList(APIView):
                 events = Event.objects.all()
                 data = []
                 for event in events:
+                    date = datetime.datetime.strptime(event.date, '%d.%m.%Y').date()
+                    if date < datetime.datetime.now().date():
+                        event.active = False
+                    else:
+                        event.active = True
+                    event.save()
                     data.append(EventSerializer(event).data)
                 res = {"list": data}
                 return Response(data = res, status = status.HTTP_200_OK)
