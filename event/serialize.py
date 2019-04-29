@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from .models import *
 
+import datetime
+
 class SideCompetenceSerializer(serializers.ModelSerializer):
     """Сериализация компетенции"""
     class Meta:
@@ -118,6 +120,10 @@ class EventSerializer(serializers.ModelSerializer):
         points = validate_data.get("points")
         validate_data.pop("points")
 
+        date = datetime.datetime.strptime(validate_data["date"], '%d.%m.%Y').date()
+        if date < datetime.datetime.now().date():
+            validate_data["active"] = True
+
         event = Event.objects.create(**validate_data)
         competence = MainCompetence.objects.get(name = mainCompetence["name"])
         competence.event.add(event)
@@ -156,6 +162,7 @@ class EventEditSerializer(serializers.ModelSerializer):
             "max_partiсipants",
             "partiсipants",
             "partner",
+            "active"
             "manager_name",
             "manager_position",
             "phonenumber"
