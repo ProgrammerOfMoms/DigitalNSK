@@ -104,6 +104,7 @@ class EventSerializer(serializers.ModelSerializer):
             "max_partiсipants",
             "partiсipants",
             "partner",
+            "active",
             "manager_name",
             "manager_position",
             "phonenumber"
@@ -164,7 +165,7 @@ class EventEditSerializer(serializers.ModelSerializer):
             "max_partiсipants",
             "partiсipants",
             "partner",
-            "active"
+            "active",
             "manager_name",
             "manager_position",
             "phonenumber"
