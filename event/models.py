@@ -73,7 +73,7 @@ class Event(models.Model):
     format_event        = models.CharField(max_length = 50, verbose_name = "Формат мероприятия", blank = True)
     max_partiсipants    = models.IntegerField(verbose_name = "Максимальное количестьво учатников", default = 0)
     partiсipants        = models.IntegerField(verbose_name = "Количестьво учатников", default = 0)
-
+    active              = models.BooleanField(default = True, verbose_name = "Активно?")
     #Партнер
     partner             = models.CharField(max_length = 50, verbose_name = "Партнер", blank = True)
     manager_name        = models.CharField(max_length = 200, verbose_name = "Имя организатора", blank = True)

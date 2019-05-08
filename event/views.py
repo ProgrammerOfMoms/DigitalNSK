@@ -17,9 +17,7 @@ from .serialize import *
 from user.serialize import *
 from testing.models import Test
 
-import os
-import json
-import uuid
+import openpyxl, datetime, os, json, uuid
 # Create your views here.
 
 #Пользователь
@@ -35,6 +33,12 @@ class EventList(APIView):
                 events = Event.objects.all()
                 data = []
                 for event in events:
+                    date = datetime.datetime.strptime(event.date, '%d.%m.%Y').date()
+                    if date < datetime.datetime.now().date():
+                        event.active = False
+                    else:
+                        event.active = True
+                    event.save()
                     data.append(EventSerializer(event).data)
                 res = {"list": data}
                 return Response(data = res, status = status.HTTP_200_OK)
@@ -231,7 +235,6 @@ class Excel(APIView):
     permission_classes = (AllowAny,)
 
     def formXSLX(self, to, _from, email):
-        import openpyxl, os, datetime
         date = str(datetime.datetime.now().date())
         while True:
             hash = uuid.uuid4().hex

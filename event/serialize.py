@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from .models import *
 
+import datetime
+
 class SideCompetenceSerializer(serializers.ModelSerializer):
     """Сериализация компетенции"""
     class Meta:
@@ -102,6 +104,7 @@ class EventSerializer(serializers.ModelSerializer):
             "max_partiсipants",
             "partiсipants",
             "partner",
+            "active",
             "manager_name",
             "manager_position",
             "phonenumber"
@@ -156,6 +159,7 @@ class EventEditSerializer(serializers.ModelSerializer):
             "max_partiсipants",
             "partiсipants",
             "partner",
+            "active",
             "manager_name",
             "manager_position",
             "phonenumber"
