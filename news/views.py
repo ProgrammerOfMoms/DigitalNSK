@@ -91,6 +91,66 @@ class NewsView(APIView):
         except:
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        try:
+            if "data" in request.data:
+                updateInfo = request.data["data"]
+            if type(updateInfo) == str:
+                updateInfo = json.loads(updateInfo)
+            if "photo" in request.FILES:
+                bphoto = request.FILES.get("photo", b"no photo").read()
+                photo_dir = settings.MEDIA_ROOT+"/news/"
+            
+                news = News.objects.get(id = updateInfo["id"])
+                old_photo = news.photo
+                if old_photo != "":
+                    start = old_photo.find('_')
+                    if start == -1:
+                        new_photo = old_photo + "_1"
+                    else:
+                        prefix = old_photo[start+1:]
+                        prefix = str(int(prefix)+1)
+                        new_photo = old_photo[:start]+"_"+prefix
+                else:
+                    while True:
+                        new_photo = uuid.uuid4().hex
+                        if new_photo not in os.listdir(photo_dir):
+                            break
+                            
+                f = open(photo_dir+new_photo, mode = 'wb')
+                f.write(bphoto)
+                f.close()
+
+                data = {"photo": "https://digitalnsk.ru/media/news/"+new_photo}
+                serializer = NewsSerializer(news, data, partial = True)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+
+            if updateInfo:
+                
+                if "html_code" in updateInfo:
+                    html_code = updateInfo["html_code"]
+                if "title" in updateInfo:
+                    title = updateInfo["title"]
+
+                if html_code and title:
+                    data = {"html_code": html_code, "title": title}
+                elif html_code:
+                    data = {"html_code": html_code}
+                else:
+                    data = {"title": title}
+
+                news = News.objects.get(id = updateInfo["id"])
+
+                serializer = NewsSerializer(news, data, partial = True)
+                serializer.is_valid(raise_exception = True)
+                serializer.save()
+            return Response(status = status.HTTP_204_NO_CONTENT)
+        except:
+            res = {"error": "Неизвестная ошибка"}
+            return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
+
 
 
 
