@@ -178,15 +178,18 @@ class VKSignIn(APIView):
                     "lastName": user["last_name"],
                     "role": User.PARTICIPANT,
                     "password": uuid.uuid4().hex,
+                    "photo": user["photo_50"]
                 }
             }
+
             serializer = ParticipantSerializer(data = data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            if len(User.objects.filter(email = id)) == 0:
+                serializer.save()
+                user = User.objects.get(email = id)
+                user.is_vk = True
+                user.save()
             data = serializer.data
-            user = User.objects.get(email = id)
-            user.is_vk = True
-            user.save()
             res = {"id": data["id"]}
             data.pop("id")
             res.update(data)
@@ -196,9 +199,9 @@ class VKSignIn(APIView):
         except ValueError:
             res = error
             return Response(res, status=status.HTTP_403_FORBIDDEN)
-        except:
-            res = {'error': 'Неизвестная ошибка'}
-            return Response(res, status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     res = {'error': 'Неизвестная ошибка'}
+        #     return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
 class Profile(APIView):
     """Редактирование профиля"""
