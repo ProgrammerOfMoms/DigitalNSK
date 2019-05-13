@@ -23,6 +23,7 @@ from mail.models import RecoveryLink
 from mail.linkGenerator import linkGenerator
 from mail.actions import *
 
+import vk_api
 
 def getJWT(user):
     payload = jwt_payload_handler(user)
@@ -168,16 +169,36 @@ class VKSignIn(APIView):
                 error = content
                 raise ValueError
             vk = auth(content["access_token"])
-            
-
-            return Response(data = content, status=status.HTTP_200_OK)
+            id = content["user_id"]
+            user = vk.method("users.get", {"user_ids": [id], "fields": ["photo_50"]})[0]
+            data = {
+                "id": {
+                    "email": id,
+                    "firstName": user["first_name"],
+                    "lastName": user["last_name"],
+                    "role": User.PARTICIPANT,
+                    "password": uuid.uuid4().hex,
+                }
+            }
+            serializer = ParticipantSerializer(data = data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            data = serializer.data
+            user = User.objects.get(email = id)
+            user.is_vk = True
+            user.save()
+            res = {"id": data["id"]}
+            data.pop("id")
+            res.update(data)
+            res["jwt"] = getJWT(user)
+            return Response(data = res, status=status.HTTP_201_CREATED)
         except ValueError:
             res = error
             return Response(res, status=status.HTTP_403_FORBIDDEN)
         except:
+            raise
             res = {'error': 'Неизвестная ошибка'}
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
-
 
 class Profile(APIView):
     """Редактирование профиля"""

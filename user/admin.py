@@ -9,6 +9,7 @@ class UserAdmin(admin.ModelAdmin):
         'phoneNumber',
         'email',
         'role',
+        'is_vk'
     )
 
 admin.site.register(User, UserAdmin)
