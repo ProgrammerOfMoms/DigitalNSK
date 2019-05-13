@@ -7,12 +7,14 @@ from rest_framework import permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.utils import jwt_payload_handler, jwt
 from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 from DigitalNSK import settings
 from user.actions import *
 
 import json
 import copy
 import datetime
+import requests
 import uuid
 
 from .models import *
@@ -147,13 +149,34 @@ class SignIn(APIView):
             res = {'error': 'Пользователь не найден'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
 
+
+# https://oauth.vk.com/authorize?client_id=6980768&display=page&redirect_uri=https://digitalnsk.ru/test&scope=email&photots&response_type=code&v=5.95
 class VKSignIn(APIView):
     """Авторизация через vk"""
     # permission_classes = (IsAuthenticated,)
     permission_classes = (AllowAny,)
+    parser_classes = (JSONParser,)
 
-    def post(self, reauest):
-        pass
+    def post(self, request):
+        try:
+            root_url = "https://oauth.vk.com/access_token?"
+            if "code" in request.data:
+                code = request.data["code"]
+            res = requests.get(root_url+"client_id="+settings.APP_ID_VK+"&client_secret="+settings.PRIVATE_KEY_VK+"&redirect_uri="+settings.REDIRECT_URI+"&code="+code)
+            content = res.json()
+            if "error" in content:
+                error = content
+                raise ValueError
+            vk = auth(content["access_token"])
+            
+
+            return Response(data = content, status=status.HTTP_200_OK)
+        except ValueError:
+            res = error
+            return Response(res, status=status.HTTP_403_FORBIDDEN)
+        except:
+            res = {'error': 'Неизвестная ошибка'}
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Profile(APIView):

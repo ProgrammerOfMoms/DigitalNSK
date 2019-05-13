@@ -129,21 +129,21 @@ class NewsView(APIView):
 
             if updateInfo:
                 
-                if "html_code" in updateInfo:
-                    html_code = updateInfo["html_code"]
-                if "title" in updateInfo:
-                    title = updateInfo["title"]
+                # if "html_code" in updateInfo:
+                #     html_code = updateInfo["html_code"]
+                # if "title" in updateInfo:
+                #     title = updateInfo["title"]
 
-                if html_code and title:
-                    data = {"html_code": html_code, "title": title}
-                elif html_code:
-                    data = {"html_code": html_code}
-                else:
-                    data = {"title": title}
+                # if html_code and title:
+                #     data = {"html_code": html_code, "title": title}
+                # elif html_code:
+                #     data = {"html_code": html_code}
+                # else:
+                #     data = {"title": title}
 
                 news = News.objects.get(id = updateInfo["id"])
 
-                serializer = NewsSerializer(news, data, partial = True)
+                serializer = NewsSerializer(news, updateInfo, partial = True)
                 serializer.is_valid(raise_exception = True)
                 serializer.save()
             return Response(status = status.HTTP_204_NO_CONTENT)

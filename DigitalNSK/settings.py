@@ -187,6 +187,11 @@ EMAIL_HOST_USER = "sibtiger.nsk@gmail.com"
 EMAIL_HOST_PASSWORD = "sibtigernstu2017"
 EMAIL_USE_TLS = True
 
+APP_ID_VK = "6980768"
+PRIVATE_KEY_VK = "iqQIekF9fmmrejnmEwqX"
+SERVICE_KEY_VK = "490ea43f490ea43f490ea43fb74964209f4490e490ea43f15d90156273ae7cf7ae29781"
+REDIRECT_URI = "https://digitalnsk.ru/test"
+
 try:
     from .local_settings import *
 except ImportError:

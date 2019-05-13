@@ -14,4 +14,5 @@ urlpatterns = [
     path('tutors/', TutorList.as_view()),
     path('feedback/', FeedBack.as_view()),
     path('test/', TestClass.as_view()),
+    path('vk-sign-in/', VKSignIn.as_view()),
 ]

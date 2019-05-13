@@ -5,6 +5,7 @@ import os
 import uuid
 import random
 import copy
+import vk_api
 
 def getPhotoPath(photo, id):
     media_dir = settings.MEDIA_ROOT
@@ -52,6 +53,12 @@ def incName(photo):
         j = 0
         photo = photo[:start]+"_"+number
     return photo
+
+
+def auth(token):
+    vk = vk_api.VkApi(token=token)
+    vk._auth_token()
+    return vk
 
 
     
