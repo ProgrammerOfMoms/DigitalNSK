@@ -191,12 +191,12 @@ class VKSignIn(APIView):
             data.pop("id")
             res.update(data)
             res["jwt"] = getJWT(user)
+            res["social"] = "vk"
             return Response(data = res, status=status.HTTP_201_CREATED)
         except ValueError:
             res = error
             return Response(res, status=status.HTTP_403_FORBIDDEN)
         except:
-            raise
             res = {'error': 'Неизвестная ошибка'}
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
