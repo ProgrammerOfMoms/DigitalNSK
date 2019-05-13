@@ -170,38 +170,46 @@ class VKSignIn(APIView):
                 raise ValueError
             vk = auth(content["access_token"])
             id = content["user_id"]
-            user = vk.method("users.get", {"user_ids": [id], "fields": ["photo_50"]})[0]
-            data = {
-                "id": {
-                    "email": id,
-                    "firstName": user["first_name"],
-                    "lastName": user["last_name"],
-                    "role": User.PARTICIPANT,
-                    "password": uuid.uuid4().hex,
-                    "photo": user["photo_50"]
-                }
-            }
 
-            serializer = ParticipantSerializer(data = data)
-            serializer.is_valid(raise_exception=True)
-            if len(User.objects.filter(email = id)) == 0:
+            if len(User.objects.filter(email = str(id))) == 0:
+                user = vk.method("users.get", {"user_ids": [id], "fields": ["photo_50"]})[0]
+                data = {
+                    "id": {
+                        "email": str(id),
+                        "firstName": user["first_name"],
+                        "lastName": user["last_name"],
+                        "role": User.PARTICIPANT,
+                        "password": uuid.uuid4().hex,
+                        "photo": user["photo_50"]
+                    }
+                }
+                serializer = ParticipantSerializer(data = data)
+                serializer.is_valid(raise_exception=False)
                 serializer.save()
-                user = User.objects.get(email = id)
+                user = User.objects.get(email = str(id))
                 user.is_vk = True
                 user.save()
-            data = serializer.data
-            res = {"id": data["id"]}
-            data.pop("id")
-            res.update(data)
+                data = serializer.data
+                res = {"id": data["id"]}
+                data.pop("id")
+                res.update(data)
+            else:
+                res = {}
+                user = User.objects.get(email = str(id))
+                res['id'] = "%s" % (user.id)
+                res['email'] = "%s" % (user.email)
+                res['firstName'] = "%s" % (user.firstName)
+                res['lastName'] = "%s" % (user.lastName)
+                res['role'] = "%s" % (user.role)
             res["jwt"] = getJWT(user)
             res["social"] = "vk"
             return Response(data = res, status=status.HTTP_201_CREATED)
         except ValueError:
             res = error
             return Response(res, status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     res = {'error': 'Неизвестная ошибка'}
-        #     return Response(res, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            res = {'error': 'Неизвестная ошибка'}
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
 class Profile(APIView):
     """Редактирование профиля"""
