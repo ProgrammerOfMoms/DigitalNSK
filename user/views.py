@@ -201,6 +201,7 @@ class VKSignIn(APIView):
                 res['firstName'] = "%s" % (user.firstName)
                 res['lastName'] = "%s" % (user.lastName)
                 res['role'] = "%s" % (user.role)
+                res['photo'] = "%s" % (user.photo)
             res["jwt"] = getJWT(user)
             res["social"] = "vk"
             return Response(data = res, status=status.HTTP_201_CREATED)
