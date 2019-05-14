@@ -67,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role            = models.CharField(verbose_name = "Роль", choices = CHOICES_OF_ROLE, default = PARTICIPANT, max_length = 20)
     emailConfirmed  = models.BooleanField(verbose_name = "Email подтвержден", default = False)
 
-    is_vk           = models.BooleanField(default=False, verbose_name="Зарегистрирован через вк")
+    # is_vk           = models.BooleanField(default=False, verbose_name="Зарегистрирован через вк")
     is_active       = models.BooleanField(default=True, verbose_name="Аккаунт действует")
     is_staff        = models.BooleanField(default=False, verbose_name="Сотрудник")
     date_joined     = models.DateTimeField(default=timezone.now)
