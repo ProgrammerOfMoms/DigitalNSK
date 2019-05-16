@@ -189,20 +189,14 @@ class VKSignIn(APIView):
                 user = User.objects.get(email = str(id))
                 user.is_vk = True
                 user.save()
-                data = serializer.data
-                res = {"id": data["id"]}
-                data.pop("id")
-                res.update(data)
-                res = res["id"]
-            else:
-                res = {}
-                user = User.objects.get(email = str(id))
-                res['id'] = "%s" % (user.id)
-                res['email'] = "%s" % (user.email)
-                res['firstName'] = "%s" % (user.firstName)
-                res['lastName'] = "%s" % (user.lastName)
-                res['role'] = "%s" % (user.role)
-                res['photo'] = "%s" % (user.photo)
+            res = {}
+            user = User.objects.get(email = str(id))
+            res['id'] = "%s" % (user.id)
+            res['email'] = "%s" % (user.email)
+            res['firstName'] = "%s" % (user.firstName)
+            res['lastName'] = "%s" % (user.lastName)
+            res['role'] = "%s" % (user.role)
+            res['photo'] = "%s" % (user.photo)
             res["jwt"] = getJWT(user)
             res["social"] = "vk"
             return Response(data = res, status=status.HTTP_201_CREATED)
