@@ -228,7 +228,7 @@ class Profile(APIView):
             if user.role == User.PARTICIPANT:
                 user = user.participant
                 serializer = ParticipantSerializer(user)
-                
+
                 data = serializer.data
                 res = {"id": data["id"]}
                 data.pop("id")
@@ -239,7 +239,9 @@ class Profile(APIView):
                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 """
                 if res["id"]["photo"] != "":
-                    res["id"]["photo"] = "https://digitalnsk.ru:8000/media/"+res["id"]["photo"]
+                    if '/' not in res["id"]["photo"]:
+                        res["id"]["photo"] = "https://digitalnsk.ru:8000/media/"+res["id"]["photo"]
+
                 return Response(data = res, status = status.HTTP_200_OK)
             else:
                 serializer = UserSerializer(user)
