@@ -505,7 +505,10 @@ class UploadPhoto(APIView):
             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             """
             if user.photo != "":
-                res = {"photo": "https://digitalnsk.ru:8000/media/"+user.photo}
+                if '/' in user.photo:
+                    res = {"photo": user.photo}
+                else:
+                    res = {"photo": "https://digitalnsk.ru:8000/media/"+user.photo}
             else:
                 res = {"photo": None}
             return Response(data = res, status = status.HTTP_200_OK)
