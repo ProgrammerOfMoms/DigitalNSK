@@ -187,7 +187,7 @@ class VKSignIn(APIView):
                 serializer.is_valid(raise_exception=False)
                 serializer.save()
                 user = User.objects.get(email = str(id))
-                user.is_vk = True
+                user.is_social = True
                 user.save()
             else:
                 user = User.objects.get(email = str(id))
