@@ -151,7 +151,7 @@ class SignIn(APIView):
             return Response(res, status=status.HTTP_403_FORBIDDEN)
 
 
-# https://oauth.vk.com/authorize?client_id=6980768&display=page&redirect_uri=https://digitalnsk.ru/test&scope=email&photots&response_type=code&v=5.95
+# https://oauth.vk.com/authorize?client_id=6980768&display=page&redirect_uri=https://digitalnsk.ru/&scope=email&photots&response_type=code&v=5.95
 class VKSignIn(APIView):
     """Авторизация через vk"""
     # permission_classes = (IsAuthenticated,)
