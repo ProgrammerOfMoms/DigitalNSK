@@ -189,8 +189,9 @@ class VKSignIn(APIView):
                 user = User.objects.get(email = str(id))
                 user.is_vk = True
                 user.save()
+            else:
+                user = User.objects.get(email = str(id))
             res = {}
-            user = User.objects.get(email = str(id))
             res['id'] = "%s" % (user.id)
             res['email'] = "%s" % (user.email)
             res['firstName'] = "%s" % (user.firstName)
