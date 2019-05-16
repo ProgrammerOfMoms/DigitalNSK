@@ -193,6 +193,7 @@ class VKSignIn(APIView):
                 res = {"id": data["id"]}
                 data.pop("id")
                 res.update(data)
+                res = res["id"]
             else:
                 res = {}
                 user = User.objects.get(email = str(id))
