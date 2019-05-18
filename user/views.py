@@ -200,6 +200,8 @@ class VKSignIn(APIView):
             res['photo'] = "%s" % (user.photo)
             res["jwt"] = getJWT(user)
             res["social"] = "vk"
+            if len(user.participant.passedTests.all())==3:
+                res['test'] = True
             return Response(data = res, status=status.HTTP_201_CREATED)
         except ValueError:
             res = error
