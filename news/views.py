@@ -95,10 +95,12 @@ class NewsView(APIView):
     def put(self, request):
         try:
             if "data" in request.data:
-                updateInfo = request.data["data"]
+                updateInfo = request.data["data"].read()
+                updateInfo = json.loads(updateInfo)
             if type(updateInfo) == str:
                 updateInfo = json.loads(updateInfo)
             if "photo" in request.FILES:
+                print(updateInfo)
                 bphoto = request.FILES.get("photo", b"no photo").read()
                 photo_dir = settings.MEDIA_ROOT+"/news/"
             
@@ -148,6 +150,7 @@ class NewsView(APIView):
                 serializer.save()
             return Response(status = status.HTTP_204_NO_CONTENT)
         except:
+            raise
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
