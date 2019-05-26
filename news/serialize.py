@@ -22,7 +22,7 @@ class NewsSerializer(serializers.ModelSerializer):
         )
     
     def create(self, validate_data):
-        return News.objects.create(**validate_data, date = datetime.datetime.now().date())
+        return News.objects.create(date = datetime.datetime.now().date(), **validate_data)
 
 
 
