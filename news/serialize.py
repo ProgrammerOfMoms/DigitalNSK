@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from news.models import News
 from DigitalNSK import settings
+import datetime
 
 import os
 import uuid
@@ -21,7 +22,7 @@ class NewsSerializer(serializers.ModelSerializer):
         )
     
     def create(self, validate_data):
-        return News.objects.create(**validate_data)
+        return News.objects.create(**validate_data, date = datetime.datetime.now().date())
 
 
 

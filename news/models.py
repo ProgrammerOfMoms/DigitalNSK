@@ -8,7 +8,7 @@ class News(models.Model):
     html_code       = models.TextField(verbose_name = "html код новости")
     title           = models.TextField(verbose_name= "Заголовок", default = "title")
     photo           = models.TextField(verbose_name = "Картинка к новости")
-    date            = models.DateField(verbose_name = "Дата публикации", default = datetime.datetime.now().date())
+    date            = models.DateField(verbose_name = "Дата публикации", null = True, default = None)
 
     class Meta:
         verbose_name        = "Новость"
