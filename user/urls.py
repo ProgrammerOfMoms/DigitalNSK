@@ -15,4 +15,5 @@ urlpatterns = [
     path('feedback/', FeedBack.as_view()),
     path('test/', TestClass.as_view()),
     path('vk-sign-in/', VKSignIn.as_view()),
+    path('fb-sign-in/', FaceBookSignIn.as_view()),
 ]

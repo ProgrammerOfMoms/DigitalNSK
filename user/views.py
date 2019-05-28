@@ -210,6 +210,82 @@ class VKSignIn(APIView):
             res = {'error': 'Неизвестная ошибка'}
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
+# https://graph.facebook.com/v3.3/oauth/access_token?
+#    client_id={app-id}
+#    &redirect_uri={redirect-uri}
+#    &client_secret={app-secret}
+#    &code={code-parameter}
+#  "https://graph.facebook.com/{your-user-id}
+#    ?fields=id,name
+#    &access_token={your-user-access-token}"
+class FaceBookSignIn(APIView):
+    "Авторизация через facebook"
+
+    # permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+    parser_classes = (JSONParser,)
+
+    def post(self, request):
+        try:
+            root_url = "https://graph.facebook.com/v3.3/oauth/access_token?"
+            if "code" in request.data:
+                code = request.data["code"]
+            res = requests.get(root_url+"client_id="+str(settings.APP_ID_FB)+"&client_secret="+settings.SECRET_KEY_FB+"&redirect_uri="+settings.REDIRECT_URI+"&code="+code)
+            content = res.json()
+            if "error" in content:
+                error = content
+                raise ValueError
+            request_url ="https://graph.facebook.com/me?fields=first_name,last_name,birthday,gender&access_token="+content["access_token"]
+            info = requests.get(request_url)
+            request_url = "https://graph.facebook.com/v3.3/me/picture?type=large&redirect=false&access_token="+content["access_token"]
+            photo = requests.get(request_url)
+            info = info.json()
+            photo = photo.json()
+            info.update(photo)
+
+            id = info["id"]
+            if len(User.objects.filter(email = str(id))) == 0:
+                data = {
+                    "id": {
+                        "email": str(id),
+                        "firstName": info["first_name"],
+                        "lastName": info["last_name"],
+                        "role": User.PARTICIPANT,
+                        "password": uuid.uuid4().hex,
+                        "photo": info["data"]["url"]
+                    }
+                }
+                serializer = ParticipantSerializer(data = data)
+                serializer.is_valid(raise_exception=False)
+                serializer.save()
+                user = User.objects.get(email = str(id))
+                user.is_social = True
+                user.save()
+            else:
+                user = User.objects.get(email = str(id))
+            res = {}
+            res['id'] = "%s" % (user.id)
+            res['email'] = "%s" % (user.email)
+            res['firstName'] = "%s" % (user.firstName)
+            res['lastName'] = "%s" % (user.lastName)
+            res['role'] = "%s" % (user.role)
+            res['photo'] = "%s" % (user.photo)
+            res["jwt"] = getJWT(user)
+            res["social"] = "fb"
+            if len(user.participant.passedTests.all())==3:
+                res['test'] = True
+            return Response(data = res, status=status.HTTP_201_CREATED)
+
+
+            return Response(info, status=status.HTTP_200_OK)
+        except ValueError:
+            res = error
+            return Response(res, status=status.HTTP_403_FORBIDDEN)
+        except:
+            raise
+            res = {'error': 'Неизвестная ошибка'}
+            return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
 class Profile(APIView):
     """Редактирование профиля"""
 

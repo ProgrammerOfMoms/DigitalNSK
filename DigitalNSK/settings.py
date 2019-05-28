@@ -192,6 +192,9 @@ PRIVATE_KEY_VK = "iqQIekF9fmmrejnmEwqX"
 SERVICE_KEY_VK = "490ea43f490ea43f490ea43fb74964209f4490e490ea43f15d90156273ae7cf7ae29781"
 REDIRECT_URI = "https://digitalnsk.ru/"
 
+APP_ID_FB = 890044541387975
+SECRET_KEY_FB = "d4bd341522292ef5baaa9b5606e95540"
+
 try:
     from .local_settings import *
 except ImportError:
