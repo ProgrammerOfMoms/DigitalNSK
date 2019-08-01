@@ -16,5 +16,5 @@ urlpatterns = [
     path('test/', TestClass.as_view()),
     path('vk-sign-in/', VKSignIn.as_view()),
     path('fb-sign-in/', FaceBookSignIn.as_view()),
-    path('false/', FalseSignUp.as_view()),
+    #path('false/', FalseSignUp.as_view()),
 ]
