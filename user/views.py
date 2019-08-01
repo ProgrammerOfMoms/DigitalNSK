@@ -18,6 +18,7 @@ import requests
 import uuid
 import openpyxl
 import threading
+import after_response
 
 from .models import *
 from .serialize import UserSerializer, ParticipantSerializer
@@ -606,51 +607,48 @@ class FeedBack(APIView):
             res = {"error": "Неизвестная ошибка"}
             return Response(data = res, status = status.HTTP_400_BAD_REQUEST)
 
+@after_response.enable
+def creaete_users():
+    path = os.path.join(settings.MEDIA_ROOT,"list.xlsx")
+    book = openpyxl.load_workbook(filename = path)
+    sheet = book["list"]
+    sheet['F1'] = "e-mail"
+    sheet['G1'] = "пароль"
+    data = {
+        "id": {
+            "email": "",
+            "firstName": "",
+            "lastName": "",
+            "patronymic": "",
+            "password": "",
+            "role": User.PARTICIPANT,
+            "emailConfirmed": True
+        },
+        "eduInstitution":  "",
+        "level": "",
+    }
+    for i in range(2,7001):
+        email = uuid.uuid4().hex[:10] + "@digitalnsk.ru"
+        password = uuid.uuid4().hex[:10]
+        sheet['F'+str(i)] = email
+        sheet['G'+str(i)] = password
+        data["id"]["email"] = email
+        data["id"]["firstName"] = sheet['B'+str(i)].value
+        data["id"]["lastName"] = sheet['A'+str(i)].value
+        data["id"]["patronymic"] = sheet['C'+str(i)].value
+        data["id"]["password"] = password
+        data["eduInstitution"] = str(sheet['D'+str(i)].value)
+        data["level"] = str(sheet['E'+str(i)].value) + " класс"
+
+        serializer = ParticipantSerializer(data = data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        print(data)
+    book.save(path)
+
 class FalseSignUp(APIView):
     permission_classes = (AllowAny,)
 
-    def form(self):
-        path = os.path.join(settings.MEDIA_ROOT,"list.xlsx")
-        book = openpyxl.load_workbook(filename = path)
-        sheet = book["list"]
-        sheet['F1'] = "e-mail"
-        sheet['G1'] = "пароль"
-        data = {
-            "id": {
-                "email": "",
-                "firstName": "",
-                "lastName": "",
-                "patronymic": "",
-                "password": "",
-                "role": User.PARTICIPANT,
-                "emailConfirmed": True
-            },
-            "eduInstitution":  "",
-            "level": "",
-        }
-        for i in range(2,7001):
-            email = uuid.uuid4().hex[:10] + "@digitalnsk.ru"
-            password = uuid.uuid4().hex[:10]
-            sheet['F'+str(i)] = email
-            sheet['G'+str(i)] = password
-            data["id"]["email"] = email
-            data["id"]["firstName"] = sheet['B'+str(i)].value
-            data["id"]["lastName"] = sheet['A'+str(i)].value
-            data["id"]["patronymic"] = sheet['C'+str(i)].value
-            data["id"]["password"] = password
-            data["eduInstitution"] = str(sheet['D'+str(i)].value)
-            data["level"] = str(sheet['E'+str(i)].value) + " класс"
-
-            serializer = ParticipantSerializer(data = data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            print(data)
-        book.save(path)
-
     def get(self, request):
-        threading.Thread(target=self.form).start()
+        creaete_users.after_response()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
