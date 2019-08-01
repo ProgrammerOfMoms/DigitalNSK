@@ -47,7 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
             "patronymic",
             "phoneNumber",
             "role",
-            "is_social"
+            "is_social",
+            "emailConfirmed"
         )
         extra_kwargs = {'password': {'write_only': True}}
         depth = 5
