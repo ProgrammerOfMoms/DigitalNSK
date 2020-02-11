@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-85r7zwam5v+z@4+c^@y7h6gv*nq9_!#mcoyial*=7&u0^7eq_'
+SECRET_KEY = 'secret'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -183,17 +183,17 @@ JWT_AUTH = {
 #email
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587 
-EMAIL_HOST_USER = "sibtiger.nsk@gmail.com"
-EMAIL_HOST_PASSWORD = "sibtigernstu2017"
+EMAIL_HOST_USER = "host_user"
+EMAIL_HOST_PASSWORD = "host_pass"
 EMAIL_USE_TLS = True
 
-APP_ID_VK = "6980768"
-PRIVATE_KEY_VK = "iqQIekF9fmmrejnmEwqX"
-SERVICE_KEY_VK = "490ea43f490ea43f490ea43fb74964209f4490e490ea43f15d90156273ae7cf7ae29781"
-REDIRECT_URI = "https://digitalnsk.ru/"
+APP_ID_VK = ""
+PRIVATE_KEY_VK = ""
+SERVICE_KEY_VK = ""
+REDIRECT_URI = ""
 
-APP_ID_FB = 324401124906737
-SECRET_KEY_FB = "e2af289ad52ea0d7c9e1530ec2840ef8"
+APP_ID_FB = ""
+SECRET_KEY_FB = ""
 
 try:
     from .local_settings import *
